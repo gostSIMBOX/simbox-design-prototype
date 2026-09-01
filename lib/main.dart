@@ -82,8 +82,17 @@ class _AdminShellState extends State<AdminShell> {
   /// Escape closes an open action-group rail or the columns editor, from
   /// anywhere on the page (fix2 Requirements #4).
   bool _onKey(KeyEvent event) {
-    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.escape) {
-      _state?.closeRail();
+    if (event is! KeyDownEvent) return false;
+    final state = _state;
+    if (state?.page == AdmPage.nabor &&
+        event.logicalKey == LogicalKeyboardKey.keyS &&
+        (HardwareKeyboard.instance.isControlPressed ||
+            HardwareKeyboard.instance.isMetaPressed)) {
+      if (state!.commandSets.isDirty) state.commandSets.save();
+      return true;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.escape) {
+      state?.closeRail();
     }
     return false;
   }

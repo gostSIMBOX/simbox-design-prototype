@@ -2,8 +2,23 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../data/models.dart';
 import '../data/mock.dart';
+import '../features/command_sets/controller.dart';
+import '../features/command_sets/repository.dart';
+import '../features/command_sets/seed.dart';
 
-enum AdmPage { sim, dongle, diagmode, hubs, nabor, plan, proc, bablo, upgrade, debug, icons }
+enum AdmPage {
+  sim,
+  dongle,
+  diagmode,
+  hubs,
+  nabor,
+  plan,
+  proc,
+  bablo,
+  upgrade,
+  debug,
+  icons
+}
 
 class Toast {
   final String text, icon;
@@ -13,6 +28,7 @@ class Toast {
 /// Single source of truth for the panel. Replace the `_exec` body with real
 /// transport (ssh / http) to drive live hardware — see TODO(api).
 class AppState extends ChangeNotifier {
+  late final CommandSetController commandSets;
   AdmPage page = AdmPage.sim;
   final Set<int> selected = <int>{};
   String? sortKey;
@@ -52,6 +68,10 @@ class AppState extends ChangeNotifier {
   Timer? _timer;
 
   AppState() {
+    commandSets =
+        CommandSetController(InMemoryCommandSetRepository(commandSetSeed));
+    commandSets.addListener(_forwardCommandSets);
+    commandSets.load();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       now = DateTime.now();
       if (liveRefresh && page == AdmPage.diagmode) {
@@ -64,9 +84,13 @@ class AppState extends ChangeNotifier {
   @override
   void dispose() {
     _timer?.cancel();
+    commandSets.removeListener(_forwardCommandSets);
+    commandSets.dispose();
     toast.dispose();
     super.dispose();
   }
+
+  void _forwardCommandSets() => notifyListeners();
 
   // ---- navigation ----------------------------------------------------------
 
@@ -117,7 +141,8 @@ class AppState extends ChangeNotifier {
   List<String> columnOrderFor(AdmPage p, List<String> defaultIds) =>
       columnOrder.putIfAbsent(p, () => List.of(defaultIds));
 
-  Set<String> hiddenColumnsFor(AdmPage p) => hiddenColumns.putIfAbsent(p, () => <String>{});
+  Set<String> hiddenColumnsFor(AdmPage p) =>
+      hiddenColumns.putIfAbsent(p, () => <String>{});
 
   void toggleColumnHidden(AdmPage p, String colId) {
     final hidden = hiddenColumnsFor(p);
@@ -125,7 +150,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void moveColumn(AdmPage p, String colId, int direction, List<String> defaultIds) {
+  void moveColumn(
+      AdmPage p, String colId, int direction, List<String> defaultIds) {
     final order = columnOrderFor(p, defaultIds);
     final i = order.indexOf(colId);
     final n = i + direction;
@@ -194,15 +220,18 @@ class AppState extends ChangeNotifier {
   // ---- data ----------------------------------------------------------------
 
   List<Sim> get visibleSims {
-    var list = sims.where((s) => query.isEmpty || s.haystack.contains(query.toLowerCase())).toList();
+    var list = sims
+        .where((s) => query.isEmpty || s.haystack.contains(query.toLowerCase()))
+        .toList();
     final k = sortKey;
     if (k != null) list.sort((a, b) => _cmp(a.field(k), b.field(k)) * sortDir);
     return list;
   }
 
   List<Dongle> get visibleDongles {
-    var list =
-        dongles.where((d) => query.isEmpty || d.haystack.contains(query.toLowerCase())).toList();
+    var list = dongles
+        .where((d) => query.isEmpty || d.haystack.contains(query.toLowerCase()))
+        .toList();
     final k = sortKey;
     if (k != null) list.sort((a, b) => _cmp(a.field(k), b.field(k)) * sortDir);
     return list;
@@ -236,7 +265,10 @@ class AppState extends ChangeNotifier {
   void push(String cmd, List<String> lines, [String warn = '']) {
     final t = DateTime.now();
     String two(int v) => v.toString().padLeft(2, '0');
-    logs.insert(0, LogEntry('${two(t.hour)}:${two(t.minute)}:${two(t.second)}', cmd, lines, warn));
+    logs.insert(
+        0,
+        LogEntry('${two(t.hour)}:${two(t.minute)}:${two(t.second)}', cmd, lines,
+            warn));
     if (logs.length > 40) logs.removeRange(40, logs.length);
     logOpen = true;
     notifyListeners();

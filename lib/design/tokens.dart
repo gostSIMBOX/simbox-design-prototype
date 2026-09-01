@@ -42,33 +42,65 @@ class T {
   static const radiusCard = 10.0;
   static const radiusCtl = 8.0;
 
+  // Fugue density unit: 16 logical px at both 1x and Retina/HiDPI.
+  static const fugueUnit = 16.0;
+  static const fugueFontSize = 12.0;
+  static const fugueLineHeight = 18.0;
+  static const fugueGap = 4.0;
+  static const fuguePadX = 6.0;
+  static const fugueRowMin = 28.0;
+  static const denseHit = 32.0;
+  static const narrowHit = 40.0;
+
   static const shadow = <BoxShadow>[
     BoxShadow(color: Color(0x1A9CB2C2), blurRadius: 32, offset: Offset(0, 1)),
   ];
 
   // Type roles
   static const _f = 'SF Pro Text';
-  static const screenTitle =
-      TextStyle(fontFamily: _f, fontSize: 20, fontWeight: FontWeight.w600, color: ink);
-  static const panelTitle =
-      TextStyle(fontFamily: _f, fontSize: 13, fontWeight: FontWeight.w600, color: ink);
+  static const screenTitle = TextStyle(
+      fontFamily: _f, fontSize: 20, fontWeight: FontWeight.w600, color: ink);
+  static const panelTitle = TextStyle(
+      fontFamily: _f, fontSize: 13, fontWeight: FontWeight.w600, color: ink);
   static const body = TextStyle(fontFamily: _f, fontSize: 13, color: fg1);
-  static const cell = TextStyle(fontFamily: _f, fontSize: 12, height: 1.3, color: fg1);
+  static const cell =
+      TextStyle(fontFamily: _f, fontSize: 12, height: 1.3, color: fg1);
   static const cellAlarm = TextStyle(
-      fontFamily: _f, fontSize: 12, height: 1.3, fontWeight: FontWeight.w600, color: danger);
-  static const cellSub = TextStyle(fontFamily: _f, fontSize: 10, height: 1.3, color: fgMuted);
-  static const cellTertiary = TextStyle(fontFamily: _f, fontSize: 10, height: 1.3, color: fg2);
+      fontFamily: _f,
+      fontSize: 12,
+      height: 1.3,
+      fontWeight: FontWeight.w600,
+      color: danger);
+  static const cellSub =
+      TextStyle(fontFamily: _f, fontSize: 10, height: 1.3, color: fgMuted);
+  static const cellTertiary =
+      TextStyle(fontFamily: _f, fontSize: 10, height: 1.3, color: fg2);
   static const head = TextStyle(
-      fontFamily: _f, fontSize: 11, height: 1.25, fontWeight: FontWeight.w600, color: ink);
-  static const headSub = TextStyle(fontFamily: _f, fontSize: 10, height: 1.25, color: fgMuted);
-  static const caption = TextStyle(fontFamily: _f, fontSize: 12, color: fgMuted);
+      fontFamily: _f,
+      fontSize: 11,
+      height: 1.25,
+      fontWeight: FontWeight.w600,
+      color: ink);
+  static const headSub =
+      TextStyle(fontFamily: _f, fontSize: 10, height: 1.25, color: fgMuted);
+  static const caption =
+      TextStyle(fontFamily: _f, fontSize: 12, color: fgMuted);
   static const mono = TextStyle(
-      fontFamily: 'monospace', fontFamilyFallback: ['Menlo', 'Consolas'], fontSize: 11, color: fg1);
+      fontFamily: 'monospace',
+      fontFamilyFallback: ['Menlo', 'Consolas'],
+      fontSize: 11,
+      color: fg1);
   static const monoDim = TextStyle(
       fontFamily: 'monospace',
       fontFamilyFallback: ['Menlo', 'Consolas'],
       fontSize: 11,
       height: 1.7,
+      color: fg1);
+  static const protocolMono = TextStyle(
+      fontFamily: 'monospace',
+      fontFamilyFallback: ['SF Mono', 'Menlo', 'Consolas'],
+      fontSize: fugueFontSize,
+      height: 1.5,
       color: fg1);
 }
 
@@ -76,15 +108,20 @@ ThemeData buildTheme() {
   final base = ThemeData.light(useMaterial3: true);
   return base.copyWith(
     scaffoldBackgroundColor: T.bg,
-    colorScheme: base.colorScheme.copyWith(primary: T.brandDeep, surface: T.surface),
-    textTheme: base.textTheme.apply(fontFamily: 'SF Pro Text', bodyColor: T.fg1),
+    colorScheme:
+        base.colorScheme.copyWith(primary: T.brandDeep, surface: T.surface),
+    textTheme:
+        base.textTheme.apply(fontFamily: 'SF Pro Text', bodyColor: T.fg1),
     tooltipTheme: TooltipThemeData(
       waitDuration: const Duration(milliseconds: 150),
       decoration: BoxDecoration(
         color: T.surface,
         borderRadius: BorderRadius.circular(T.radiusCtl),
         border: Border.all(color: T.border),
-        boxShadow: const [BoxShadow(color: Color(0x599CB2C2), blurRadius: 32, offset: Offset(0, 1))],
+        boxShadow: const [
+          BoxShadow(
+              color: Color(0x599CB2C2), blurRadius: 32, offset: Offset(0, 1))
+        ],
       ),
       textStyle: T.cell,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

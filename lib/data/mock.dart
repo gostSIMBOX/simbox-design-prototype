@@ -213,8 +213,8 @@ const sims = <Sim>[
       io: 'O',
       qos: 'BAD',
       napr: 'NZ',
-      plan: 'megafon_mks',
-      nabor: 'megafon_mks',
+      plan: 'megafon_msk',
+      nabor: 'megafon_msk',
       tarif: 'MC',
       number: '9218887766',
       oper: 'MegaFon',
@@ -533,28 +533,6 @@ const hubTree = <HubNode>[
     IcoRef('p-off.png', 'питание выкл')
   ], device: 'Port 2: Dev 4, Class=vend.', port: '02:4:2'),
 ];
-
-const naborNames = <String>[
-  'default',
-  'beeline_spb',
-  'megafon_spb',
-  'megafon_mks',
-  'mts_spb',
-  'tele2_spb',
-  'life',
-  'velcom'
-];
-
-const naborIcons = <String, String>{
-  'default': 'hz.png',
-  'beeline_spb': 'napravleine/beeline_spb.png',
-  'megafon_spb': 'napravleine/megafon_spb.png',
-  'megafon_mks': 'napravleine/megafon_msk.png',
-  'mts_spb': 'napravleine/mts_spb.png',
-  'tele2_spb': 'napravleine/tele2_spb.png',
-  'life': 'napravleine/life_by.png',
-  'velcom': 'napravleine/velcom_by.png',
-};
 
 const planRows = <PlanRow>[
   PlanRow('default', 'default',

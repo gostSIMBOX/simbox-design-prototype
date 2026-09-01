@@ -24,7 +24,7 @@ class _SimsPageState extends State<SimsPage> {
   final _smsTxt = TextEditingController();
   final _call = TextEditingController();
   final _group = TextEditingController();
-  String _plan = naborNames.first;
+  String _plan = 'default';
 
   @override
   void dispose() {
@@ -422,7 +422,9 @@ class _SimsPageState extends State<SimsPage> {
                 SizedBox(
                   width: 160,
                   child: DropdownButtonFormField<String>(
-                    value: _plan,
+                    initialValue: st.commandSets.selectableIds.contains(_plan)
+                        ? _plan
+                        : st.commandSets.selectableIds.first,
                     isDense: true,
                     style: T.body,
                     decoration: InputDecoration(
@@ -438,7 +440,8 @@ class _SimsPageState extends State<SimsPage> {
                       ),
                     ),
                     items: [
-                      for (final p in naborNames) DropdownMenuItem(value: p, child: Text(p)),
+                      for (final p in st.commandSets.selectableIds)
+                        DropdownMenuItem(value: p, child: Text(p)),
                     ],
                     onChanged: (v) => setState(() => _plan = v ?? _plan),
                   ),

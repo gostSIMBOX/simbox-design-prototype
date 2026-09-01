@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import '../design/tokens.dart';
 import '../state/app_state.dart';
 import 'adm_icon.dart';
+import 'fugue_icon.dart';
 
 const _tabs = <(AdmPage, String, String)>[
   (AdmPage.sim, 'Симки', 'free.png'),
   (AdmPage.dongle, 'Свистки (nm)', 'dongle1550.png'),
   (AdmPage.diagmode, 'Свистки (um)', 'diagmode/diagmode_update.png'),
   (AdmPage.hubs, 'Хабы', 'usb/hub_16.png'),
-  (AdmPage.nabor, 'Наборы команд', 'ussdsms.png'),
+  (AdmPage.nabor, 'Наборы команд', 'fugue:application-list.png'),
   (AdmPage.plan, 'Планы', 'clock.png'),
   (AdmPage.proc, 'Процессы', 'conn.png'),
   (AdmPage.bablo, 'Биллинг', 'may.png'),
@@ -112,7 +113,12 @@ class _NavItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: compact ? MainAxisAlignment.center : MainAxisAlignment.start,
             children: [
-              Opacity(opacity: active ? 1 : 0.75, child: AdmIcon(icon)),
+              Opacity(
+                opacity: active ? 1 : 0.75,
+                child: icon.startsWith('fugue:')
+                    ? FugueIcon(icon.substring(6), semanticLabel: label)
+                    : AdmIcon(icon),
+              ),
               if (!compact) ...[
                 const SizedBox(width: 10),
                 Expanded(
