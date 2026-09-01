@@ -1,28 +1,48 @@
 name: simbox_adminka
-description: SimBox Adminka — Flutter prototype (NativeMind DS)
+description: SimBox Adminka — dense SIM-box operations panel (NativeMind design system).
 publish_to: "none"
-version: 0.1.0
+version: 1.0.0+1
 
 environment:
-  sdk: ">=3.3.0 <4.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
+dev_dependencies:
+  flutter_lints: ^3.0.0
+
 flutter:
   uses-material-design: true
+
   assets:
-    - assets/logo_square.png
-    - assets/logo_wide.png
     - assets/imgs/
-    - assets/imgs/qos/
+    - assets/imgs/diagmode/
     - assets/imgs/im/
+    - assets/imgs/napravleine/
+    - assets/imgs/qos/
+    - assets/imgs/recog_types/
+    - assets/imgs/rssi/
     - assets/imgs/spec/
     - assets/imgs/state/
-    - assets/imgs/usb/
-    - assets/imgs/rssi/
+    - assets/imgs/state/cfun/
+    - assets/imgs/state/end_party/
+    - assets/imgs/state/simst/
+    - assets/imgs/state/srvst/
     - assets/imgs/tree/
-    - assets/imgs/diagmode/
-    - assets/imgs/recog_types/
-    - assets/imgs/napravleine/
+    - assets/imgs/usb/
+
+  fonts:
+    - family: SF Pro Text
+      fonts:
+        - asset: assets/fonts/sf-pro-text-light.ttf
+          weight: 300
+        - asset: assets/fonts/sf-pro-text-regular.ttf
+          weight: 400
+        - asset: assets/fonts/sf-pro-text-semibold.ttf
+          weight: 600
+        - asset: assets/fonts/sf-pro-text-bold.ttf
+          weight: 700
+        - asset: assets/fonts/sf-pro-text-heavy.ttf
+          weight: 800

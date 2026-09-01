@@ -1,33 +1,44 @@
-# SimBox Adminka — Flutter prototype
+# SimBox Adminka — Flutter
 
-Layout prototype of the SimBox admin panel, ported from the HTML Design
-Component. Desktop-targeted (Linux / macOS / Windows / web).
+Порт интерактивного прототипа панели управления SIM-боксом (GostSimBox, 2015 as-is)
+на Flutter, на токенах дизайн-системы **NativeMind**.
 
-    flutter create . --platforms=web,macos,linux,windows   # generate runners
-    flutter run -d chrome
+## Запуск
 
-## Structure
+```bash
+cd flutter_simbox_adminka
+flutter create . --platforms=web,macos,windows,linux   # создаёт платформенные папки
+flutter pub get
+flutter run -d chrome                                   # или -d macos
+```
 
-| File | Role |
+Проект рассчитан на широкий экран (десктоп / веб). Минимальная комфортная
+ширина — 1280px; таблицы скроллятся горизонтально.
+
+## Что внутри
+
+| Путь | Назначение |
 | --- | --- |
-| `lib/theme.dart` | NativeMind DS tokens + the 16px `Ico` glyph widget (nearest-neighbour, never resampled) |
-| `lib/data.dart` | Nav items, action groups, column defs, mock SIM rows, icon mapping |
-| `lib/widgets/sidebar.dart` | Left nav; the logo toggles compact (64px, icons only) ↔ full (208px, labels) |
-| `lib/widgets/actions_bar.dart` | Title + `Всего: N` + grouped actions in one row; commands open in an overlay sheet |
-| `lib/widgets/sim_table.dart` | Dense grid: pinned header band, only the body scrolls, sortable columns, zebra as brand tint |
-| `lib/main.dart` | Shell, selection state, command log console |
+| `lib/design/tokens.dart` | Цвета, типографика, тени, токены плотной таблицы (`--adm-*`) |
+| `lib/data/models.dart` | `Sim`, `Dongle`, `LogEntry`, `Cell`, `ColDef` |
+| `lib/data/mock.dart` | Демо-данные: 8 симок, 4 свистка, планы, биллинг |
+| `lib/data/icons_catalog.dart` | Реестр набора иконок GostSimBox по семантическим осям |
+| `lib/state/app_state.dart` | `ChangeNotifier`: выбор строк, сортировка, фильтр, лог команд |
+| `lib/widgets/adm_icon.dart` | 16px глиф с `FilterQuality.none` (nearest-neighbour) |
+| `lib/widgets/dense_table.dart` | Плотная таблица: grid-колонки, зебра, залипающая шапка |
+| `lib/widgets/command_log.dart` | Нижняя панель «Вывод команд» |
+| `lib/pages/` | 11 разделов панели |
 
-## Ported behaviour
+## Иконки
 
-- Compact/full nav switched by tapping the logo (square ↔ wide asset).
-- Actions grouped two-clicks-deep, disabled until rows are selected.
-- Action sheet is an overlay — the table does not shift when it opens.
-- Header stays pinned; horizontal scroll moves header and body together.
-- Zebra: rows brand@3.5% over white, header band 5%, selected row 9%.
-- Left-aligned text; stacked cells ranked primary 12 → secondary 10 → tertiary.
+Исходный набор — 214 файлов 16×16 из `www/simbox/imgs`. Flutter не декодирует
+`.ico`, поэтому все глифы сконвертированы в PNG с сохранением путей и имён.
+Рендерятся строго 16px (или целым кратным) с `FilterQuality.none` —
+дробные размеры замыливают пиксельную сетку.
 
-## Assets
+## Отличия от прототипа
 
-Copy `assets/imgs/` and the two logos from the project root next to
-`pubspec.yaml`. Icons are the original 16×16 GostSimBox glyphs — rendered at
-16px with `FilterQuality.none`; any non-integer size blurs them.
+* Всплывающий лог у курсора (`showlog_cut.php`) реализован через `Tooltip` —
+  привязан к элементу, а не к координатам курсора.
+* Тосты — `SnackBar`; подтверждения — `AlertDialog`.
+* Данные мок-овые; точки интеграции помечены `// TODO(api)` в `app_state.dart`.

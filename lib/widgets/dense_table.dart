@@ -1,0 +1,222 @@
+import 'package:flutter/material.dart';
+import '../data/models.dart';
+import '../design/tokens.dart';
+import 'adm_icon.dart';
+
+/// Dense operations table.
+///
+/// Explicit column widths + one horizontal scroller, so the header band and the
+/// body stay locked together. Zebra is the brand tint at ascending strength —
+/// odd 3.5%, header 5%, selected 9% — so a selected odd row still reads as
+/// selected without a second neutral entering the palette.
+class DenseTable<TRow> extends StatelessWidget {
+  final List<ColDef<TRow>> cols;
+  final List<TRow> rows;
+  final int Function(TRow) idOf;
+  final bool Function(int) isSelected;
+  final void Function(int) onToggleRow;
+  final VoidCallback onToggleAll;
+  final String? sortKey;
+  final int sortDir;
+  final void Function(String) onSort;
+
+  const DenseTable({
+    super.key,
+    required this.cols,
+    required this.rows,
+    required this.idOf,
+    required this.isSelected,
+    required this.onToggleRow,
+    required this.onToggleAll,
+    required this.sortKey,
+    required this.sortDir,
+    required this.onSort,
+  });
+
+  static const double _checkW = 34;
+
+  double get _totalWidth =>
+      _checkW + cols.fold<double>(0, (a, c) => a + c.w);
+
+  @override
+  Widget build(BuildContext context) {
+    final allSelected = rows.isNotEmpty && rows.every((r) => isSelected(idOf(r)));
+    return Container(
+      decoration: BoxDecoration(
+        color: T.surface,
+        borderRadius: BorderRadius.circular(T.radiusCard),
+        boxShadow: T.shadow,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Scrollbar(
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: _totalWidth,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _header(allSelected),
+                for (var i = 0; i < rows.length; i++) _row(rows[i], i),
+                if (rows.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text('Ничего не найдено', style: T.caption),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _header(bool allSelected) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: T.headBg,
+        border: Border(bottom: BorderSide(color: T.headSep)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: _checkW,
+            child: Padding(
+              padding: T.headPad,
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: Checkbox(
+                  value: allSelected,
+                  onChanged: (_) => onToggleAll(),
+                  activeColor: T.brandDeep,
+                ),
+              ),
+            ),
+          ),
+          for (final c in cols)
+            SizedBox(
+              width: c.w,
+              child: InkWell(
+                onTap: () => onSort(c.key),
+                child: Tooltip(
+                  message: c.title ?? c.key,
+                  child: Padding(
+                    padding: T.headPad,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (c.icon != null) ...[AdmIcon(c.icon!), const SizedBox(height: 2)],
+                        Text(
+                          c.label + (sortKey == c.key ? (sortDir > 0 ? ' ↑' : ' ↓') : ''),
+                          style: T.head,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (c.sub.isNotEmpty)
+                          Text(c.sub, style: T.headSub, overflow: TextOverflow.ellipsis),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(TRow r, int index) {
+    final id = idOf(r);
+    final sel = isSelected(id);
+    return Container(
+      decoration: BoxDecoration(
+        color: sel ? T.rowSel : (index.isOdd ? T.rowOdd : T.rowEven),
+        border: const Border(bottom: BorderSide(color: T.rowSep)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: _checkW,
+            child: Padding(
+              padding: T.cellPad,
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: Checkbox(
+                  value: sel,
+                  onChanged: (_) => onToggleRow(id),
+                  activeColor: T.brandDeep,
+                ),
+              ),
+            ),
+          ),
+          for (final c in cols)
+            SizedBox(width: c.w, child: _cell(c.build(r))),
+        ],
+      ),
+    );
+  }
+
+  /// Stacked cell, ranked by ink: note → icons → primary → mono → alarm → subs.
+  Widget _cell(Cell c) {
+    final children = <Widget>[];
+    if (c.note.isNotEmpty) children.add(Text(c.note, style: T.cellTertiary));
+    if (c.icons.isNotEmpty) children.add(IconStack(c.icons));
+    if (c.text.isNotEmpty) children.add(Text(c.text, style: T.cell));
+    if (c.mono.isNotEmpty) children.add(Text(c.mono, style: T.mono));
+    if (c.warn.isNotEmpty) children.add(Text(c.warn, style: T.cellAlarm));
+    if (c.sub.isNotEmpty) children.add(Text(c.sub, style: T.cellSub));
+    if (c.sub2.isNotEmpty) children.add(Text(c.sub2, style: T.cellTertiary));
+    for (final l in c.links) {
+      children.add(_HoverLog(l));
+    }
+    return Padding(
+      padding: T.cellPad,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      ),
+    );
+  }
+}
+
+/// `showlog_cut.php` — the log that popped up under the cursor.
+class _HoverLog extends StatelessWidget {
+  final LogLink link;
+  const _HoverLog(this.link);
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      richMessage: TextSpan(children: [
+        TextSpan(
+            text: '${link.title}\n',
+            style: const TextStyle(
+                fontFamily: 'SF Pro Text',
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: T.ink)),
+        TextSpan(text: link.lines.join('\n'), style: T.monoDim),
+      ]),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.help,
+        child: Text(
+          link.label,
+          style: const TextStyle(
+            fontFamily: 'SF Pro Text',
+            fontSize: 11,
+            color: T.brandDeep,
+            decoration: TextDecoration.underline,
+            decorationColor: T.brandDeep,
+          ),
+        ),
+      ),
+    );
+  }
+}

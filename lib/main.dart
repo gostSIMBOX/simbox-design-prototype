@@ -1,217 +1,126 @@
 import 'package:flutter/material.dart';
-import 'data.dart';
-import 'theme.dart';
-import 'widgets/actions_bar.dart';
-import 'widgets/sidebar.dart';
-import 'widgets/sim_table.dart';
+import 'design/tokens.dart';
+import 'state/app_state.dart';
+import 'widgets/adm_icon.dart';
+import 'widgets/command_log.dart';
+import 'widgets/top_bar.dart';
+import 'pages/sims_page.dart';
+import 'pages/dongles_page.dart';
+import 'pages/diagmode_page.dart';
+import 'pages/hubs_page.dart';
+import 'pages/nabor_page.dart';
+import 'pages/plan_page.dart';
+import 'pages/proc_page.dart';
+import 'pages/billing_page.dart';
+import 'pages/upgrade_page.dart';
+import 'pages/debug_page.dart';
+import 'pages/icons_page.dart';
 
-void main() => runApp(const AdminkaApp());
+void main() => runApp(const SimBoxApp());
 
-class AdminkaApp extends StatelessWidget {
-  const AdminkaApp({super.key});
+class SimBoxApp extends StatefulWidget {
+  const SimBoxApp({super.key});
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: 'SimBox Adminka',
-        debugShowCheckedModeBanner: false,
-        theme: T.data(),
-        home: const AdminkaShell(),
+  State<SimBoxApp> createState() => _SimBoxAppState();
+}
+
+class _SimBoxAppState extends State<SimBoxApp> {
+  final AppState state = AppState();
+
+  @override
+  void dispose() {
+    state.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AppScope(
+        state: state,
+        child: MaterialApp(
+          title: 'SimBox Adminka',
+          debugShowCheckedModeBanner: false,
+          theme: buildTheme(),
+          home: const AdminShell(),
+        ),
       );
 }
 
-class AdminkaShell extends StatefulWidget {
-  const AdminkaShell({super.key});
+class AdminShell extends StatefulWidget {
+  const AdminShell({super.key});
   @override
-  State<AdminkaShell> createState() => _AdminkaShellState();
+  State<AdminShell> createState() => _AdminShellState();
 }
 
-class _AdminkaShellState extends State<AdminkaShell> {
-  bool _navOpen = true;
-  String _page = 'sim';
-  String? _openGroup;
-  final Set<int> _selected = {};
-  final List<String> _log = [];
+class _AdminShellState extends State<AdminShell> {
+  AppState? _state;
 
-  void _run(ActionDef a) {
-    final ids = _selected.toList()..sort();
-    setState(() {
-      for (final id in ids) {
-        if (a.cmd.startsWith('AT+CFUN=1')) {
-          simRows.firstWhere((s) => s.id == id).cfun = 1;
-        } else if (a.cmd == 'AT+CFUN=0') {
-          simRows.firstWhere((s) => s.id == id).cfun = 0;
-        }
-      }
-      _log.insert(0, '[${ids.length}] ${a.cmd} → ${ids.join(", ")}');
-      _openGroup = null;
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final s = AppScope.of(context);
+    if (identical(s, _state)) return;
+    _state?.toast.removeListener(_onToast);
+    _state = s;
+    s.toast.addListener(_onToast);
+  }
+
+  @override
+  void dispose() {
+    _state?.toast.removeListener(_onToast);
+    super.dispose();
+  }
+
+  void _onToast() {
+    final t = _state?.toast.value;
+    if (t == null || !mounted) return;
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        width: 420,
         backgroundColor: T.ink,
-        content: Text('${a.label} · ${ids.length} симк(и)',
-            style: const TextStyle(fontSize: 13)),
+        behavior: SnackBarBehavior.floating,
+        width: 360,
+        duration: const Duration(milliseconds: 2400),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        content: Row(mainAxisSize: MainAxisSize.min, children: [
+          AdmIcon(t.icon),
+          const SizedBox(width: 10),
+          Flexible(
+              child: Text(t.text,
+                  style: const TextStyle(
+                      fontFamily: 'SF Pro Text', fontSize: 13, color: Colors.white))),
+        ]),
       ));
   }
 
+  Widget _page(AdmPage p) => switch (p) {
+        AdmPage.sim => const SimsPage(),
+        AdmPage.dongle => const DonglesPage(),
+        AdmPage.diagmode => const DiagmodePage(),
+        AdmPage.hubs => const HubsPage(),
+        AdmPage.nabor => const NaborPage(),
+        AdmPage.plan => const PlanPage(),
+        AdmPage.proc => const ProcPage(),
+        AdmPage.bablo => const BillingPage(),
+        AdmPage.upgrade => const UpgradePage(),
+        AdmPage.debug => const DebugPage(),
+        AdmPage.icons => const IconsPage(),
+      };
+
   @override
   Widget build(BuildContext context) {
-    final title = navItems.firstWhere((n) => n.key == _page).label;
-    final group = _openGroup == null
-        ? null
-        : actionGroups.firstWhere((g) => g.title == _openGroup);
-
+    final s = AppScope.of(context);
     return Scaffold(
-      body: Row(
-        children: [
-          Sidebar(
-            expanded: _navOpen,
-            activeKey: _page,
-            onToggle: () => setState(() => _navOpen = !_navOpen),
-            onSelect: (k) => setState(() {
-              _page = k;
-              _openGroup = null;
-            }),
+      backgroundColor: T.bg,
+      body: Column(children: [
+        const TopBar(),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(22),
+            child: _page(s.page),
           ),
-          Expanded(
-            child: Column(
-              children: [
-                _topBar(),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(18),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: T.surface,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [T.cardShadow],
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: [
-                          // toolbar + overlay sheet share one stacking context
-                          Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              ActionsBar(
-                                title: title,
-                                total: simRows.length,
-                                selected: _selected.length,
-                                openGroup: _openGroup,
-                                onToggleGroup: (t) => setState(
-                                    () => _openGroup = _openGroup == t ? null : t),
-                                onRun: _run,
-                              ),
-                              if (group != null)
-                                Positioned(
-                                  top: 57,
-                                  left: 0,
-                                  right: 0,
-                                  child: ActionsSheet(group: group, onRun: _run),
-                                ),
-                            ],
-                          ),
-                          Expanded(
-                            child: _page == 'sim'
-                                ? SimTable(
-                                    rows: simRows,
-                                    selected: _selected,
-                                    onToggleRow: (id) => setState(() =>
-                                        _selected.contains(id)
-                                            ? _selected.remove(id)
-                                            : _selected.add(id)),
-                                    onToggleAll: () => setState(() {
-                                      if (_selected.length == simRows.length) {
-                                        _selected.clear();
-                                      } else {
-                                        _selected
-                                          ..clear()
-                                          ..addAll(simRows.map((s) => s.id));
-                                      }
-                                    }),
-                                  )
-                                : Center(
-                                    child: Text('$title — раздел прототипа',
-                                        style: const TextStyle(
-                                            fontSize: 15, color: T.fg2)),
-                                  ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                if (_log.isNotEmpty) _console(),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+        const CommandLog(),
+      ]),
     );
   }
-
-  Widget _topBar() => Container(
-        height: 64,
-        padding: const EdgeInsets.symmetric(horizontal: 18),
-        decoration: BoxDecoration(
-          color: T.surface,
-          border: Border(bottom: BorderSide(color: T.rulePanel)),
-        ),
-        child: Row(children: [
-          const Text('SimBox Adminka',
-              style: TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.w600, color: T.ink)),
-          const SizedBox(width: 10),
-          const Text('up 41 days, 6:12',
-              style: TextStyle(fontSize: 12, color: T.fg2)),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-            decoration: BoxDecoration(
-              gradient: T.gradient,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Text('online',
-                style: TextStyle(
-                    fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600)),
-          ),
-        ]),
-      );
-
-  Widget _console() => Container(
-        height: 118,
-        width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
-        decoration: BoxDecoration(
-          color: T.surface,
-          border: Border(top: BorderSide(color: T.rulePanel)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(children: [
-              const Text('Вывод команд',
-                  style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.4,
-                      color: T.fg2)),
-              const Spacer(),
-              TextButton(
-                onPressed: () => setState(_log.clear),
-                child: const Text('очистить', style: TextStyle(fontSize: 12)),
-              ),
-            ]),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _log.length,
-                itemBuilder: (_, i) => Text(_log[i],
-                    style: const TextStyle(
-                        fontFamily: T.mono, fontSize: 11, color: T.fgBody)),
-              ),
-            ),
-          ],
-        ),
-      );
 }
