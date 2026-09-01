@@ -1,1 +1,0 @@
-# simbox-design-prototype
