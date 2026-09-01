@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'design/tokens.dart';
 import 'state/app_state.dart';
 import 'widgets/adm_icon.dart';
@@ -56,6 +57,12 @@ class _AdminShellState extends State<AdminShell> {
   AppState? _state;
 
   @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_onKey);
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final s = AppScope.of(context);
@@ -67,8 +74,18 @@ class _AdminShellState extends State<AdminShell> {
 
   @override
   void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKey);
     _state?.toast.removeListener(_onToast);
     super.dispose();
+  }
+
+  /// Escape closes an open action-group rail or the columns editor, from
+  /// anywhere on the page (fix2 Requirements #4).
+  bool _onKey(KeyEvent event) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.escape) {
+      _state?.closeRail();
+    }
+    return false;
   }
 
   void _onToast() {

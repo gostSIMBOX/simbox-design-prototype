@@ -5,7 +5,7 @@ import '../state/app_state.dart';
 import '../widgets/action_group_bar.dart';
 import '../widgets/dense_table.dart';
 import '../widgets/panel.dart';
-import 'sims_page.dart' show TableHeaderBar;
+import 'sims_page.dart' show TableHeading, TableToolbar, columnDisplayLabel;
 
 class HubsPage extends StatefulWidget {
   const HubsPage({super.key});
@@ -33,70 +33,68 @@ class _HubsPageState extends State<HubsPage> {
       ColDef(key: 'port', w: 120, label: 'bus:dev:port', build: (h) => Cell(mono: h.port)),
     ];
 
+    final defaultIds = [for (final c in cols) c.key];
+    final order = st.columnOrderFor(AdmPage.hubs, defaultIds);
+    final hidden = st.hiddenColumnsFor(AdmPage.hubs);
+    final byKey = {for (final c in cols) c.key: c};
+    final visibleCols = [
+      for (final k in order) if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!
+    ];
+
     final groups = <ActionGroup>[
       ActionGroup(
         key: 'hubpwr',
         label: 'Питание порта',
         icon: 'usb/hub_16.png',
-        builder: (_) => Panel(
-          title: 'Питание порта',
-          icon: 'usb/hub_16.png',
-          width: 300,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            AdmButton('ВКЛ',
-                icon: 'p-on.png',
-                expand: true,
-                onPressed: () => st.push('/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 1',
-                    const ['port powered on'])),
-            const SizedBox(height: 8),
-            AdmButton('ВЫКЛ',
-                icon: 'p-off.png',
-                expand: true,
-                onPressed: () => st.push('/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 0',
-                    const ['port powered off'])),
-            const SizedBox(height: 8),
-            AdmButton('РЕСТАРТ',
-                icon: 'power.png',
-                expand: true,
-                onPressed: () => st.push(
-                    '/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 0 && sleep 2 && hub-ctrl -b 02 -d 3 -P 1 -p 1',
-                    const ['power cycled'])),
-          ]),
-        ),
+        subActions: [
+          SubAction(
+            key: 'all',
+            label: 'Питание порта',
+            builder: (_) => Wrap(spacing: 8, runSpacing: 8, children: [
+              AdmButton('ВКЛ',
+                  icon: 'p-on.png',
+                  onPressed: () => st.push('/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 1',
+                      const ['port powered on'])),
+              AdmButton('ВЫКЛ',
+                  icon: 'p-off.png',
+                  onPressed: () => st.push('/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 0',
+                      const ['port powered off'])),
+              AdmButton('РЕСТАРТ',
+                  icon: 'power.png',
+                  onPressed: () => st.push(
+                      '/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 0 && sleep 2 && hub-ctrl -b 02 -d 3 -P 1 -p 1',
+                      const ['power cycled'])),
+            ]),
+          ),
+        ],
       ),
     ];
 
     return Padding(
       padding: const EdgeInsets.all(22),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        TableHeaderBar(
-            title: 'Ридеры (хабы)',
-            count: rows.length,
-            search: _search,
-            onSearch: st.setQuery,
-            groups: groups),
+        TableHeading(title: 'Ридеры (хабы)', count: rows.length),
+        const SizedBox(height: 10),
+        TableToolbar(
+          groups: groups,
+          search: _search,
+          onSearch: st.setQuery,
+          page: AdmPage.hubs,
+          allColumns: [for (final c in cols) (key: c.key, label: columnDisplayLabel(c))],
+        ),
         const SizedBox(height: 12),
         Expanded(
-          child: Stack(children: [
-            DenseTable<HubNode>(
-              cols: cols,
-              rows: rows,
-              idOf: (h) => h.id,
-              isSelected: st.isSelected,
-              onToggleRow: st.toggleRow,
-              onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
-              sortKey: st.sortKey,
-              sortDir: st.sortDir,
-              onSort: st.sortBy,
-            ),
-            if (st.activeGroup != null)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: ActionGroupOverlay(groups: groups, activeKey: st.activeGroup!),
-              ),
-          ]),
+          child: DenseTable<HubNode>(
+            cols: visibleCols,
+            rows: rows,
+            idOf: (h) => h.id,
+            isSelected: st.isSelected,
+            onToggleRow: st.toggleRow,
+            onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
+            sortKey: st.sortKey,
+            sortDir: st.sortDir,
+            onSort: st.sortBy,
+          ),
         ),
       ]),
     );

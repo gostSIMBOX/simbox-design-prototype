@@ -5,6 +5,7 @@ import '../data/mock.dart';
 import '../design/tokens.dart';
 import '../state/app_state.dart';
 import '../widgets/action_group_bar.dart';
+import '../widgets/columns_editor.dart';
 import '../widgets/dense_table.dart';
 import '../widgets/panel.dart';
 
@@ -221,32 +222,288 @@ class _SimsPageState extends State<SimsPage> {
                 Cell(note: s.dates[0], text: s.dates[1], sub: s.dates[2], sub2: s.dates[3])),
       ];
 
+  List<ColDef<Sim>> _visibleCols(AppState st, List<ColDef<Sim>> all) {
+    final defaults = [for (final c in all) c.key];
+    final order = st.columnOrderFor(AdmPage.sim, defaults);
+    final hidden = st.hiddenColumnsFor(AdmPage.sim);
+    final byKey = {for (final c in all) c.key: c};
+    return [for (final k in order) if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!];
+  }
+
   List<ActionGroup> _groups(AppState st) => [
         ActionGroup(
-            key: 'power',
-            label: 'Передатчик и статус',
-            icon: 'state/state_dial.png',
-            builder: (_) => _transmitter(st)),
+          key: 'power',
+          label: 'Передатчик',
+          icon: 'state/state_dial.png',
+          subActions: [
+            SubAction(
+                key: 'on',
+                label: 'ВКЛ',
+                builder: (_) => AdmButton('ВКЛ', icon: 'p-on.png', primary: true, onPressed: () {
+                      st.setPower(1);
+                      st.runOnSelection(
+                          (r) => LogEntry('', '/usr/simbox/actions/connect.sh ${r.dongle} on',
+                              const ['AT+CFUN=1', 'OK']),
+                          toastText: 'Передатчик включён',
+                          icon: 'p-on.png');
+                    })),
+            SubAction(
+                key: 'off',
+                label: 'ВЫКЛ',
+                builder: (_) => AdmButton('ВЫКЛ', icon: 'p-off.png', onPressed: () {
+                      st.setPower(5);
+                      st.runOnSelection(
+                          (r) => LogEntry('', '/usr/simbox/actions/connect.sh ${r.dongle} off',
+                              const ['AT+CFUN=5', 'OK']),
+                          toastText: 'Передатчик выключен',
+                          icon: 'p-off.png');
+                    })),
+            SubAction(
+                key: 'pause',
+                label: 'Пауза',
+                builder: (_) => AdmButton('Пауза', icon: 'pause2.png', onPressed: () {
+                      st.setPause(1);
+                      st.runOnSelection(
+                          (r) => LogEntry('', 'echo 1 > /var/simbox/sim/settings/${r.imsi}.pause',
+                              const ['pause=1']),
+                          toastText: 'Поставлено на паузу',
+                          icon: 'pause2.png');
+                    })),
+            SubAction(
+                key: 'work',
+                label: 'В работу',
+                builder: (_) => AdmButton('В работу', icon: 'play.png', onPressed: () {
+                      st.setPause(0);
+                      st.runOnSelection(
+                          (r) => LogEntry('', '/usr/simbox/actions/activate_work.sh ${r.dongle}',
+                              const ['group -> 101', 'OK']),
+                          toastText: 'Отправлено в работу',
+                          icon: 'play.png');
+                    })),
+          ],
+          sharedSettings: (_) => Row(mainAxisSize: MainAxisSize.min, children: [
+            AdmCheck(value: st.queueMode, onChanged: st.setQueueMode, label: 'в очередь'),
+            const SizedBox(width: 12),
+            Text('Задержка', style: T.caption),
+            const SizedBox(width: 6),
+            AdmField(_delay, width: 44),
+            const SizedBox(width: 6),
+            Text('+до', style: T.caption),
+            const SizedBox(width: 6),
+            AdmField(_rnd, width: 44),
+            const SizedBox(width: 4),
+            Text('сек', style: T.caption),
+          ]),
+        ),
         ActionGroup(
-            key: 'simple',
-            label: 'Действия простые',
-            icon: 'ussdsms.png',
-            builder: (_) => _simpleActions(st)),
+          key: 'simple',
+          label: 'Простые',
+          icon: 'ussdsms.png',
+          subActions: [
+            SubAction(
+              key: 'ussd',
+              label: 'USSD',
+              builder: (_) => Row(mainAxisSize: MainAxisSize.min, children: [
+                AdmField(_ussd, width: 140),
+                const SizedBox(width: 8),
+                AdmButton('Отправить', primary: true, onPressed: () {
+                  final v = _ussd.text.isEmpty ? '*100#' : _ussd.text;
+                  st.runOnSelection(
+                      (r) => LogEntry('', "asterisk -rx 'dongle ussd ${r.dongle} $v'", [
+                            '+CUSD: 0,"Баланс: ${r.bal.toStringAsFixed(2)} р.",15',
+                            'OK'
+                          ]),
+                      toastText: 'USSD отправлен',
+                      icon: 'ussdsms.png');
+                }),
+              ]),
+            ),
+            SubAction(
+              key: 'sms',
+              label: 'SMS',
+              builder: (_) => Row(mainAxisSize: MainAxisSize.min, children: [
+                AdmField(_smsTo, hint: 'номер', width: 104),
+                const SizedBox(width: 8),
+                AdmField(_smsTxt, hint: 'сообщение', width: 200),
+                const SizedBox(width: 8),
+                AdmButton('SMS', primary: true, onPressed: () {
+                  final to = _smsTo.text.isEmpty ? '9219981122' : _smsTo.text;
+                  final tx = _smsTxt.text.isEmpty ? 'test' : _smsTxt.text;
+                  st.runOnSelection(
+                      (r) => LogEntry('', "asterisk -rx 'dongle sms ${r.dongle} $to $tx'",
+                          const ['+CMGS: 42', 'OK']),
+                      toastText: 'SMS отправлена',
+                      icon: 'sms_out.png');
+                }),
+              ]),
+            ),
+            SubAction(
+              key: 'call',
+              label: 'Звонок',
+              builder: (_) => Row(mainAxisSize: MainAxisSize.min, children: [
+                AdmField(_call, hint: '89261112233', width: 140),
+                const SizedBox(width: 8),
+                AdmButton('Call60', onPressed: () {
+                  final n = _call.text.isEmpty ? '89261112233' : _call.text;
+                  st.runOnSelection(
+                      (r) => LogEntry(
+                          '',
+                          "asterisk -rx 'channel originate Dongle/${r.dongle}/$n application Wait 60'",
+                          const ['DialStatus: ANSWER', 'duration 60s']),
+                      toastText: 'Звонок с тишиной',
+                      icon: 'state/state_dial.png');
+                }),
+                const SizedBox(width: 8),
+                AdmButton('CallSpeak', onPressed: () {
+                  final n = _call.text.isEmpty ? '89261112233' : _call.text;
+                  st.runOnSelection(
+                      (r) => LogEntry(
+                          '',
+                          "asterisk -rx 'channel originate Dongle/${r.dongle}/$n extension speak@simbox'",
+                          const ['DialStatus: ANSWER', 'recog: 50 (голос)']),
+                      toastText: 'Звонок с разговором',
+                      icon: 'spec/in_sound.png');
+                }),
+                const SizedBox(width: 10),
+                Text('0611 или 89261112233, w — пауза 0.5с', style: T.caption),
+              ]),
+            ),
+          ],
+        ),
         ActionGroup(
-            key: 'smart',
-            label: 'Действия хитрые',
-            icon: 'free.png',
-            builder: (_) => _smartActions(st)),
+          key: 'smart',
+          label: 'Хитрые',
+          icon: 'free.png',
+          subActions: [
+            SubAction(
+              key: 'all',
+              label: 'Хитрые',
+              builder: (_) => Wrap(spacing: 8, runSpacing: 8, children: [
+                for (final a in smartActions)
+                  AdmButton(a.label,
+                      icon: a.icon,
+                      tooltip: '/usr/simbox/actions/${a.cmd}',
+                      onPressed: () => st.runOnSelection(
+                          (r) => LogEntry(
+                              '', '/usr/simbox/actions/${a.cmd} ${r.dongle} ${r.imsi}', a.output),
+                          toastText: '${a.label}: отправлено')),
+              ]),
+            ),
+          ],
+        ),
         ActionGroup(
-            key: 'plans',
-            label: 'Группы и планы',
-            icon: 'spec/nav.png',
-            builder: (_) => _groupsAndPlans(st)),
+          key: 'plans',
+          label: 'Группы и планы',
+          icon: 'spec/nav.png',
+          subActions: [
+            SubAction(
+              key: 'setgroup',
+              label: 'Set group',
+              builder: (_) => Row(mainAxisSize: MainAxisSize.min, children: [
+                Text('Группа', style: T.body),
+                const SizedBox(width: 8),
+                AdmField(_group, hint: '101', width: 70),
+                const SizedBox(width: 8),
+                AdmButton('Set group', primary: true, onPressed: () {
+                  final g = _group.text.isEmpty ? '101' : _group.text;
+                  st.runOnSelection(
+                      (r) => LogEntry('', 'echo $g > /var/simbox/sim/settings/${r.imsi}.group',
+                          ['group -> $g']),
+                      toastText: 'Группа $g');
+                }),
+              ]),
+            ),
+            SubAction(
+              key: 'setplan',
+              label: 'Set plan',
+              builder: (_) => Row(mainAxisSize: MainAxisSize.min, children: [
+                Text('План', style: T.body),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 160,
+                  child: DropdownButtonFormField<String>(
+                    value: _plan,
+                    isDense: true,
+                    style: T.body,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(T.radiusCtl),
+                        borderSide: const BorderSide(color: T.border),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(T.radiusCtl),
+                        borderSide: const BorderSide(color: T.border),
+                      ),
+                    ),
+                    items: [
+                      for (final p in naborNames) DropdownMenuItem(value: p, child: Text(p)),
+                    ],
+                    onChanged: (v) => setState(() => _plan = v ?? _plan),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                AdmButton('без копирования',
+                    onPressed: () => st.runOnSelection(
+                        (r) => LogEntry(
+                            '', '/usr/simbox/actions/set_plan_set.sh ${r.imsi} $_plan',
+                            ['plan -> $_plan']),
+                        toastText: 'План установлен')),
+                const SizedBox(width: 8),
+                AdmButton('с копированием',
+                    onPressed: () => st.runOnSelection(
+                        (r) => LogEntry(
+                            '', '/usr/simbox/actions/set_plan_copy.sh ${r.imsi} $_plan',
+                            ['plan -> $_plan', 'параметры скопированы']),
+                        toastText: 'План + параметры')),
+              ]),
+            ),
+            SubAction(
+              key: 'restore',
+              label: 'Восстановить параметры плана',
+              builder: (_) => AdmButton('Восстановить параметры плана',
+                  onPressed: () => st.runOnSelection(
+                      (r) => LogEntry('', '/usr/simbox/actions/set_plan.sh ${r.imsi}',
+                          const ['параметры плана восстановлены']),
+                      toastText: 'Параметры восстановлены')),
+            ),
+            SubAction(
+              key: 'clearautoblock',
+              label: 'Снять флажки автоблокировки',
+              builder: (_) => AdmButton('Снять флажки автоблокировки',
+                  icon: 'high_datt.png',
+                  onPressed: () => st.runOnSelection(
+                      (r) => LogEntry('', '/usr/simbox/actions/set_autoblock_null.sh ${r.imsi}',
+                          const ['DATT=0', 'ACDL flag cleared']),
+                      toastText: 'Флажки сняты',
+                      icon: 'high_datt.png')),
+            ),
+          ],
+        ),
         ActionGroup(
-            key: 'export',
-            label: 'Экспорт / Импорт',
-            icon: 'sms_out.png',
-            builder: (_) => _exports(st)),
+          key: 'export',
+          label: 'Экспорт',
+          icon: 'sms_out.png',
+          subActions: [
+            SubAction(
+              key: 'all',
+              label: 'Экспорт',
+              builder: (_) => Wrap(spacing: 8, runSpacing: 8, children: [
+                AdmButton('Export dongles',
+                    onPressed: () => st.push('/usr/simbox/www/simbox/export.php?what=dongles',
+                        [for (final s in sims) '${s.dongle};${s.imsi}'])),
+                AdmButton('Export numbers',
+                    onPressed: () => st.push('/usr/simbox/www/simbox/numbers.php',
+                        [for (final s in sims) s.number])),
+                AdmButton('Export masspayment',
+                    onPressed: () => st.push('/usr/simbox/www/simbox/export.php?what=masspayment',
+                        const ['9219981122;10;3;WMR;1', '9037761234;2;10;WMR;2'],
+                        'НЕ ОПРЕДЕЛЕН;0;0;WMR;3')),
+              ]),
+            ),
+          ],
+        ),
       ];
 
   @override
@@ -254,400 +511,151 @@ class _SimsPageState extends State<SimsPage> {
     final st = AppScope.of(context);
     final rows = st.visibleSims;
     final groups = _groups(st);
+    final allCols = _cols(st);
 
     return Padding(
       padding: const EdgeInsets.all(22),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        TableHeaderBar(
-          title: 'Симки',
-          count: rows.length,
+        TableHeading(title: 'Симки', count: rows.length),
+        const SizedBox(height: 10),
+        TableToolbar(
+          groups: groups,
           search: _search,
           onSearch: st.setQuery,
-          groups: groups,
+          page: AdmPage.sim,
+          allColumns: [for (final c in allCols) (key: c.key, label: columnDisplayLabel(c))],
         ),
         const SizedBox(height: 12),
         Expanded(
-          child: Stack(children: [
-            DenseTable<Sim>(
-              cols: _cols(st),
-              rows: rows,
-              idOf: (s) => s.id,
-              isSelected: st.isSelected,
-              onToggleRow: st.toggleRow,
-              onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
-              sortKey: st.sortKey,
-              sortDir: st.sortDir,
-              onSort: st.sortBy,
-            ),
-            if (st.activeGroup != null)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: ActionGroupOverlay(groups: groups, activeKey: st.activeGroup!),
-              ),
-          ]),
+          child: DenseTable<Sim>(
+            cols: _visibleCols(st, allCols),
+            rows: rows,
+            idOf: (s) => s.id,
+            isSelected: st.isSelected,
+            onToggleRow: st.toggleRow,
+            onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
+            sortKey: st.sortKey,
+            sortDir: st.sortDir,
+            onSort: st.sortBy,
+          ),
         ),
       ]),
     );
   }
-
-  Widget _transmitter(AppState st) => Panel(
-        title: 'Передатчик и статус',
-        icon: 'state/state_dial.png',
-        width: 340,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Row(children: [
-            Expanded(
-                child: AdmButton('ВКЛ', icon: 'p-on.png', onPressed: () {
-              st.setPower(1);
-              st.runOnSelection(
-                  (r) => LogEntry('', '/usr/simbox/actions/connect.sh ${r.dongle} on',
-                      const ['AT+CFUN=1', 'OK']),
-                  toastText: 'Передатчик включён',
-                  icon: 'p-on.png');
-            })),
-            const SizedBox(width: 10),
-            Expanded(
-                child: AdmButton('ВЫКЛ', icon: 'p-off.png', onPressed: () {
-              st.setPower(5);
-              st.runOnSelection(
-                  (r) => LogEntry('', '/usr/simbox/actions/connect.sh ${r.dongle} off',
-                      const ['AT+CFUN=5', 'OK']),
-                  toastText: 'Передатчик выключен',
-                  icon: 'p-off.png');
-            })),
-          ]),
-          const SizedBox(height: 10),
-          Row(children: [
-            Expanded(
-                child: AdmButton('Пауза', icon: 'pause2.png', onPressed: () {
-              st.setPause(1);
-              st.runOnSelection(
-                  (r) => LogEntry(
-                      '', 'echo 1 > /var/simbox/sim/settings/${r.imsi}.pause', const ['pause=1']),
-                  toastText: 'Поставлено на паузу',
-                  icon: 'pause2.png');
-            })),
-            const SizedBox(width: 10),
-            Expanded(
-                child: AdmButton('В работу', icon: 'play.png', onPressed: () {
-              st.setPause(0);
-              st.runOnSelection(
-                  (r) => LogEntry('', '/usr/simbox/actions/activate_work.sh ${r.dongle}',
-                      const ['group -> 101', 'OK']),
-                  toastText: 'Отправлено в работу',
-                  icon: 'play.png');
-            })),
-          ]),
-          const SizedBox(height: 10),
-          AdmCheck(
-              value: st.queueMode,
-              onChanged: st.setQueueMode,
-              label: 'Вместо запуска — в очередь'),
-          const SizedBox(height: 8),
-          Row(children: [
-            Text('Задержка', style: T.caption),
-            const SizedBox(width: 8),
-            AdmField(_delay, width: 52),
-            const SizedBox(width: 8),
-            Flexible(child: Text('+ случайная до', style: T.caption)),
-            const SizedBox(width: 8),
-            AdmField(_rnd, width: 52),
-            const SizedBox(width: 6),
-            Text('сек', style: T.caption),
-          ]),
-        ]),
-      );
-
-  Widget _simpleActions(AppState st) => Panel(
-        title: 'Действия простые',
-        icon: 'ussdsms.png',
-        width: 430,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Row(children: [
-            SizedBox(width: 54, child: Text('USSD', style: T.body)),
-            Expanded(child: AdmField(_ussd)),
-            const SizedBox(width: 8),
-            AdmButton('Отправить', onPressed: () {
-              final v = _ussd.text.isEmpty ? '*100#' : _ussd.text;
-              st.runOnSelection(
-                  (r) => LogEntry('', "asterisk -rx 'dongle ussd ${r.dongle} $v'", [
-                        '+CUSD: 0,"Баланс: ${r.bal.toStringAsFixed(2)} р.",15',
-                        'OK'
-                      ]),
-                  toastText: 'USSD отправлен',
-                  icon: 'ussdsms.png');
-            }),
-          ]),
-          const SizedBox(height: 10),
-          Row(children: [
-            SizedBox(width: 54, child: Text('SMS', style: T.body)),
-            AdmField(_smsTo, hint: 'номер', width: 104),
-            const SizedBox(width: 8),
-            Expanded(child: AdmField(_smsTxt, hint: 'сообщение')),
-            const SizedBox(width: 8),
-            AdmButton('SMS', onPressed: () {
-              final to = _smsTo.text.isEmpty ? '9219981122' : _smsTo.text;
-              final tx = _smsTxt.text.isEmpty ? 'test' : _smsTxt.text;
-              st.runOnSelection(
-                  (r) => LogEntry('', "asterisk -rx 'dongle sms ${r.dongle} $to $tx'",
-                      const ['+CMGS: 42', 'OK']),
-                  toastText: 'SMS отправлена',
-                  icon: 'sms_out.png');
-            }),
-          ]),
-          const SizedBox(height: 10),
-          Row(children: [
-            SizedBox(width: 54, child: Text('Звонок', style: T.body)),
-            Expanded(child: AdmField(_call, hint: '89261112233')),
-            const SizedBox(width: 8),
-            AdmButton('Call60', onPressed: () {
-              final n = _call.text.isEmpty ? '89261112233' : _call.text;
-              st.runOnSelection(
-                  (r) => LogEntry(
-                      '',
-                      "asterisk -rx 'channel originate Dongle/${r.dongle}/$n application Wait 60'",
-                      const ['DialStatus: ANSWER', 'duration 60s']),
-                  toastText: 'Звонок с тишиной',
-                  icon: 'state/state_dial.png');
-            }),
-            const SizedBox(width: 8),
-            AdmButton('CallSpeak', onPressed: () {
-              final n = _call.text.isEmpty ? '89261112233' : _call.text;
-              st.runOnSelection(
-                  (r) => LogEntry(
-                      '',
-                      "asterisk -rx 'channel originate Dongle/${r.dongle}/$n extension speak@simbox'",
-                      const ['DialStatus: ANSWER', 'recog: 50 (голос)']),
-                  toastText: 'Звонок с разговором',
-                  icon: 'spec/in_sound.png');
-            }),
-          ]),
-          const SizedBox(height: 10),
-          Text('Формат как на телефоне: 0611 или 89261112233. w — пауза 0.5 сек.',
-              style: T.caption),
-        ]),
-      );
-
-  Widget _smartActions(AppState st) => Panel(
-        title: 'Действия хитрые',
-        icon: 'free.png',
-        width: 320,
-        child: Wrap(spacing: 8, runSpacing: 8, children: [
-          for (final a in smartActions)
-            SizedBox(
-              width: 136,
-              child: AdmButton(a.label,
-                  icon: a.icon,
-                  tooltip: '/usr/simbox/actions/${a.cmd}',
-                  expand: true,
-                  onPressed: () => st.runOnSelection(
-                      (r) => LogEntry(
-                          '', '/usr/simbox/actions/${a.cmd} ${r.dongle} ${r.imsi}', a.output),
-                      toastText: '${a.label}: отправлено')),
-            ),
-        ]),
-      );
-
-  Widget _groupsAndPlans(AppState st) => Panel(
-        title: 'Группы и планы',
-        icon: 'spec/nav.png',
-        width: 360,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Row(children: [
-            Text('Группа', style: T.body),
-            const SizedBox(width: 8),
-            AdmField(_group, hint: '101', width: 80),
-            const SizedBox(width: 8),
-            AdmButton('Set group', onPressed: () {
-              final g = _group.text.isEmpty ? '101' : _group.text;
-              st.runOnSelection(
-                  (r) => LogEntry(
-                      '', 'echo $g > /var/simbox/sim/settings/${r.imsi}.group', ['group -> $g']),
-                  toastText: 'Группа $g');
-            }),
-          ]),
-          const SizedBox(height: 10),
-          Row(children: [
-            Text('План', style: T.body),
-            const SizedBox(width: 8),
-            Expanded(
-              child: DropdownButtonFormField<String>(
-                value: _plan,
-                isDense: true,
-                style: T.body,
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(T.radiusCtl),
-                    borderSide: const BorderSide(color: T.border),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(T.radiusCtl),
-                    borderSide: const BorderSide(color: T.border),
-                  ),
-                ),
-                items: [
-                  for (final p in naborNames) DropdownMenuItem(value: p, child: Text(p)),
-                ],
-                onChanged: (v) => setState(() => _plan = v ?? _plan),
-              ),
-            ),
-          ]),
-          const SizedBox(height: 10),
-          Row(children: [
-            Expanded(
-                child: AdmButton('без копирования',
-                    onPressed: () => st.runOnSelection(
-                        (r) => LogEntry('', '/usr/simbox/actions/set_plan_set.sh ${r.imsi} $_plan',
-                            ['plan -> $_plan']),
-                        toastText: 'План установлен'))),
-            const SizedBox(width: 8),
-            Expanded(
-                child: AdmButton('с копированием',
-                    onPressed: () => st.runOnSelection(
-                        (r) => LogEntry('', '/usr/simbox/actions/set_plan_copy.sh ${r.imsi} $_plan',
-                            ['plan -> $_plan', 'параметры скопированы']),
-                        toastText: 'План + параметры'))),
-          ]),
-          const SizedBox(height: 10),
-          AdmButton('Восстановить параметры плана',
-              expand: true,
-              onPressed: () => st.runOnSelection(
-                  (r) => LogEntry('', '/usr/simbox/actions/set_plan.sh ${r.imsi}',
-                      const ['параметры плана восстановлены']),
-                  toastText: 'Параметры восстановлены')),
-          const SizedBox(height: 8),
-          AdmButton('Снять флажки автоблокировки',
-              icon: 'high_datt.png',
-              expand: true,
-              onPressed: () => st.runOnSelection(
-                  (r) => LogEntry('', '/usr/simbox/actions/set_autoblock_null.sh ${r.imsi}',
-                      const ['DATT=0', 'ACDL flag cleared']),
-                  toastText: 'Флажки сняты',
-                  icon: 'high_datt.png')),
-        ]),
-      );
-
-  Widget _exports(AppState st) => Panel(
-        title: 'Экспорт / Импорт',
-        icon: 'sms_out.png',
-        width: 300,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          AdmButton('Export dongles',
-              expand: true,
-              onPressed: () => st.push('/usr/simbox/www/simbox/export.php?what=dongles',
-                  [for (final s in sims) '${s.dongle};${s.imsi}'])),
-          const SizedBox(height: 8),
-          AdmButton('Export numbers',
-              expand: true,
-              onPressed: () => st.push('/usr/simbox/www/simbox/numbers.php',
-                  [for (final s in sims) s.number])),
-          const SizedBox(height: 8),
-          AdmButton('Export masspayment',
-              expand: true,
-              onPressed: () => st.push('/usr/simbox/www/simbox/export.php?what=masspayment',
-                  const ['9219981122;10;3;WMR;1', '9037761234;2;10;WMR;2'],
-                  'НЕ ОПРЕДЕЛЕН;0;0;WMR;3')),
-        ]),
-      );
 }
 
-/// Title + row count + selection chip + filter + refresh.
-class TableHeaderBar extends StatelessWidget {
+/// Fallback chain for a column's display name in the columns editor:
+/// `label` (grid header text) is often empty for icon-only columns, so fall
+/// back to the tooltip `title`, then the raw `key`.
+String columnDisplayLabel(ColDef c) => c.label.isNotEmpty ? c.label : (c.title ?? c.key);
+
+/// Title + row count + selection chip. Sits above [TableToolbar].
+class TableHeading extends StatelessWidget {
   final String title;
   final int count;
-  final TextEditingController search;
-  final ValueChanged<String> onSearch;
-  final List<ActionGroup> groups;
-
-  const TableHeaderBar({
-    super.key,
-    required this.title,
-    required this.count,
-    required this.search,
-    required this.onSearch,
-    this.groups = const [],
-  });
+  const TableHeading({super.key, required this.title, required this.count});
 
   @override
   Widget build(BuildContext context) {
     final st = AppScope.of(context);
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Expanded(
-        child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 12, runSpacing: 8, children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [
-            Text(title, style: T.screenTitle),
-            const SizedBox(width: 14),
-            Text('Всего: $count', style: T.caption),
-          ]),
-          if (groups.isNotEmpty)
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: [
-                for (final g in groups)
-                  ActionGroupPill(
-                    group: g,
-                    open: st.activeGroup == g.key,
-                    onTap: () => st.toggleGroup(g.key),
-                  ),
-              ],
-            ),
-          if (st.selected.isNotEmpty)
-            InkWell(
-              onTap: st.clearSelection,
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: T.rowSel, borderRadius: BorderRadius.circular(20)),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Text('Выбрано: ${st.selected.length}',
-                      style: const TextStyle(
-                          fontFamily: 'SF Pro Text',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: T.brandDeep)),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.close, size: 13, color: T.fgMuted),
-                ]),
-              ),
-            ),
-        ]),
-      ),
-      const SizedBox(width: 12),
-      SizedBox(
-        width: 250,
-        child: TextField(
-          controller: search,
-          onChanged: onSearch,
-          style: const TextStyle(fontFamily: 'SF Pro Text', fontSize: 12),
-          decoration: InputDecoration(
-            hintText: 'фильтр: номер, план, dongle',
-            hintStyle: T.caption,
-            isDense: true,
-            filled: true,
-            fillColor: T.surface,
-            prefixIcon: const Icon(Icons.search, size: 16, color: T.fgMuted),
-            prefixIconConstraints: const BoxConstraints(minWidth: 34, minHeight: 34),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(T.radiusCtl),
-              borderSide: const BorderSide(color: T.border),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(T.radiusCtl),
-              borderSide: const BorderSide(color: T.brandDeep, width: 1.6),
-            ),
+    return Row(children: [
+      Text(title, style: T.screenTitle),
+      const SizedBox(width: 14),
+      Text('Всего: $count', style: T.caption),
+      if (st.selected.isNotEmpty) ...[
+        const SizedBox(width: 12),
+        InkWell(
+          onTap: st.clearSelection,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(color: T.rowSel, borderRadius: BorderRadius.circular(20)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Text('Выбрано: ${st.selected.length}',
+                  style: const TextStyle(
+                      fontFamily: 'SF Pro Text',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: T.brandDeep)),
+              const SizedBox(width: 6),
+              const Icon(Icons.close, size: 13, color: T.fgMuted),
+            ]),
           ),
         ),
-      ),
-      const SizedBox(width: 10),
-      AdmButton('Обновить',
-          primary: true,
-          onPressed: () => st.showToast('Данные обновлены', 'conn.png')),
+      ],
     ]);
+  }
+}
+
+/// Action rail (or the columns editor) + filter + Columns button + Обновить,
+/// all in one fixed-height row. Drops to icon-only pills below [_breakpoint].
+class TableToolbar extends StatelessWidget {
+  final List<ActionGroup> groups;
+  final TextEditingController search;
+  final ValueChanged<String> onSearch;
+  final AdmPage page;
+  final List<({String key, String label})> allColumns;
+
+  const TableToolbar({
+    super.key,
+    required this.groups,
+    required this.search,
+    required this.onSearch,
+    required this.page,
+    required this.allColumns,
+  });
+
+  static const double _breakpoint = 1180;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = AppScope.of(context);
+    return LayoutBuilder(builder: (context, constraints) {
+      final compact = constraints.maxWidth < _breakpoint;
+      return SizedBox(
+        height: 44,
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(
+            child: st.columnsOpen
+                ? ColumnsEditor(page: page, allColumns: allColumns)
+                : ActionRail(groups: groups, compact: compact),
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: compact ? 140 : 250,
+            child: TextField(
+              controller: search,
+              onChanged: onSearch,
+              style: const TextStyle(fontFamily: 'SF Pro Text', fontSize: 12),
+              decoration: InputDecoration(
+                hintText: compact ? 'фильтр' : 'фильтр: номер, план, dongle',
+                hintStyle: T.caption,
+                isDense: true,
+                filled: true,
+                fillColor: T.surface,
+                prefixIcon: const Icon(Icons.search, size: 16, color: T.fgMuted),
+                prefixIconConstraints: const BoxConstraints(minWidth: 34, minHeight: 34),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(T.radiusCtl),
+                  borderSide: const BorderSide(color: T.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(T.radiusCtl),
+                  borderSide: const BorderSide(color: T.brandDeep, width: 1.6),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          RailIconButton(
+              icon: Icons.view_column_outlined, tooltip: 'Столбцы', onTap: st.toggleColumns),
+          const SizedBox(width: 8),
+          AdmButton('Обновить',
+              primary: true,
+              onPressed: () => st.showToast('Данные обновлены', 'conn.png')),
+        ]),
+      );
+    });
   }
 }

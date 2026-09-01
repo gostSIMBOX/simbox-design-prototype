@@ -6,7 +6,7 @@ import '../widgets/action_group_bar.dart';
 import '../widgets/adm_icon.dart';
 import '../widgets/dense_table.dart';
 import '../widgets/panel.dart';
-import 'sims_page.dart' show TableHeaderBar;
+import 'sims_page.dart' show TableHeading, TableToolbar, columnDisplayLabel;
 
 class DiagmodePage extends StatefulWidget {
   const DiagmodePage({super.key});
@@ -55,78 +55,73 @@ class _DiagmodePageState extends State<DiagmodePage> {
           build: (d) => Cell(text: '${d.pct}%', sub: d.pct >= 100 ? 'завершено' : 'идёт запись')),
     ];
 
+    final defaultIds = [for (final c in cols) c.key];
+    final order = st.columnOrderFor(AdmPage.diagmode, defaultIds);
+    final hidden = st.hiddenColumnsFor(AdmPage.diagmode);
+    final byKey = {for (final c in cols) c.key: c};
+    final visibleCols = [
+      for (final k in order) if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!
+    ];
+
     final groups = <ActionGroup>[
       ActionGroup(
         key: 'fw',
         label: 'Перепрошивка',
         icon: 'diagmode/diagmode_start.png',
-        builder: (_) => Panel(
-          title: 'Перепрошивка',
-          icon: 'diagmode/diagmode_start.png',
-          width: 340,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            AdmCheck(
-                value: st.liveRefresh,
-                onChanged: st.setLiveRefresh,
-                label: 'Автообновление (1 сек)'),
-            const SizedBox(height: 10),
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        subActions: [
+          SubAction(
+            key: 'send',
+            label: 'Отправить в diagmode',
+            builder: (_) => Row(mainAxisSize: MainAxisSize.min, children: [
               const AdmIcon('stop.png'),
               const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Внимание!!! Запуск перепрошивки начнётся только после вынимания SIM-карты',
-                  style: const TextStyle(
-                      fontFamily: 'SF Pro Text',
-                      fontSize: 12,
-                      height: 1.45,
-                      fontWeight: FontWeight.w600,
-                      color: T.danger),
-                ),
+              const Text(
+                'Внимание!!! Запуск перепрошивки начнётся только после вынимания SIM-карты',
+                style: TextStyle(
+                    fontFamily: 'SF Pro Text',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: T.danger),
               ),
+              const SizedBox(width: 12),
+              AdmButton('Отправить в diagmode',
+                  icon: 'diagmode/diagmode_init.png',
+                  primary: true,
+                  onPressed: () => st.push('/usr/simbox/actions/diagmode.sh /dev/ttyUSB4',
+                      const [], 'Внимание!!! Вынуть SIM-карту')),
             ]),
-            const SizedBox(height: 12),
-            AdmButton('Отправить в diagmode',
-                icon: 'diagmode/diagmode_init.png',
-                expand: true,
-                onPressed: () => st.push('/usr/simbox/actions/diagmode.sh /dev/ttyUSB4', const [],
-                    'Внимание!!! Вынуть SIM-карту')),
-          ]),
-        ),
+          ),
+        ],
+        sharedSettings: (_) =>
+            AdmCheck(value: st.liveRefresh, onChanged: st.setLiveRefresh, label: 'Автообновление (1 сек)'),
       ),
     ];
 
     return Padding(
       padding: const EdgeInsets.all(22),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        TableHeaderBar(
-            title: 'Свистки (update mode)',
-            count: rows.length,
-            search: _search,
-            onSearch: st.setQuery,
-            groups: groups),
+        TableHeading(title: 'Свистки (update mode)', count: rows.length),
+        const SizedBox(height: 10),
+        TableToolbar(
+          groups: groups,
+          search: _search,
+          onSearch: st.setQuery,
+          page: AdmPage.diagmode,
+          allColumns: [for (final c in cols) (key: c.key, label: columnDisplayLabel(c))],
+        ),
         const SizedBox(height: 12),
         Expanded(
-          child: Stack(children: [
-            DenseTable<UmDevice>(
-              cols: cols,
-              rows: rows,
-              idOf: (d) => d.id,
-              isSelected: st.isSelected,
-              onToggleRow: st.toggleRow,
-              onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
-              sortKey: st.sortKey,
-              sortDir: st.sortDir,
-              onSort: st.sortBy,
-            ),
-            if (st.activeGroup != null)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: ActionGroupOverlay(groups: groups, activeKey: st.activeGroup!),
-              ),
-          ]),
+          child: DenseTable<UmDevice>(
+            cols: visibleCols,
+            rows: rows,
+            idOf: (d) => d.id,
+            isSelected: st.isSelected,
+            onToggleRow: st.toggleRow,
+            onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
+            sortKey: st.sortKey,
+            sortDir: st.sortDir,
+            onSort: st.sortBy,
+          ),
         ),
       ]),
     );

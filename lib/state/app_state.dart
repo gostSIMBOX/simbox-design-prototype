@@ -21,6 +21,10 @@ class AppState extends ChangeNotifier {
 
   bool navCompact = false;
   String? activeGroup;
+  String? railSubAction;
+  bool columnsOpen = false;
+  final Map<AdmPage, List<String>> columnOrder = {};
+  final Map<AdmPage, Set<String>> hiddenColumns = {};
 
   final List<LogEntry> logs = [];
   bool logOpen = true;
@@ -72,6 +76,8 @@ class AppState extends ChangeNotifier {
     sortKey = null;
     query = '';
     activeGroup = null;
+    railSubAction = null;
+    columnsOpen = false;
     notifyListeners();
   }
 
@@ -80,8 +86,68 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleGroup(String key) {
-    activeGroup = (activeGroup == key) ? null : key;
+  void toggleGroup(String key, [List<String>? subActionKeys]) {
+    if (activeGroup == key) {
+      activeGroup = null;
+      railSubAction = null;
+    } else {
+      activeGroup = key;
+      columnsOpen = false;
+      railSubAction = (subActionKeys != null && subActionKeys.isNotEmpty)
+          ? subActionKeys.first
+          : null;
+    }
+    notifyListeners();
+  }
+
+  void selectSubAction(String key) {
+    railSubAction = key;
+    notifyListeners();
+  }
+
+  void toggleColumns() {
+    columnsOpen = !columnsOpen;
+    if (columnsOpen) {
+      activeGroup = null;
+      railSubAction = null;
+    }
+    notifyListeners();
+  }
+
+  List<String> columnOrderFor(AdmPage p, List<String> defaultIds) =>
+      columnOrder.putIfAbsent(p, () => List.of(defaultIds));
+
+  Set<String> hiddenColumnsFor(AdmPage p) => hiddenColumns.putIfAbsent(p, () => <String>{});
+
+  void toggleColumnHidden(AdmPage p, String colId) {
+    final hidden = hiddenColumnsFor(p);
+    hidden.contains(colId) ? hidden.remove(colId) : hidden.add(colId);
+    notifyListeners();
+  }
+
+  void moveColumn(AdmPage p, String colId, int direction, List<String> defaultIds) {
+    final order = columnOrderFor(p, defaultIds);
+    final i = order.indexOf(colId);
+    final n = i + direction;
+    if (i < 0 || n < 0 || n >= order.length) return;
+    order.removeAt(i);
+    order.insert(n, colId);
+    notifyListeners();
+  }
+
+  void resetColumns(AdmPage p, List<String> defaultIds) {
+    columnOrder[p] = List.of(defaultIds);
+    hiddenColumns[p] = <String>{};
+    notifyListeners();
+  }
+
+  /// Closes an open action-group rail or the columns editor, if either is
+  /// open — used by the global Escape-key handler.
+  void closeRail() {
+    if (activeGroup == null && !columnsOpen) return;
+    activeGroup = null;
+    railSubAction = null;
+    columnsOpen = false;
     notifyListeners();
   }
 
