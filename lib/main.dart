@@ -11,6 +11,7 @@ import 'pages/dongles_page.dart';
 import 'pages/diagmode_page.dart';
 import 'pages/hubs_page.dart';
 import 'pages/nabor_page.dart';
+import 'pages/zones_page.dart';
 import 'pages/plan_page.dart';
 import 'pages/proc_page.dart';
 import 'pages/billing_page.dart';
@@ -125,6 +126,7 @@ class _AdminShellState extends State<AdminShell> {
         AdmPage.diagmode => const DiagmodePage(),
         AdmPage.hubs => const HubsPage(),
         AdmPage.nabor => const NaborPage(),
+        AdmPage.zones => const ZonesPage(),
         AdmPage.plan => const PlanPage(),
         AdmPage.proc => const ProcPage(),
         AdmPage.bablo => const BillingPage(),

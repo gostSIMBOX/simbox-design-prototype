@@ -5,6 +5,9 @@ import '../data/mock.dart';
 import '../features/command_sets/controller.dart';
 import '../features/command_sets/repository.dart';
 import '../features/command_sets/seed.dart';
+import '../features/zones/controller.dart';
+import '../features/zones/repository.dart';
+import '../features/zones/seed.dart';
 
 enum AdmPage {
   sim,
@@ -12,6 +15,7 @@ enum AdmPage {
   diagmode,
   hubs,
   nabor,
+  zones,
   plan,
   proc,
   bablo,
@@ -29,6 +33,7 @@ class Toast {
 /// transport (ssh / http) to drive live hardware — see TODO(api).
 class AppState extends ChangeNotifier {
   late final CommandSetController commandSets;
+  late final ZoneController zones;
   AdmPage page = AdmPage.sim;
   final Set<int> selected = <int>{};
   String? sortKey;
@@ -72,6 +77,9 @@ class AppState extends ChangeNotifier {
         CommandSetController(InMemoryCommandSetRepository(commandSetSeed));
     commandSets.addListener(_forwardCommandSets);
     commandSets.load();
+    zones = ZoneController(InMemoryZoneRepository(zoneSeed));
+    zones.addListener(_forwardZones);
+    zones.load();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       now = DateTime.now();
       if (liveRefresh && page == AdmPage.diagmode) {
@@ -86,11 +94,14 @@ class AppState extends ChangeNotifier {
     _timer?.cancel();
     commandSets.removeListener(_forwardCommandSets);
     commandSets.dispose();
+    zones.removeListener(_forwardZones);
+    zones.dispose();
     toast.dispose();
     super.dispose();
   }
 
   void _forwardCommandSets() => notifyListeners();
+  void _forwardZones() => notifyListeners();
 
   // ---- navigation ----------------------------------------------------------
 
