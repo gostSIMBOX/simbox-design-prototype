@@ -17,6 +17,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/brand/
     - assets/imgs/
     - assets/imgs/diagmode/
     - assets/imgs/im/

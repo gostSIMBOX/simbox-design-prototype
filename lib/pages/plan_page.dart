@@ -57,7 +57,9 @@ class PlanPage extends StatelessWidget {
     final cols = _planCols.where((c) => c.group == '*' || st.planShow[c.group] == true).toList();
     final width = cols.fold<double>(0, (a, c) => a + c.w);
 
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(22),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Panel(
         title: 'Отображение информации',
         width: 290,
@@ -144,7 +146,8 @@ class PlanPage extends StatelessWidget {
           ]),
         ),
       ),
-    ]);
+      ]),
+    );
   }
 
   Widget _row(List<_PlanCol> cols, int index) {

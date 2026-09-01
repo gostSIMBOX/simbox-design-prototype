@@ -23,14 +23,17 @@ class DebugPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(spacing: 18, runSpacing: 18, children: [
-      for (final b in _blocks)
-        Panel(
-          title: b[0],
-          width: 460,
-          child: SelectableText(b[1],
-              style: T.monoDim.copyWith(color: const Color(0xFF546675))),
-        ),
-    ]);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(22),
+      child: Wrap(spacing: 18, runSpacing: 18, children: [
+        for (final b in _blocks)
+          Panel(
+            title: b[0],
+            width: 460,
+            child: SelectableText(b[1],
+                style: T.monoDim.copyWith(color: const Color(0xFF546675))),
+          ),
+      ]),
+    );
   }
 }

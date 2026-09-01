@@ -11,7 +11,9 @@ class UpgradePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final st = AppScope.of(context);
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(22),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Panel(
         title: 'Обновление',
         icon: 'power.png',
@@ -69,6 +71,7 @@ class UpgradePage extends StatelessWidget {
           ),
         ]),
       ),
-    ]);
+      ]),
+    );
   }
 }

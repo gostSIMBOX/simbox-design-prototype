@@ -19,6 +19,9 @@ class AppState extends ChangeNotifier {
   int sortDir = 1;
   String query = '';
 
+  bool navCompact = false;
+  String? activeGroup;
+
   final List<LogEntry> logs = [];
   bool logOpen = true;
 
@@ -68,6 +71,17 @@ class AppState extends ChangeNotifier {
     selected.clear();
     sortKey = null;
     query = '';
+    activeGroup = null;
+    notifyListeners();
+  }
+
+  void toggleNav() {
+    navCompact = !navCompact;
+    notifyListeners();
+  }
+
+  void toggleGroup(String key) {
+    activeGroup = (activeGroup == key) ? null : key;
     notifyListeners();
   }
 

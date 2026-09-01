@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/models.dart';
 import '../data/mock.dart';
 import '../state/app_state.dart';
+import '../widgets/action_group_bar.dart';
 import '../widgets/dense_table.dart';
 import '../widgets/panel.dart';
 import 'sims_page.dart' show TableHeaderBar;
@@ -32,24 +33,12 @@ class _HubsPageState extends State<HubsPage> {
       ColDef(key: 'port', w: 120, label: 'bus:dev:port', build: (h) => Cell(mono: h.port)),
     ];
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      TableHeaderBar(
-          title: 'Ридеры (хабы)', count: rows.length, search: _search, onSearch: st.setQuery),
-      const SizedBox(height: 12),
-      DenseTable<HubNode>(
-        cols: cols,
-        rows: rows,
-        idOf: (h) => h.id,
-        isSelected: st.isSelected,
-        onToggleRow: st.toggleRow,
-        onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
-        sortKey: st.sortKey,
-        sortDir: st.sortDir,
-        onSort: st.sortBy,
-      ),
-      const SizedBox(height: 18),
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Panel(
+    final groups = <ActionGroup>[
+      ActionGroup(
+        key: 'hubpwr',
+        label: 'Питание порта',
+        icon: 'usb/hub_16.png',
+        builder: (_) => Panel(
           title: 'Питание порта',
           icon: 'usb/hub_16.png',
           width: 300,
@@ -74,7 +63,42 @@ class _HubsPageState extends State<HubsPage> {
                     const ['power cycled'])),
           ]),
         ),
+      ),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(22),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        TableHeaderBar(
+            title: 'Ридеры (хабы)',
+            count: rows.length,
+            search: _search,
+            onSearch: st.setQuery,
+            groups: groups),
+        const SizedBox(height: 12),
+        Expanded(
+          child: Stack(children: [
+            DenseTable<HubNode>(
+              cols: cols,
+              rows: rows,
+              idOf: (h) => h.id,
+              isSelected: st.isSelected,
+              onToggleRow: st.toggleRow,
+              onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
+              sortKey: st.sortKey,
+              sortDir: st.sortDir,
+              onSort: st.sortBy,
+            ),
+            if (st.activeGroup != null)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: ActionGroupOverlay(groups: groups, activeKey: st.activeGroup!),
+              ),
+          ]),
+        ),
       ]),
-    ]);
+    );
   }
 }

@@ -3,7 +3,8 @@ import 'design/tokens.dart';
 import 'state/app_state.dart';
 import 'widgets/adm_icon.dart';
 import 'widgets/command_log.dart';
-import 'widgets/top_bar.dart';
+import 'widgets/sidebar.dart';
+import 'widgets/status_bar.dart';
 import 'pages/sims_page.dart';
 import 'pages/dongles_page.dart';
 import 'pages/diagmode_page.dart';
@@ -111,15 +112,15 @@ class _AdminShellState extends State<AdminShell> {
     final s = AppScope.of(context);
     return Scaffold(
       backgroundColor: T.bg,
-      body: Column(children: [
-        const TopBar(),
+      body: Row(children: [
+        const Sidebar(),
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(22),
-            child: _page(s.page),
-          ),
+          child: Column(children: [
+            const StatusBar(),
+            Expanded(child: _page(s.page)),
+            const CommandLog(),
+          ]),
         ),
-        const CommandLog(),
       ]),
     );
   }

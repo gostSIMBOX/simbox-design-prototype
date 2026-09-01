@@ -10,7 +10,9 @@ class IconsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(22),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Container(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
         decoration: BoxDecoration(
@@ -37,7 +39,8 @@ class IconsPage extends StatelessWidget {
         _group(g),
         const SizedBox(height: 18),
       ],
-    ]);
+      ]),
+    );
   }
 
   Widget _group(IconGroup g) {

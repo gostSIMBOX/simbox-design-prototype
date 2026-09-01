@@ -11,7 +11,9 @@ class BillingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(22),
+      child: Align(
       alignment: Alignment.topLeft,
       child: SizedBox(
         width: 580,
@@ -87,6 +89,7 @@ class BillingPage extends StatelessWidget {
             ),
           ]),
         ),
+      ),
       ),
     );
   }

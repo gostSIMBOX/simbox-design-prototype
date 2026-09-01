@@ -9,7 +9,11 @@ import 'adm_icon.dart';
 /// body stay locked together. Zebra is the brand tint at ascending strength —
 /// odd 3.5%, header 5%, selected 9% — so a selected odd row still reads as
 /// selected without a second neutral entering the palette.
-class DenseTable<TRow> extends StatelessWidget {
+///
+/// The header row is pinned; only the row list scrolls vertically (both live
+/// inside the same horizontal scroller, so they pan sideways together). The
+/// widget therefore needs a bounded height from its parent (e.g. `Expanded`).
+class DenseTable<TRow> extends StatefulWidget {
   final List<ColDef<TRow>> cols;
   final List<TRow> rows;
   final int Function(TRow) idOf;
@@ -33,14 +37,27 @@ class DenseTable<TRow> extends StatelessWidget {
     required this.onSort,
   });
 
+  @override
+  State<DenseTable<TRow>> createState() => _DenseTableState<TRow>();
+}
+
+class _DenseTableState<TRow> extends State<DenseTable<TRow>> {
+  final _vCtrl = ScrollController();
+
+  @override
+  void dispose() {
+    _vCtrl.dispose();
+    super.dispose();
+  }
+
   static const double _checkW = 34;
 
-  double get _totalWidth =>
-      _checkW + cols.fold<double>(0, (a, c) => a + c.w);
+  double get _totalWidth => _checkW + widget.cols.fold<double>(0, (a, c) => a + c.w);
 
   @override
   Widget build(BuildContext context) {
-    final allSelected = rows.isNotEmpty && rows.every((r) => isSelected(idOf(r)));
+    final rows = widget.rows;
+    final allSelected = rows.isNotEmpty && rows.every((r) => widget.isSelected(widget.idOf(r)));
     return Container(
       decoration: BoxDecoration(
         color: T.surface,
@@ -56,15 +73,24 @@ class DenseTable<TRow> extends StatelessWidget {
             width: _totalWidth,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 _header(allSelected),
-                for (var i = 0; i < rows.length; i++) _row(rows[i], i),
-                if (rows.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text('Ничего не найдено', style: T.caption),
-                  ),
+                Expanded(
+                  child: rows.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text('Ничего не найдено', style: T.caption),
+                        )
+                      : Scrollbar(
+                          controller: _vCtrl,
+                          thumbVisibility: true,
+                          child: ListView.builder(
+                            controller: _vCtrl,
+                            itemCount: rows.length,
+                            itemBuilder: (_, i) => _row(rows[i], i),
+                          ),
+                        ),
+                ),
               ],
             ),
           ),
@@ -74,6 +100,9 @@ class DenseTable<TRow> extends StatelessWidget {
   }
 
   Widget _header(bool allSelected) {
+    final cols = widget.cols;
+    final sortKey = widget.sortKey;
+    final sortDir = widget.sortDir;
     return Container(
       decoration: const BoxDecoration(
         color: T.headBg,
@@ -91,7 +120,7 @@ class DenseTable<TRow> extends StatelessWidget {
                 height: 18,
                 child: Checkbox(
                   value: allSelected,
-                  onChanged: (_) => onToggleAll(),
+                  onChanged: (_) => widget.onToggleAll(),
                   activeColor: T.brandDeep,
                 ),
               ),
@@ -101,7 +130,7 @@ class DenseTable<TRow> extends StatelessWidget {
             SizedBox(
               width: c.w,
               child: InkWell(
-                onTap: () => onSort(c.key),
+                onTap: () => widget.onSort(c.key),
                 child: Tooltip(
                   message: c.title ?? c.key,
                   child: Padding(
@@ -130,8 +159,8 @@ class DenseTable<TRow> extends StatelessWidget {
   }
 
   Widget _row(TRow r, int index) {
-    final id = idOf(r);
-    final sel = isSelected(id);
+    final id = widget.idOf(r);
+    final sel = widget.isSelected(id);
     return Container(
       decoration: BoxDecoration(
         color: sel ? T.rowSel : (index.isOdd ? T.rowOdd : T.rowEven),
@@ -149,13 +178,13 @@ class DenseTable<TRow> extends StatelessWidget {
                 height: 18,
                 child: Checkbox(
                   value: sel,
-                  onChanged: (_) => onToggleRow(id),
+                  onChanged: (_) => widget.onToggleRow(id),
                   activeColor: T.brandDeep,
                 ),
               ),
             ),
           ),
-          for (final c in cols)
+          for (final c in widget.cols)
             SizedBox(width: c.w, child: _cell(c.build(r))),
         ],
       ),

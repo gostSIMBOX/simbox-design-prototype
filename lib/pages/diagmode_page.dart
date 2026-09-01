@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/models.dart';
 import '../design/tokens.dart';
 import '../state/app_state.dart';
+import '../widgets/action_group_bar.dart';
 import '../widgets/adm_icon.dart';
 import '../widgets/dense_table.dart';
 import '../widgets/panel.dart';
@@ -54,27 +55,12 @@ class _DiagmodePageState extends State<DiagmodePage> {
           build: (d) => Cell(text: '${d.pct}%', sub: d.pct >= 100 ? 'завершено' : 'идёт запись')),
     ];
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      TableHeaderBar(
-          title: 'Свистки (update mode)',
-          count: rows.length,
-          search: _search,
-          onSearch: st.setQuery),
-      const SizedBox(height: 12),
-      DenseTable<UmDevice>(
-        cols: cols,
-        rows: rows,
-        idOf: (d) => d.id,
-        isSelected: st.isSelected,
-        onToggleRow: st.toggleRow,
-        onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
-        sortKey: st.sortKey,
-        sortDir: st.sortDir,
-        onSort: st.sortBy,
-      ),
-      const SizedBox(height: 18),
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Panel(
+    final groups = <ActionGroup>[
+      ActionGroup(
+        key: 'fw',
+        label: 'Перепрошивка',
+        icon: 'diagmode/diagmode_start.png',
+        builder: (_) => Panel(
           title: 'Перепрошивка',
           icon: 'diagmode/diagmode_start.png',
           width: 340,
@@ -107,7 +93,42 @@ class _DiagmodePageState extends State<DiagmodePage> {
                     'Внимание!!! Вынуть SIM-карту')),
           ]),
         ),
+      ),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(22),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        TableHeaderBar(
+            title: 'Свистки (update mode)',
+            count: rows.length,
+            search: _search,
+            onSearch: st.setQuery,
+            groups: groups),
+        const SizedBox(height: 12),
+        Expanded(
+          child: Stack(children: [
+            DenseTable<UmDevice>(
+              cols: cols,
+              rows: rows,
+              idOf: (d) => d.id,
+              isSelected: st.isSelected,
+              onToggleRow: st.toggleRow,
+              onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
+              sortKey: st.sortKey,
+              sortDir: st.sortDir,
+              onSort: st.sortBy,
+            ),
+            if (st.activeGroup != null)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: ActionGroupOverlay(groups: groups, activeKey: st.activeGroup!),
+              ),
+          ]),
+        ),
       ]),
-    ]);
+    );
   }
 }

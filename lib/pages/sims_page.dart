@@ -4,9 +4,9 @@ import '../data/models.dart';
 import '../data/mock.dart';
 import '../design/tokens.dart';
 import '../state/app_state.dart';
+import '../widgets/action_group_bar.dart';
 import '../widgets/dense_table.dart';
 import '../widgets/panel.dart';
-import '../widgets/adm_icon.dart';
 
 class SimsPage extends StatefulWidget {
   const SimsPage({super.key});
@@ -221,39 +221,75 @@ class _SimsPageState extends State<SimsPage> {
                 Cell(note: s.dates[0], text: s.dates[1], sub: s.dates[2], sub2: s.dates[3])),
       ];
 
+  List<ActionGroup> _groups(AppState st) => [
+        ActionGroup(
+            key: 'power',
+            label: 'Передатчик и статус',
+            icon: 'state/state_dial.png',
+            builder: (_) => _transmitter(st)),
+        ActionGroup(
+            key: 'simple',
+            label: 'Действия простые',
+            icon: 'ussdsms.png',
+            builder: (_) => _simpleActions(st)),
+        ActionGroup(
+            key: 'smart',
+            label: 'Действия хитрые',
+            icon: 'free.png',
+            builder: (_) => _smartActions(st)),
+        ActionGroup(
+            key: 'plans',
+            label: 'Группы и планы',
+            icon: 'spec/nav.png',
+            builder: (_) => _groupsAndPlans(st)),
+        ActionGroup(
+            key: 'export',
+            label: 'Экспорт / Импорт',
+            icon: 'sms_out.png',
+            builder: (_) => _exports(st)),
+      ];
+
   @override
   Widget build(BuildContext context) {
     final st = AppScope.of(context);
     final rows = st.visibleSims;
+    final groups = _groups(st);
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      TableHeaderBar(
-        title: 'Симки',
-        count: rows.length,
-        search: _search,
-        onSearch: st.setQuery,
-      ),
-      const SizedBox(height: 12),
-      DenseTable<Sim>(
-        cols: _cols(st),
-        rows: rows,
-        idOf: (s) => s.id,
-        isSelected: st.isSelected,
-        onToggleRow: st.toggleRow,
-        onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
-        sortKey: st.sortKey,
-        sortDir: st.sortDir,
-        onSort: st.sortBy,
-      ),
-      const SizedBox(height: 18),
-      Wrap(spacing: 18, runSpacing: 18, children: [
-        _transmitter(st),
-        _simpleActions(st),
-        _smartActions(st),
-        _groupsAndPlans(st),
-        _exports(st),
+    return Padding(
+      padding: const EdgeInsets.all(22),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        TableHeaderBar(
+          title: 'Симки',
+          count: rows.length,
+          search: _search,
+          onSearch: st.setQuery,
+          groups: groups,
+        ),
+        const SizedBox(height: 12),
+        Expanded(
+          child: Stack(children: [
+            DenseTable<Sim>(
+              cols: _cols(st),
+              rows: rows,
+              idOf: (s) => s.id,
+              isSelected: st.isSelected,
+              onToggleRow: st.toggleRow,
+              onToggleAll: () => st.toggleAll(rows.map((e) => e.id).toList()),
+              sortKey: st.sortKey,
+              sortDir: st.sortDir,
+              onSort: st.sortBy,
+            ),
+            if (st.activeGroup != null)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: ActionGroupOverlay(groups: groups, activeKey: st.activeGroup!),
+              ),
+          ]),
+        ),
       ]),
-    ]);
+    );
   }
 
   Widget _transmitter(AppState st) => Panel(
@@ -525,6 +561,7 @@ class TableHeaderBar extends StatelessWidget {
   final int count;
   final TextEditingController search;
   final ValueChanged<String> onSearch;
+  final List<ActionGroup> groups;
 
   const TableHeaderBar({
     super.key,
@@ -532,37 +569,55 @@ class TableHeaderBar extends StatelessWidget {
     required this.count,
     required this.search,
     required this.onSearch,
+    this.groups = const [],
   });
 
   @override
   Widget build(BuildContext context) {
     final st = AppScope.of(context);
-    return Row(children: [
-      Text(title, style: T.screenTitle),
-      const SizedBox(width: 14),
-      Text('Всего: $count', style: T.caption),
-      if (st.selected.isNotEmpty) ...[
-        const SizedBox(width: 12),
-        InkWell(
-          onTap: st.clearSelection,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(color: T.rowSel, borderRadius: BorderRadius.circular(20)),
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Text('Выбрано: ${st.selected.length}',
-                  style: const TextStyle(
-                      fontFamily: 'SF Pro Text',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: T.brandDeep)),
-              const SizedBox(width: 6),
-              const Icon(Icons.close, size: 13, color: T.fgMuted),
-            ]),
-          ),
-        ),
-      ],
-      const Spacer(),
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Expanded(
+        child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 12, runSpacing: 8, children: [
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            Text(title, style: T.screenTitle),
+            const SizedBox(width: 14),
+            Text('Всего: $count', style: T.caption),
+          ]),
+          if (groups.isNotEmpty)
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final g in groups)
+                  ActionGroupPill(
+                    group: g,
+                    open: st.activeGroup == g.key,
+                    onTap: () => st.toggleGroup(g.key),
+                  ),
+              ],
+            ),
+          if (st.selected.isNotEmpty)
+            InkWell(
+              onTap: st.clearSelection,
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(color: T.rowSel, borderRadius: BorderRadius.circular(20)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Text('Выбрано: ${st.selected.length}',
+                      style: const TextStyle(
+                          fontFamily: 'SF Pro Text',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: T.brandDeep)),
+                  const SizedBox(width: 6),
+                  const Icon(Icons.close, size: 13, color: T.fgMuted),
+                ]),
+              ),
+            ),
+        ]),
+      ),
+      const SizedBox(width: 12),
       SizedBox(
         width: 250,
         child: TextField(
