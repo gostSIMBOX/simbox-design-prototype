@@ -4,6 +4,7 @@ import '../../widgets/fugue_icon.dart';
 import 'code_editor.dart';
 import 'controller.dart';
 import 'detail_header.dart';
+import 'group_rules_editor.dart';
 import 'registry_pane.dart';
 
 class ZonesWorkspace extends StatelessWidget {
@@ -65,7 +66,14 @@ class _DetailPane extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         ZoneDetailHeader(controller: controller, narrow: narrow),
-        Expanded(child: ZoneCodeEditor(controller: controller)),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              SizedBox(height: 280, child: ZoneCodeEditor(controller: controller)),
+              GroupRulesEditor(controller: controller),
+            ]),
+          ),
+        ),
         if (controller.isDirty) _DraftBar(controller: controller, narrow: narrow),
       ]),
     );

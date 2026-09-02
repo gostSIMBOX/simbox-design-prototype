@@ -73,7 +73,7 @@ class _HubsPageState extends State<HubsPage> {
     return Padding(
       padding: const EdgeInsets.all(22),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        TableHeading(title: 'Ридеры (хабы)', count: rows.length),
+        TableHeading(title: 'Хабы (Hubs)', count: rows.length),
         const SizedBox(height: 10),
         TableToolbar(
           groups: groups,

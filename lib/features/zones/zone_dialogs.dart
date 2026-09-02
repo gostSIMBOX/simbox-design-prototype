@@ -83,6 +83,7 @@ Future<void> showEditZoneMetadataDialog(BuildContext context, ZoneController con
   if (zone == null) return;
   final name = TextEditingController(text: zone.name);
   final region = TextEditingController(text: zone.region ?? '');
+  final billingCode = TextEditingController(text: zone.billingCode ?? '');
   await showDialog<void>(
     context: context,
     builder: (_) => AlertDialog(
@@ -97,6 +98,8 @@ Future<void> showEditZoneMetadataDialog(BuildContext context, ZoneController con
           _field(name, 'Название', required: true),
           const SizedBox(height: 10),
           _field(region, 'Регион (необязательно)'),
+          const SizedBox(height: 10),
+          _field(billingCode, 'Код направления (2 буквы, напр. NS)'),
         ]),
       ),
       actions: [
@@ -104,7 +107,11 @@ Future<void> showEditZoneMetadataDialog(BuildContext context, ZoneController con
         FilledButton(
           onPressed: () {
             controller.renameZone(
-                zone.id, name.text.trim(), region.text.trim().isEmpty ? null : region.text.trim());
+              zone.id,
+              name.text.trim(),
+              region.text.trim().isEmpty ? null : region.text.trim(),
+              billingCode.text.trim().isEmpty ? null : billingCode.text.trim().toUpperCase(),
+            );
             Navigator.pop(context);
           },
           child: const Text('Применить'),
@@ -114,6 +121,7 @@ Future<void> showEditZoneMetadataDialog(BuildContext context, ZoneController con
   );
   name.dispose();
   region.dispose();
+  billingCode.dispose();
 }
 
 Future<void> showDeleteZoneDialog(BuildContext context, ZoneController controller) async {

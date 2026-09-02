@@ -119,10 +119,57 @@ class ZoneController extends ChangeNotifier {
     _selectImmediately(id);
   }
 
-  void renameZone(String id, String name, String? region) {
+  void renameZone(String id, String name, String? region, [String? billingCode]) {
     final current = repository.byId(id);
     if (current == null) return;
-    repository.replace(id, current.copyWith(name: name, region: region));
+    repository.replace(
+        id, current.copyWith(name: name, region: region, billingCode: billingCode));
+    notifyListeners();
+  }
+
+  void addGroupRule() {
+    final current = selected;
+    if (current == null) return;
+    draft ??= ZoneDraft(current);
+    draft!.working = draft!.working.copyWith(groupRules: [
+      ...draft!.working.groupRules,
+      const GroupRule(limitSlot: 0, alg: 'D', type: '=', group: ''),
+    ]);
+    notifyListeners();
+  }
+
+  void updateGroupRule(int index, {int? limitSlot, String? alg, String? type, String? group}) {
+    final current = selected;
+    if (current == null) return;
+    draft ??= ZoneDraft(current);
+    final rules = List<GroupRule>.of(draft!.working.groupRules);
+    if (index < 0 || index >= rules.length) return;
+    rules[index] = rules[index].copyWith(limitSlot: limitSlot, alg: alg, type: type, group: group);
+    draft!.working = draft!.working.copyWith(groupRules: rules);
+    notifyListeners();
+  }
+
+  void moveGroupRule(int index, int direction) {
+    final current = selected;
+    if (current == null) return;
+    draft ??= ZoneDraft(current);
+    final rules = List<GroupRule>.of(draft!.working.groupRules);
+    final n = index + direction;
+    if (index < 0 || index >= rules.length || n < 0 || n >= rules.length) return;
+    final r = rules.removeAt(index);
+    rules.insert(n, r);
+    draft!.working = draft!.working.copyWith(groupRules: rules);
+    notifyListeners();
+  }
+
+  void removeGroupRule(int index) {
+    final current = selected;
+    if (current == null) return;
+    draft ??= ZoneDraft(current);
+    final rules = List<GroupRule>.of(draft!.working.groupRules);
+    if (index < 0 || index >= rules.length) return;
+    rules.removeAt(index);
+    draft!.working = draft!.working.copyWith(groupRules: rules);
     notifyListeners();
   }
 

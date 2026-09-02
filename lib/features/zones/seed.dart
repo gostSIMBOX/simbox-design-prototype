@@ -1,18 +1,26 @@
 import 'models.dart';
 
 /// Generated from legacy/simbox-desktop-v2014/asterisk/extensions/zones/*.conf
-/// 18 zones, 6073 DEF codes total (deduplicated).
+/// and extensions_dial_zones.conf's [macro-makecall-std].
+/// 18 zones, 6073 DEF codes, 38 group-selection rules.
 const List<Zone> zoneSeed = [
   Zone(
     id: "megafon_spb",
     name: "МегаФон СПб",
     region: "СПб",
     icon: "napravleine/megafon_spb.png",
+    billingCode: "NS",
     defCodes: [
       "792109XXXXX", "7921111XXXX", "792118XXXXX", "79213XXXXXX", "79214[0-4]XXXXX", "79215[5-9]XXXXX",
       "79216[3-5]XXXXX", "79217[4-9]XXXXX", "792184[5-9]XXXX", "792185[5-9]XXXX", "79218[6-9]XXXXX", "79219XXXXXX",
       "79291[0-1]XXXXX", "793100[0-8]XXXX", "79312XXXXXX", "79313[0-7]XXXXX", "793138[0-3]XXXX", "793153XXXXX",
       "793154[0-3]XXXX", "7931576XXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "D", type: "=", group: "101"),
+      GroupRule(limitSlot: 3, alg: ">", type: "_", group: "102"),
+      GroupRule(limitSlot: 3, alg: ">", type: "=", group: "162"),
+      GroupRule(limitSlot: 1, alg: "D", type: "=", group: "205"),
     ],
   ),
   Zone(
@@ -20,6 +28,7 @@ const List<Zone> zoneSeed = [
     name: "МегаФон Мск",
     region: "Мск",
     icon: "napravleine/megafon_msk.png",
+    billingCode: "NM",
     defCodes: [
       "79250XXXXXX", "7925100XXXX", "792510[1-6]XXXX", "7925107XXXX", "7925108XXXX", "7925109XXXX",
       "79251[1-2]XXXXX", "7925130XXXX", "792513[1-5]XXXX", "7925136XXXX", "792513[7-8]XXXX", "7925139XXXX",
@@ -45,17 +54,25 @@ const List<Zone> zoneSeed = [
       "79264XXXXXX", "79265XXXXXX", "79266XXXXXX", "79267XXXXXX", "79268XXXXXX", "79269XXXXXX",
       "7929[5-6]XXXXXX", "79299XXXXXX", "7936000XXXX", "7936600XXXX", "7936777XXXX",
     ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "*", type: "=", group: "104"),
+      GroupRule(limitSlot: 3, alg: "D", type: "_", group: "101"),
+    ],
   ),
   Zone(
     id: "megafon_sz",
     name: "МегаФон СЗ",
     region: "СЗ",
     icon: "napravleine/megafon_sz.png",
+    billingCode: "NZ",
     defCodes: [
       "792109XXXXX", "7921111XXXX", "792118XXXXX", "79213XXXXXX", "79214[0-4]XXXXX", "79215[5-9]XXXXX",
       "79216[3-5]XXXXX", "79217[4-9]XXXXX", "792184[5-9]XXXX", "792185[5-9]XXXX", "79218[6-9]XXXXX", "79219XXXXXX",
       "79291[0-1]XXXXX", "793100[0-8]XXXX", "79312XXXXXX", "79313[0-7]XXXXX", "793138[0-3]XXXX", "793153XXXXX",
       "793154[0-3]XXXX", "7931576XXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 2, alg: "D", type: "=", group: "101"),
     ],
   ),
   Zone(
@@ -63,6 +80,7 @@ const List<Zone> zoneSeed = [
     name: "МегаФон РФ",
     region: "РФ",
     icon: "napravleine/megafon_ru.png",
+    billingCode: "NR",
     defCodes: [
       "79200[0-7]XXXXX", "792008XXXXX", "792009XXXXX", "792010XXXXX", "7920110XXXX", "7920111XXXX",
       "792011[2-9]XXXX", "79201[2-4]XXXXX", "79201[5-9]XXXXX", "792020XXXXX", "79202[1-2]XXXXX", "792023XXXXX",
@@ -249,12 +267,16 @@ const List<Zone> zoneSeed = [
       "793891[0-2]XXXX", "793891[3-5]XXXX", "793898[4-6]XXXX", "7938987[0-1]XXX", "793899[4-9]XXXX", "79397[0-1]XXXXX",
       "793972XXXXX", "793973XXXXX", "793974XXXXX", "793975XXXXX", "7997445[0-6]XXX",
     ],
+    groupRules: [
+      GroupRule(limitSlot: 3, alg: "D", type: "_", group: "101"),
+    ],
   ),
   Zone(
     id: "beeline_spb",
     name: "Билайн СПб",
     region: "СПб",
     icon: "napravleine/beeline_spb.png",
+    billingCode: "BS",
     defCodes: [
       "790309[2-9]XXXX", "79052[0-2]XXXXX", "790523[0-6]XXXX", "79052[5-8]XXXXX", "790622[5-9]XXXX", "79062[4-7]XXXXX",
       "790957[7-9]XXXX", "790958XXXXX", "790959[0-3]XXXX", "79602[3-8]XXXXX", "796160[7-9]XXXX", "796161[0-2]XXXX",
@@ -266,12 +288,19 @@ const List<Zone> zoneSeed = [
       "796755[0-3]XXXX", "796756[0-4]XXXX", "796757[0-4]XXXX", "796759XXXXX", "7967625XXXX", "796796[7-9]XXXX",
       "796797[3-9]XXXX", "796818XXXXX", "796819[0-4]XXXX", "796819[5-6]XXXX", "79697[0-3]XXXXX", "796979XXXXX",
     ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: ">", type: "=", group: "102"),
+      GroupRule(limitSlot: 1, alg: ">", type: "=", group: "162"),
+      GroupRule(limitSlot: 1, alg: ">", type: "_", group: "202"),
+      GroupRule(limitSlot: 3, alg: "D", type: "=", group: "205"),
+    ],
   ),
   Zone(
     id: "beeline_msk",
     name: "Билайн Мск",
     region: "Мск",
     icon: "napravleine/beeline_msk.png",
+    billingCode: "BM",
     defCodes: [
       "79030[0-1]XXXXX", "79031XXXXXX", "79032XXXXXX", "7903363XXXX", "79035XXXXXX", "79036[1-2]XXXXX",
       "79036[6-8]XXXXX", "79037XXXXXX", "79039[6-7]XXXXX", "79055XXXXXX", "79057XXXXXX", "79060XXXXXX",
@@ -283,6 +312,10 @@ const List<Zone> zoneSeed = [
       "7967[0-2]XXXXXX", "79680XXXXXX", "796831XXXXX", "79683[2-3]XXXXX", "796834XXXXX", "79683[5-9]XXXXX",
       "7968[4-7]XXXXXX", "7968[8-9]XXXXXX", "79690XXXXXX", "79691XXXXXX", "79692XXXXXX", "79693[0-3]XXXXX",
       "796934XXXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 2, alg: ">", type: "_", group: "102"),
+      GroupRule(limitSlot: 1, alg: ">", type: "_", group: "202"),
     ],
   ),
   Zone(
@@ -307,6 +340,7 @@ const List<Zone> zoneSeed = [
     name: "Билайн РФ",
     region: "РФ",
     icon: "napravleine/beeline_ru.png",
+    billingCode: "BR",
     defCodes: [
       "790033[5-9]XXXX", "790034[0-4]XXXX", "79020[5-7]XXXXX", "790252XXXXX", "790255[3-7]XXXX", "7902559XXXX",
       "79030[0-1]XXXXX", "790302[0-3]XXXX", "7903024XXXX", "7903025XXXX", "7903026XXXX", "7903027XXXX",
@@ -568,16 +602,29 @@ const List<Zone> zoneSeed = [
       "7969759XXXX", "796976[0-6]XXXX", "796977[0-2]XXXX", "796977[8-9]XXXX", "796979XXXXX", "796980XXXXX",
       "796981[0-1]XXXX", "796982[0-5]XXXX",
     ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "<", type: "=", group: "155"),
+      GroupRule(limitSlot: 2, alg: ">", type: "_", group: "102"),
+      GroupRule(limitSlot: 1, alg: ">", type: "_", group: "202"),
+    ],
   ),
   Zone(
     id: "mts_spb",
     name: "МТС СПб",
     region: "СПб",
     icon: "napravleine/mts_spb.png",
+    billingCode: "SS",
     defCodes: [
       "79110[0-3]XXXXX", "79110[8-9]XXXXX", "7911[1-2]XXXXXX", "79117XXXXXX", "79118[1-4]XXXXX", "79119XXXXXX",
       "79811XXXXXX", "79816[8-9]XXXXX", "79817XXXXXX", "79818[0-1]XXXXX", "79818[2-5]XXXXX", "798186[0-4]XXXX",
       "79818[7-9]XXXXX", "79819XXXXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 0, alg: "D", type: "=", group: "103"),
+      GroupRule(limitSlot: 3, alg: ">", type: "_", group: "102"),
+      GroupRule(limitSlot: 3, alg: ">", type: "=", group: "162"),
+      GroupRule(limitSlot: 2, alg: "D", type: "=", group: "205"),
+      GroupRule(limitSlot: 2, alg: "D", type: "=", group: "206"),
     ],
   ),
   Zone(
@@ -585,6 +632,7 @@ const List<Zone> zoneSeed = [
     name: "МТС Мск",
     region: "Мск",
     icon: "napravleine/mts_msk.png",
+    billingCode: "SM",
     defCodes: [
       "791000[0-5]XXXX", "791000[8-9]XXXX", "7910013XXXX", "7910015XXXX", "7910019XXXX", "791004[8-9]XXXX",
       "7910050XXXX", "791008[1-9]XXXX", "79104XXXXXX", "7915[0-4]XXXXXX", "7916XXXXXXX", "79175XXXXXX",
@@ -596,16 +644,27 @@ const List<Zone> zoneSeed = [
       "79857[3-5]XXXXX", "79857[6-9]XXXXX", "79858XXXXXX", "7985904XXXX", "79859[1-2]XXXXX", "79859[6-7]XXXXX",
       "798599XXXXX",
     ],
+    groupRules: [
+      GroupRule(limitSlot: 2, alg: "*", type: "=", group: "105"),
+      GroupRule(limitSlot: 2, alg: ">", type: "-", group: "106"),
+    ],
   ),
   Zone(
     id: "tele2_spb",
     name: "Tele2 СПб",
     region: "СПб",
     icon: "napravleine/tele2_spb.png",
+    billingCode: "TS",
     defCodes: [
       "790433XXXXX", "790451XXXXX", "790455XXXXX", "79046[0-1]XXXXX", "79046[3-4]XXXXX", "79500[0-4]XXXXX",
       "795022XXXXX", "79516[4-8]XXXXX", "795209[5-9]XXXX", "79522[0-4]XXXXX", "79522[6-8]XXXXX", "79523[5-9]XXXXX",
       "795266[5-9]XXXX", "79531[4-7]XXXXX", "79533[4-7]XXXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: ">", type: "=", group: "109"),
+      GroupRule(limitSlot: 1, alg: ">", type: "=", group: "209"),
+      GroupRule(limitSlot: 1, alg: ">", type: "=", group: "210"),
+      GroupRule(limitSlot: 3, alg: ">", type: "_", group: "102"),
     ],
   ),
   Zone(
@@ -613,8 +672,13 @@ const List<Zone> zoneSeed = [
     name: "Kyivstar UA",
     region: "UA",
     icon: "napravleine/kievstar.png",
+    billingCode: "KU",
     defCodes: [
       "38067XXXXXXX", "38098XXXXXXX", "38097XXXXXXX", "38096XXXXXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "*", type: "=", group: "111"),
+      GroupRule(limitSlot: 1, alg: "D", type: "=", group: "232"),
     ],
   ),
   Zone(
@@ -622,6 +686,7 @@ const List<Zone> zoneSeed = [
     name: "Ростелеком СПб (городские)",
     region: "СПб",
     icon: "napravleine/rostel_spb_gor.png",
+    billingCode: "PR",
     defCodes: [
       "7812208XXXX", "7812210XXXX", "7812213XXXX", "781221[8-9]XXXX", "7812222XXXX", "78122240XXX",
       "78122241[0-3]XX", "781222414[0-7]X", "7812224148[0-7]", "78122241489", "7812224149X", "78122241[5-9]XX",
@@ -1100,15 +1165,22 @@ const List<Zone> zoneSeed = [
       "7812786754[0-4]", "7812786754[6-9]", "781278675[5-9]X", "78127867[6-9]XX", "7812786[8-9]XXX", "781279[3-8]XXXX",
       "7812799[0-4]XXX",
     ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "D", type: "_", group: "220"),
+    ],
   ),
   Zone(
     id: "rostel_spb_mob",
     name: "Ростелеком СПб (мобильные)",
     region: "СПб",
     icon: "napravleine/rostel_spb_mob.png",
+    billingCode: "SR",
     defCodes: [
       "799100[0-4]XXXX", "799100[5-9]XXXX", "799101[0-2]XXXX", "799101[3-6]XXXX", "799191XXXXX", "799199[0-3]XXXX",
       "799199[5-9]XXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "D", type: "_", group: "220"),
     ],
   ),
   Zone(
@@ -1116,6 +1188,7 @@ const List<Zone> zoneSeed = [
     name: "Все операторы, СПб",
     region: "СПб",
     icon: "napravleine/hz.png",
+    billingCode: "AS",
     defCodes: [
       "79013[0-8]XXXXX", "790139[1-9]XXXX", "790197XXXXX", "790309[2-9]XXXX", "790433XXXXX", "790451XXXXX",
       "790455XXXXX", "79046[0-1]XXXXX", "79046[3-4]XXXXX", "79052[0-2]XXXXX", "790523[0-6]XXXX", "79052[5-8]XXXXX",
@@ -1141,14 +1214,23 @@ const List<Zone> zoneSeed = [
       "79819XXXXXX", "799100[0-4]XXXX", "799100[5-9]XXXX", "799101[0-2]XXXX", "799101[3-6]XXXX", "799191XXXXX",
       "799199[0-3]XXXX", "799199[5-9]XXXX", "79992[0-1]XXXXX", "7999779[0-8]XXX", "7999940XXXX",
     ],
+    groupRules: [
+      GroupRule(limitSlot: 3, alg: ">", type: "_", group: "102"),
+      GroupRule(limitSlot: 3, alg: ">", type: "=", group: "162"),
+      GroupRule(limitSlot: 2, alg: "D", type: "=", group: "205"),
+    ],
   ),
   Zone(
     id: "all_tj",
     name: "Все операторы, Таджикистан",
     region: "TJ",
     icon: "napravleine/hz.png",
+    billingCode: "AT",
     defCodes: [
       "992XXXXXXXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "D", type: "=", group: "233"),
     ],
   ),
   Zone(
@@ -1156,8 +1238,12 @@ const List<Zone> zoneSeed = [
     name: "Все операторы, Украина",
     region: "UA",
     icon: "napravleine/hz.png",
+    billingCode: "AU",
     defCodes: [
       "380XXXXXXXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "D", type: "=", group: "232"),
     ],
   ),
   Zone(
@@ -1165,8 +1251,12 @@ const List<Zone> zoneSeed = [
     name: "Все операторы, Узбекистан",
     region: "UZ",
     icon: "napravleine/hz.png",
+    billingCode: "AZ",
     defCodes: [
       "998XXXXXXX",
+    ],
+    groupRules: [
+      GroupRule(limitSlot: 1, alg: "D", type: "=", group: "232"),
     ],
   ),
 ];

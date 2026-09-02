@@ -13,32 +13,31 @@ class IconsPage extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(22),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Container(
-        padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-        decoration: BoxDecoration(
-          color: T.surface,
-          borderRadius: BorderRadius.circular(T.radiusCard),
-          boxShadow: T.shadow,
-        ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Набор иконок GostSimBox', style: T.screenTitle),
-          const SizedBox(height: 6),
-          SizedBox(
-            width: 780,
-            child: Text(
-              'Папка — семантическая ось, имя файла — сырое значение протокола. Все глифы 16×16, '
-              'рендер только в 16px или целочисленном кратном с nearest-neighbour. '
-              'Наведите на иконку — в подсказке сырой код.',
-              style: T.caption.copyWith(height: 1.5),
-            ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
+          decoration: BoxDecoration(
+            color: T.surface,
+            borderRadius: BorderRadius.circular(T.radiusCard),
+            boxShadow: T.shadow,
           ),
-        ]),
-      ),
-      const SizedBox(height: 18),
-      for (final g in iconCatalog) ...[
-        _group(g),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Набор иконок GostSimBox', style: T.screenTitle),
+            const SizedBox(height: 6),
+            SizedBox(
+              width: 780,
+              child: Text(
+                'Наведите на иконку — в Tooltip подсказка .',
+                style: T.caption.copyWith(height: 1.5),
+              ),
+            ),
+          ]),
+        ),
         const SizedBox(height: 18),
-      ],
+        for (final g in iconCatalog) ...[
+          _group(g),
+          const SizedBox(height: 18),
+        ],
       ]),
     );
   }
@@ -92,7 +91,8 @@ class IconsPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(label, style: T.cell, overflow: TextOverflow.ellipsis),
-                  Text(code, style: T.mono.copyWith(fontSize: 10, color: T.fg2),
+                  Text(code,
+                      style: T.mono.copyWith(fontSize: 10, color: T.fg2),
                       overflow: TextOverflow.ellipsis),
                 ],
               ),
