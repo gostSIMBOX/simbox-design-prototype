@@ -6,16 +6,16 @@ import 'fugue_icon.dart';
 
 const _tabs = <(AdmPage, String, String)>[
   (AdmPage.sim, 'Симки', 'free.png'),
-  (AdmPage.dongle, 'Свистки (nm)', 'dongle1550.png'),
-  (AdmPage.diagmode, 'Свистки (um)', 'diagmode/diagmode_update.png'),
+  (AdmPage.dongle, 'Модемы', 'dongle1550.png'),
+  (AdmPage.diagmode, 'DiagMode', 'fugue:processor.png'),
   (AdmPage.readers, 'Ридеры', 'pl2303.png'),
   (AdmPage.hubs, 'Хабы', 'usb/hub_16.png'),
   (AdmPage.nabor, 'Наборы команд', 'fugue:application-list.png'),
-  (AdmPage.zones, 'Направления', 'napravleine/hz.png'),
+  (AdmPage.zones, 'Направления', 'fugue:direction.png'),
   (AdmPage.plan, 'Планы', 'clock.png'),
   (AdmPage.proc, 'Процессы', 'conn.png'),
-  (AdmPage.bablo, 'Биллинг', 'may.png'),
-  (AdmPage.upgrade, 'Обновление', 'power.png'),
+  (AdmPage.bablo, 'Биллинг', 'fugue:money.png'),
+  (AdmPage.upgrade, 'Обновление', 'fugue:terminal.png'),
   (AdmPage.debug, 'Debug', 'logussd.png'),
   (AdmPage.icons, 'Иконки', 'qos/ivip.png'),
 ];
@@ -38,7 +38,10 @@ class Sidebar extends StatelessWidget {
       decoration: const BoxDecoration(
         color: T.surface,
         border: Border(right: BorderSide(color: T.border)),
-        boxShadow: [BoxShadow(color: Color(0x249CB2C2), blurRadius: 32, offset: Offset(0, 1))],
+        boxShadow: [
+          BoxShadow(
+              color: Color(0x249CB2C2), blurRadius: 32, offset: Offset(0, 1))
+        ],
       ),
       child: Column(children: [
         _LogoHeader(compact: compact, onTap: s.toggleNav),
@@ -49,7 +52,8 @@ class Sidebar extends StatelessWidget {
               for (final tab in _tabs)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 2),
-                  child: _NavItem(tab.$1, tab.$2, tab.$3, s.page == tab.$1, compact),
+                  child: _NavItem(
+                      tab.$1, tab.$2, tab.$3, s.page == tab.$1, compact),
                 ),
             ],
           ),
@@ -82,9 +86,13 @@ class _LogoHeader extends StatelessWidget {
             ),
             child: compact
                 ? Image.asset('assets/brand/logo_transparent.png',
-                    height: 34, width: 34, errorBuilder: (_, __, ___) => const SizedBox(width: 34, height: 34))
+                    height: 34,
+                    width: 34,
+                    errorBuilder: (_, __, ___) =>
+                        const SizedBox(width: 34, height: 34))
                 : Image.asset('assets/brand/logo_wide_transparent.png',
-                    height: 30, errorBuilder: (_, __, ___) => const SizedBox(height: 30)),
+                    height: 30,
+                    errorBuilder: (_, __, ___) => const SizedBox(height: 30)),
           ),
         ),
       ),
@@ -113,7 +121,8 @@ class _NavItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
           child: Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: compact ? MainAxisAlignment.center : MainAxisAlignment.start,
+            mainAxisAlignment:
+                compact ? MainAxisAlignment.center : MainAxisAlignment.start,
             children: [
               Opacity(
                 opacity: active ? 1 : 0.75,
