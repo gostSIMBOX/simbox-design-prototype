@@ -13,7 +13,7 @@ const _tabs = <(AdmPage, String, String)>[
   (AdmPage.nabor, 'Наборы команд', 'fugue:application-list.png'),
   (AdmPage.zones, 'Направления', 'fugue:direction.png'),
   (AdmPage.plan, 'Планы', 'clock.png'),
-  (AdmPage.proc, 'Процессы', 'conn.png'),
+  (AdmPage.proc, 'Процессы', 'fugue:application-monitor.png'),
   (AdmPage.bablo, 'Биллинг', 'fugue:money.png'),
   (AdmPage.upgrade, 'Обновление', 'fugue:terminal.png'),
   (AdmPage.debug, 'Debug', 'logussd.png'),

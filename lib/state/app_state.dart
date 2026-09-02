@@ -5,6 +5,9 @@ import '../data/mock.dart';
 import '../features/command_sets/controller.dart';
 import '../features/command_sets/repository.dart';
 import '../features/command_sets/seed.dart';
+import '../features/plans/controller.dart';
+import '../features/plans/repository.dart';
+import '../features/plans/seed.dart';
 import '../features/zones/controller.dart';
 import '../features/zones/repository.dart';
 import '../features/zones/seed.dart';
@@ -35,6 +38,7 @@ class Toast {
 class AppState extends ChangeNotifier {
   late final CommandSetController commandSets;
   late final ZoneController zones;
+  late final PlanController plans;
   AdmPage page = AdmPage.sim;
   final Set<int> selected = <int>{};
   String? sortKey;
@@ -59,16 +63,6 @@ class AppState extends ChangeNotifier {
   final Map<int, int> pauseOverride = {};
   final Map<int, int> flashProgress = {4: 62, 6: 100};
 
-  final Map<String, bool> planShow = {
-    'modes': true,
-    'timings': true,
-    'sched': true,
-    'fwd': true,
-    'gin': true,
-    'gsms': true,
-    'napr': true,
-  };
-
   final ValueNotifier<Toast?> toast = ValueNotifier(null);
 
   Timer? _timer;
@@ -81,6 +75,12 @@ class AppState extends ChangeNotifier {
     zones = ZoneController(InMemoryZoneRepository(zoneSeed));
     zones.addListener(_forwardZones);
     zones.load();
+    plans = PlanController(
+      InMemoryPlanRepository(planSeed, liveSimPlanIds: () => sims.map((s) => s.plan).toList()),
+      usageCount: (id) => sims.where((s) => s.plan == id).length,
+    );
+    plans.addListener(_forwardPlans);
+    plans.load();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       now = DateTime.now();
       if (liveRefresh && page == AdmPage.diagmode) {
@@ -97,12 +97,15 @@ class AppState extends ChangeNotifier {
     commandSets.dispose();
     zones.removeListener(_forwardZones);
     zones.dispose();
+    plans.removeListener(_forwardPlans);
+    plans.dispose();
     toast.dispose();
     super.dispose();
   }
 
   void _forwardCommandSets() => notifyListeners();
   void _forwardZones() => notifyListeners();
+  void _forwardPlans() => notifyListeners();
 
   // ---- navigation ----------------------------------------------------------
 
@@ -369,11 +372,6 @@ class AppState extends ChangeNotifier {
     for (final r in rows) {
       pauseOverride[r.id] = value;
     }
-  }
-
-  void setPlanGroup(String key, bool on) {
-    planShow[key] = on;
-    notifyListeners();
   }
 
   void setQueueMode(bool v) {

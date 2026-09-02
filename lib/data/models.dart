@@ -292,12 +292,6 @@ class LogEntry {
   const LogEntry(this.time, this.cmd, this.lines, [this.warn = '']);
 }
 
-class PlanRow {
-  final String name, sub;
-  final List<Object> values;
-  const PlanRow(this.name, this.sub, this.values);
-}
-
 class BillRow {
   final String date, code, name, minutes, money;
   const BillRow(this.date, this.code, this.name, this.minutes, this.money);

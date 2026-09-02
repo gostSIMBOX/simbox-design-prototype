@@ -62,7 +62,7 @@ const sims = <Sim>[
       io: 'W',
       qos: 'NOR',
       napr: 'BS',
-      plan: 'beeline_spb',
+      plan: 'beeline_spb_good',
       nabor: 'beeline_spb',
       tarif: 'L200',
       number: '9037761234',
@@ -162,7 +162,7 @@ const sims = <Sim>[
       io: 'I',
       qos: 'VIP',
       napr: 'TS',
-      plan: 'tele2_spb',
+      plan: 'tele2_spb_good',
       nabor: 'tele2_spb',
       tarif: 'BL',
       number: '9506660011',
@@ -213,7 +213,7 @@ const sims = <Sim>[
       io: 'O',
       qos: 'BAD',
       napr: 'NZ',
-      plan: 'megafon_msk',
+      plan: 'megafon_msk_good',
       nabor: 'megafon_msk',
       tarif: 'MC',
       number: '9218887766',
@@ -363,7 +363,7 @@ const sims = <Sim>[
       spec: 'CAROUSEL',
       qos: 'NOS',
       napr: 'LB',
-      plan: 'life',
+      plan: 'default',
       nabor: 'life',
       tarif: 'LT',
       number: '2955550033',
@@ -550,15 +550,6 @@ const readers = <Reader>[
       spn: '', iccid: '8979007112345630071', pin: '', imsi: '', ki: '00', dataport: '/dev/ttyUSB4'),
   Reader(id: 206, model: '', device: 'reader6', lock: '', state: 'Not connected',
       spn: '', iccid: '', pin: '', imsi: '', ki: '', dataport: '/dev/ttyUSB5'),
-];
-
-const planRows = <PlanRow>[
-  PlanRow('default', 'default',
-      [5, 1, 5, 1, 1, 1, 1, 1, 0, 5, 120, 40, -1, -1, 0, 5, 15, 2, 10, '*', 9000, 10000]),
-  PlanRow('beeline_spb', 'beeline_spb',
-      [8, 2, 8, 1, 1, 0, 1, 1, 0, 5, 150, 45, 9, 21, 1, 5, 15, 2, 10, 'B', 9000, 10000]),
-  PlanRow('tele2_spb', 'tele2_spb',
-      [6, 1, 6, 1, 1, 1, 1, 0, 0, 4, 100, 30, 8, 23, 0, 4, 12, 3, 12, 'T', 8000, 9500]),
 ];
 
 const billing = <BillRow>[
