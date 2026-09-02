@@ -9,6 +9,7 @@ import 'widgets/status_bar.dart';
 import 'pages/sims_page.dart';
 import 'pages/dongles_page.dart';
 import 'pages/diagmode_page.dart';
+import 'pages/readers_page.dart';
 import 'pages/hubs_page.dart';
 import 'pages/nabor_page.dart';
 import 'pages/zones_page.dart';
@@ -124,6 +125,7 @@ class _AdminShellState extends State<AdminShell> {
         AdmPage.sim => const SimsPage(),
         AdmPage.dongle => const DonglesPage(),
         AdmPage.diagmode => const DiagmodePage(),
+        AdmPage.readers => const ReadersPage(),
         AdmPage.hubs => const HubsPage(),
         AdmPage.nabor => const NaborPage(),
         AdmPage.zones => const ZonesPage(),

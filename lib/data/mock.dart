@@ -534,6 +534,24 @@ const hubTree = <HubNode>[
   ], device: 'Port 2: Dev 4, Class=vend.', port: '02:4:2'),
 ];
 
+const readers = <Reader>[
+  Reader(id: 201, model: '1001', device: 'reader1', lock: '', state: 'Not connected',
+      spn: '', iccid: '', pin: '', imsi: '', ki: '', dataport: '/dev/ttyUSB0'),
+  Reader(id: 202, model: '1001', device: 'reader2', lock: 'locked', state: 'OK',
+      spn: 'Beeline', iccid: '8979025912345634471', pin: '1234', imsi: '250014912345671',
+      ki: 'A1B2C3D4E5F60718293A4B5C6D7E8F90', dataport: '/dev/ttyUSB1'),
+  Reader(id: 203, model: '1001', device: 'reader3', lock: '', state: 'Reading',
+      stateFault: '12', spn: 'MTS', iccid: '8977011912345631183', pin: '', imsi: '250991912345699',
+      ki: '00', progressDone: 812, progressTotal: 31044, dataport: '/dev/ttyUSB2'),
+  Reader(id: 204, model: '1001', device: 'reader4', lock: 'locked', state: 'OK',
+      spn: 'MegaFon', iccid: '8977029012345632290', pin: '0000', imsi: '250021912345678',
+      ki: 'F3C9A87654321000FEDCBA9876543210', dataport: '/dev/ttyUSB3'),
+  Reader(id: 205, model: '1001', device: 'reader5', lock: '', state: 'Error',
+      spn: '', iccid: '8979007112345630071', pin: '', imsi: '', ki: '00', dataport: '/dev/ttyUSB4'),
+  Reader(id: 206, model: '', device: 'reader6', lock: '', state: 'Not connected',
+      spn: '', iccid: '', pin: '', imsi: '', ki: '', dataport: '/dev/ttyUSB5'),
+];
+
 const planRows = <PlanRow>[
   PlanRow('default', 'default',
       [5, 1, 5, 1, 1, 1, 1, 1, 0, 5, 120, 40, -1, -1, 0, 5, 15, 2, 10, '*', 9000, 10000]),

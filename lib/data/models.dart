@@ -191,6 +191,53 @@ class HubNode {
       {required this.id, required this.icons, required this.device, required this.port});
 }
 
+/// A physical SIM-card-reader device (`readers.php`), distinct from `HubNode`'s USB-hub
+/// topology. Card-keyed fields (iccid/imsi/ki/progress/stateFault) are blank when no card
+/// is currently seated in the reader.
+class Reader {
+  final int id;
+  final String model, device, lock, state, stateFault, spn, iccid, pin, imsi, ki, dataport;
+  final int progressDone, progressTotal;
+
+  const Reader({
+    required this.id,
+    required this.model,
+    required this.device,
+    required this.lock,
+    required this.state,
+    this.stateFault = '',
+    required this.spn,
+    required this.iccid,
+    required this.pin,
+    required this.imsi,
+    required this.ki,
+    this.progressDone = 0,
+    this.progressTotal = 0,
+    required this.dataport,
+  });
+
+  bool get hasCard => iccid.isNotEmpty;
+  String get progressDisplay => progressDone > 0 ? '$progressDone/$progressTotal' : '';
+
+  /// Search haystack for the toolbar's filter box (mirrors Dongle.haystack/Sim.haystack).
+  String get haystack => '$device $state $spn $iccid $imsi $dataport'.toLowerCase();
+
+  Object? field(String k) => switch (k) {
+        'model' => model,
+        'device' => device,
+        'lock' => lock,
+        'state' => state,
+        'spn' => spn,
+        'iccid' => iccid,
+        'pin' => pin,
+        'imsi' => imsi,
+        'ki' => ki,
+        'progress' => progressDone,
+        'dataport' => dataport,
+        _ => null,
+      };
+}
+
 /// A 16px glyph reference: asset path (without the `assets/imgs/` prefix) + tooltip.
 class IcoRef {
   final String path;

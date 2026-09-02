@@ -13,6 +13,7 @@ enum AdmPage {
   sim,
   dongle,
   diagmode,
+  readers,
   hubs,
   nabor,
   zones,
@@ -248,6 +249,15 @@ class AppState extends ChangeNotifier {
     return list;
   }
 
+  List<Reader> get visibleReaders {
+    var list = readers
+        .where((r) => query.isEmpty || r.haystack.contains(query.toLowerCase()))
+        .toList();
+    final k = sortKey;
+    if (k != null) list.sort((a, b) => _cmp(a.field(k), b.field(k)) * sortDir);
+    return list;
+  }
+
   List<UmDevice> get umDevices => [
         UmDevice(
             id: 91,
@@ -324,6 +334,20 @@ class AppState extends ChangeNotifier {
     final rows = visibleDongles.where((d) => selected.contains(d.id)).toList();
     if (rows.isEmpty) {
       showToast('Не выбрано ни одного свистка', 'stop.png');
+      return;
+    }
+    for (final r in rows.take(4)) {
+      final e = build(r);
+      push(e.cmd, e.lines, e.warn);
+    }
+    showToast(toastText ?? 'Отправлено: ${rows.length}', icon);
+  }
+
+  void runOnReaders(LogEntry Function(Reader) build,
+      {String? toastText, String icon = 'free.png'}) {
+    final rows = visibleReaders.where((r) => selected.contains(r.id)).toList();
+    if (rows.isEmpty) {
+      showToast('Не выбрано ни одного ридера', 'stop.png');
       return;
     }
     for (final r in rows.take(4)) {

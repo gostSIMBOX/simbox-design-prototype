@@ -8,6 +8,7 @@ const _tabs = <(AdmPage, String, String)>[
   (AdmPage.sim, 'Симки', 'free.png'),
   (AdmPage.dongle, 'Свистки (nm)', 'dongle1550.png'),
   (AdmPage.diagmode, 'Свистки (um)', 'diagmode/diagmode_update.png'),
+  (AdmPage.readers, 'Ридеры', 'pl2303.png'),
   (AdmPage.hubs, 'Хабы', 'usb/hub_16.png'),
   (AdmPage.nabor, 'Наборы команд', 'fugue:application-list.png'),
   (AdmPage.zones, 'Направления', 'napravleine/hz.png'),

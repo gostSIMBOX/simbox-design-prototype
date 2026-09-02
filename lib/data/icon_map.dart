@@ -158,4 +158,12 @@ class Ico {
         _ => 'dongle.png',
       },
       'модем $model');
+
+  /// Reader hardware model icon (`readers.php`'s `$model` code). Unrecognized/absent
+  /// models render no icon rather than falling back to a generic glyph, since no such
+  /// asset exists for readers.
+  static IcoRef? readerModel(String model) => switch (model) {
+        '1001' => const IcoRef('pl2303.png', 'PL2303'),
+        _ => null,
+      };
 }
