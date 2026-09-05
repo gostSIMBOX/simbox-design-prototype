@@ -32,7 +32,8 @@ bool _belongsToCommandSet(Zone zone, String commandSetId) =>
 class DirectionsSection extends StatelessWidget {
   final PlanController controller;
   final ZoneController zones;
-  const DirectionsSection({super.key, required this.controller, required this.zones});
+  const DirectionsSection(
+      {super.key, required this.controller, required this.zones});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,11 @@ class DirectionsSection extends StatelessWidget {
           children: [
             for (final slot in plan.directions)
               slot.editable
-                  ? _EditableSlotRow(controller: controller, zones: zones, plan: plan, slot: slot)
+                  ? _EditableSlotRow(
+                      controller: controller,
+                      zones: zones,
+                      plan: plan,
+                      slot: slot)
                   : _CompatibilitySlotRow(slot: slot),
           ],
         ),
@@ -60,7 +65,10 @@ class _EditableSlotRow extends StatelessWidget {
   final Plan plan;
   final DirectionSlot slot;
   const _EditableSlotRow(
-      {required this.controller, required this.zones, required this.plan, required this.slot});
+      {required this.controller,
+      required this.zones,
+      required this.plan,
+      required this.slot});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +76,8 @@ class _EditableSlotRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Слот L${slot.slot}', style: T.body.copyWith(fontWeight: FontWeight.w600)),
+        Text('Слот L${slot.slot}',
+            style: T.body.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
         Wrap(spacing: 12, runSpacing: 8, children: [
           IntField(
@@ -80,23 +89,29 @@ class _EditableSlotRow extends StatelessWidget {
           BoolField(
             label: 'не учитывать различие',
             value: slot.nodiff,
-            onChanged: (v) => controller.updateDirectionSlot(slot.slot, nodiff: v),
+            onChanged: (v) =>
+                controller.updateDirectionSlot(slot.slot, nodiff: v),
           ),
           IntField(
-            key: ValueKey('limitSoft-${plan.id}-${slot.slot}-${slot.limitSoft}'),
+            key:
+                ValueKey('limitSoft-${plan.id}-${slot.slot}-${slot.limitSoft}'),
             label: 'мягкий лимит',
             value: slot.limitSoft,
-            onChanged: (v) => controller.updateDirectionSlot(slot.slot, limitSoft: v),
+            onChanged: (v) =>
+                controller.updateDirectionSlot(slot.slot, limitSoft: v),
           ),
           IntField(
-            key: ValueKey('limitHard-${plan.id}-${slot.slot}-${slot.limitHard}'),
+            key:
+                ValueKey('limitHard-${plan.id}-${slot.slot}-${slot.limitHard}'),
             label: 'жёсткий лимит',
             value: slot.limitHard,
-            onChanged: (v) => controller.updateDirectionSlot(slot.slot, limitHard: v),
+            onChanged: (v) =>
+                controller.updateDirectionSlot(slot.slot, limitHard: v),
           ),
         ]),
         const SizedBox(height: 6),
-        Text('Маршруты, использующие этот слот (из Направления):', style: T.cellSub),
+        Text('Маршруты, использующие этот слот (из Направления):',
+            style: T.cellSub),
         const SizedBox(height: 4),
         if (routes.isEmpty)
           Text('нет данных для этого набора команд', style: T.caption)
@@ -108,14 +123,17 @@ class _EditableSlotRow extends StatelessWidget {
               for (final route in routes.take(6))
                 Chip(
                   avatar: ZoneIcon(route.zone, size: 14),
-                  label: Text('${route.zone.name} · ${route.zone.billingCode ?? ''}${route.rule.group}',
+                  label: Text(
+                      '${route.zone.name} · ${route.zone.billingCode ?? ''}${route.rule.group}',
                       style: T.cellSub),
                   visualDensity: VisualDensity.compact,
                 ),
               if (routes.length > 6)
                 ActionChip(
-                  label: Text('показать все ${routes.length}', style: T.cellSub),
-                  onPressed: () => _showAllRoutes(context, plan.id, slot.slot, routes),
+                  label:
+                      Text('показать все ${routes.length}', style: T.cellSub),
+                  onPressed: () =>
+                      _showAllRoutes(context, plan.id, slot.slot, routes),
                   visualDensity: VisualDensity.compact,
                 ),
             ],
@@ -124,8 +142,8 @@ class _EditableSlotRow extends StatelessWidget {
     );
   }
 
-  void _showAllRoutes(
-      BuildContext context, String planId, int slot, List<({Zone zone, GroupRule rule})> routes) {
+  void _showAllRoutes(BuildContext context, String planId, int slot,
+      List<({Zone zone, GroupRule rule})> routes) {
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
@@ -140,13 +158,16 @@ class _EditableSlotRow extends StatelessWidget {
                   dense: true,
                   leading: ZoneIcon(route.zone, size: 16),
                   title: Text(route.zone.name),
-                  subtitle: Text('${route.zone.billingCode ?? ''}${route.rule.group}'),
+                  subtitle: Text(
+                      '${route.zone.billingCode ?? ''}${route.rule.group}'),
                 ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Закрыть')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Закрыть')),
         ],
       ),
     );

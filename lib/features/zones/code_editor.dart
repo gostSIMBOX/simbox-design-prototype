@@ -98,7 +98,8 @@ class _ZoneCodeEditorState extends State<ZoneCodeEditor> {
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        child: Text('Каждый код — новая строка. Пустые строки игнорируются.', style: T.caption),
+        child: Text('Каждый код — новая строка. Пустые строки игнорируются.',
+            style: T.caption),
       ),
     ]);
   }

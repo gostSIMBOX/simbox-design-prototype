@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/icons_catalog.dart';
+import '../data/terminology.dart';
 import '../design/tokens.dart';
 import '../widgets/adm_icon.dart';
 
@@ -22,12 +23,12 @@ class IconsPage extends StatelessWidget {
           ),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Набор иконок GostSimBox', style: T.screenTitle),
+            const Text('Легенда иконок GostSimBox', style: T.screenTitle),
             const SizedBox(height: 6),
             SizedBox(
               width: 780,
               child: Text(
-                'Наведите на иконку — в Tooltip подсказка .',
+                'Наведите на иконку, чтобы увидеть полное значение, raw-код и путь к файлу.',
                 style: T.caption.copyWith(height: 1.5),
               ),
             ),
@@ -73,13 +74,15 @@ class IconsPage extends StatelessWidget {
     );
   }
 
-  Widget _tile(String spec) {
-    final parts = spec.split('|');
-    final file = parts[0], code = parts[1], label = parts[2];
+  Widget _tile(IconLegendItem item) {
+    final term = termById(item.termId, fallbackLabel: item.legacyLabel);
+    final file = item.file, code = item.code;
+    final label = resolveLocalized(term.shortLabel, locale: 'ru');
+    final tooltip = resolveLocalized(term.tooltip, locale: 'ru');
     return SizedBox(
       width: 190,
       child: Tooltip(
-        message: '$code — $label  ($file)',
+        message: '$code — $tooltip ($file)',
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
           child: Row(children: [

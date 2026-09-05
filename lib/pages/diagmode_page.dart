@@ -33,10 +33,21 @@ class _DiagmodePageState extends State<DiagmodePage> {
           key: 'st',
           w: 36,
           title: 'статус',
-          build: (d) => Cell(icons: const [IcoRef('diagmode/diagmode_log.png', 'лог прошивки')])),
-      ColDef(key: 'device', w: 116, label: 'device', build: (d) => Cell(mono: d.device)),
-      ColDef(key: 'model', w: 64, label: 'model', build: (d) => Cell(mono: d.model)),
-      ColDef(key: 'port', w: 116, label: 'port', build: (d) => Cell(mono: d.port)),
+          build: (d) => Cell(icons: const [
+                IcoRef('diagmode/diagmode_log.png', 'лог прошивки')
+              ])),
+      ColDef(
+          key: 'device',
+          w: 116,
+          label: 'device',
+          build: (d) => Cell(mono: d.device)),
+      ColDef(
+          key: 'model',
+          w: 64,
+          label: 'model',
+          build: (d) => Cell(mono: d.model)),
+      ColDef(
+          key: 'port', w: 116, label: 'port', build: (d) => Cell(mono: d.port)),
       ColDef(
           key: 'state',
           w: 48,
@@ -52,7 +63,9 @@ class _DiagmodePageState extends State<DiagmodePage> {
           key: 'pct',
           w: 180,
           label: '%',
-          build: (d) => Cell(text: '${d.pct}%', sub: d.pct >= 100 ? 'завершено' : 'идёт запись')),
+          build: (d) => Cell(
+              text: '${d.pct}%',
+              sub: d.pct >= 100 ? 'завершено' : 'идёт запись')),
     ];
 
     final defaultIds = [for (final c in cols) c.key];
@@ -60,7 +73,8 @@ class _DiagmodePageState extends State<DiagmodePage> {
     final hidden = st.hiddenColumnsFor(AdmPage.diagmode);
     final byKey = {for (final c in cols) c.key: c};
     final visibleCols = [
-      for (final k in order) if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!
+      for (final k in order)
+        if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!
     ];
 
     final groups = <ActionGroup>[
@@ -87,13 +101,17 @@ class _DiagmodePageState extends State<DiagmodePage> {
               AdmButton('Отправить в diagmode',
                   icon: 'diagmode/diagmode_init.png',
                   primary: true,
-                  onPressed: () => st.push('/usr/simbox/actions/diagmode.sh /dev/ttyUSB4',
-                      const [], 'Внимание!!! Вынуть SIM-карту')),
+                  onPressed: () => st.push(
+                      '/usr/simbox/actions/diagmode.sh /dev/ttyUSB4',
+                      const [],
+                      'Внимание!!! Вынуть SIM-карту')),
             ]),
           ),
         ],
-        sharedSettings: (_) =>
-            AdmCheck(value: st.liveRefresh, onChanged: st.setLiveRefresh, label: 'Автообновление (1 сек)'),
+        sharedSettings: (_) => AdmCheck(
+            value: st.liveRefresh,
+            onChanged: st.setLiveRefresh,
+            label: 'Автообновление (1 сек)'),
       ),
     ];
 
@@ -107,7 +125,9 @@ class _DiagmodePageState extends State<DiagmodePage> {
           search: _search,
           onSearch: st.setQuery,
           page: AdmPage.diagmode,
-          allColumns: [for (final c in cols) (key: c.key, label: columnDisplayLabel(c))],
+          allColumns: [
+            for (final c in cols) (key: c.key, label: columnDisplayLabel(c))
+          ],
         ),
         const SizedBox(height: 12),
         Expanded(

@@ -1,8 +1,15 @@
 import 'models.dart';
+import 'terminology.dart';
 
 /// Folder = semantic axis, filename = raw protocol value.
 /// Every mapping keeps the raw code in the tooltip.
 class Ico {
+  static IcoRef _termRef(String file, String termId, String raw) {
+    final term = termById(termId);
+    return IcoRef(
+        file, '$raw — ${resolveLocalized(term.tooltip, locale: 'ru')}');
+  }
+
   static const _naprMap = <String, List<String>>{
     'NS': ['megafon_spb', 'МегаФон СПб'],
     'NM': ['megafon_msk', 'МегаФон Мск'],
@@ -41,47 +48,76 @@ class Ico {
   static List<IcoRef> group(int group, int pause) {
     if (group >= 100 && group <= 299) {
       if (pause == 1) {
-        return const [IcoRef('pause2.png', 'пауза'), IcoRef('day_work.png', 'рабочий день')];
+        return const [
+          IcoRef('pause2.png', 'пауза'),
+          IcoRef('day_work.png', 'рабочий день')
+        ];
       }
       if (pause == 11) {
-        return const [IcoRef('wake.png', 'просыпается'), IcoRef('day_work.png', 'рабочий день')];
+        return const [
+          IcoRef('wake.png', 'просыпается'),
+          IcoRef('day_work.png', 'рабочий день')
+        ];
       }
       if (pause == 21) {
-        return const [IcoRef('sleep.png', 'спит'), IcoRef('day_work.png', 'рабочий день')];
+        return const [
+          IcoRef('sleep.png', 'спит'),
+          IcoRef('day_work.png', 'рабочий день')
+        ];
       }
       return const [IcoRef('play.png', 'в работе')];
     }
-    if (group == 333) return const [IcoRef('high_datt.png', 'автоблок: высокий DATT')];
-    if (group == 334) return const [IcoRef('low_acdl.png', 'автоблок: низкий ACDL')];
-    if (group == 335) return const [IcoRef('blocked_balance.png', 'блок по балансу')];
-    if (group == 336) return const [IcoRef('simblocked.png', 'симка заблокирована')];
-    if (group >= 300 && group <= 399) return const [IcoRef('low_acdl.png', 'низкий ACDL')];
-    if (group >= 400 && group <= 499) return const [IcoRef('low_balance.png', 'низкий баланс')];
+    if (group == 333) {
+      return const [IcoRef('high_datt.png', 'автоблок: высокий DATT')];
+    }
+    if (group == 334) {
+      return const [IcoRef('low_acdl.png', 'автоблок: низкий ACDL')];
+    }
+    if (group == 335) {
+      return const [IcoRef('blocked_balance.png', 'блок по балансу')];
+    }
+    if (group == 336) {
+      return const [IcoRef('simblocked.png', 'симка заблокирована')];
+    }
+    if (group >= 300 && group <= 399) {
+      return const [IcoRef('stop.png', 'другая стоп/сервисная группа 3xx')];
+    }
+    if (group >= 400 && group <= 499) {
+      return const [IcoRef('low_balance.png', 'низкий баланс')];
+    }
     if (group >= 500) return const [IcoRef('blocked.png', 'заблокирована')];
     return const [];
   }
 
   static const _qosMap = <String, List<String>>{
-    'VIP': ['qos/ivip.png', 'достоверные источники'],
-    'GOO': ['qos/igoo.png', 'белый список'],
-    'NOR': ['qos/inor.png', 'нормальные'],
-    'BAD': ['qos/ibad.png', 'чёрный список'],
-    'NEW': ['qos/inew.png', 'новый номер'],
-    'NOS': ['qos/inos.png', 'нет ответа сервера'],
-    'ROB': ['qos/irob.png', 'робот'],
-    'BLO': ['qos/iblo.png', 'блокировка'],
-    'FAST': ['qos/fast.png', 'быстрый'],
-    'VERY': ['qos/very.png', 'очень быстрый'],
-    'SLOW': ['qos/slow.png', 'медленный'],
-    'NEVER': ['qos/never.png', 'никогда'],
+    'VIP': ['qos/ivip.png', 'qos.vip'],
+    'GOO': ['qos/igoo.png', 'qos.goo'],
+    'NOR': ['qos/inor.png', 'qos.nor'],
+    'BAD': ['qos/ibad.png', 'qos.bad'],
+    'NEW': ['qos/inew.png', 'qos.new'],
+    'NOS': ['qos/inos.png', 'qos.nos'],
+    'ROB': ['qos/irob.png', 'qos.rob'],
+    'BLO': ['qos/iblo.png', 'qos.blo'],
+    'NE0': ['qos/ine0.png', 'qos.ne0'],
+    'NEC': ['qos/inec.png', 'qos.nec'],
+    'NEM': ['qos/inem.png', 'qos.nem'],
+    'FAST': ['qos/fast.png', 'incoming.recency.fast'],
+    'VERY': ['qos/very.png', 'incoming.recency.very'],
+    'SLOW': ['qos/slow.png', 'incoming.recency.slow'],
+    'NEVER': ['qos/never.png', 'incoming.recency.never'],
   };
 
   static IcoRef? qos(String q, String io) {
     if (q == 'SOU') {
-      return IcoRef('state/state_sout_${io == 'I' ? 'in' : 'out'}.png', 'SOU — свой себе');
+      final incoming = io == 'I';
+      return _termRef(
+        'state/state_sout_${incoming ? 'in' : 'out'}.png',
+        incoming ? 'call.sou.in' : 'call.sou.out',
+        'SOU',
+      );
     }
     final m = _qosMap[q];
-    return m == null ? null : IcoRef(m[0], '$q — ${m[1]}');
+    return m == null ? null : _termRef(m[0], m[1], q);
   }
 
   static const _specMap = <String, List<String>>{
@@ -96,6 +132,8 @@ class Ico {
     'CAROUSEL': ['spec/carousel.png', 'карусель'],
     'MAG': ['spec/mag.png', 'магазин'],
     'NAV': ['spec/nav.png', 'навигация'],
+    'MON': ['spec/mon.png', 'MON · специальный режим'],
+    'NOTVIP': ['spec/notvip.png', 'политика «не VIP»'],
   };
 
   static IcoRef? spec(String s) {
@@ -104,9 +142,18 @@ class Ico {
   }
 
   static IcoRef? im(String v) {
-    const m = {'A': 'ima', 'B': 'imb', 'C': 'imc', 'D': 'imd', 'E': 'ime', 'N': 'imn'};
+    const m = {
+      'A': 'ima',
+      'B': 'imb',
+      'C': 'imc',
+      'D': 'imd',
+      'E': 'ime',
+      'N': 'imn'
+    };
     final f = m[v];
-    return f == null ? null : IcoRef('im/$f.png', 'мульти-сим $v');
+    return f == null
+        ? null
+        : _termRef('im/$f.png', 'im.im${v.toLowerCase()}', 'IM$v');
   }
 
   static IcoRef? io(String v) => switch (v) {
@@ -117,39 +164,46 @@ class Ico {
       };
 
   static IcoRef cfun(int c) => switch (c) {
-        1 => const IcoRef('p-on.png', 'cfun=1 — передатчик включён'),
-        5 => const IcoRef('p-off.png', 'cfun=5 — передатчик выключен'),
-        4 => const IcoRef('state/cfun/4.png', 'cfun=4 — только приём'),
-        6 => const IcoRef('state/cfun/6.png', 'cfun=6 — перезагрузка'),
+        1 => _termRef('p-on.png', 'modem.cfun.1', 'CFUN=1'),
+        5 => _termRef('p-off.png', 'modem.cfun.5', 'CFUN=5'),
+        4 => _termRef('state/cfun/4.png', 'modem.cfun.4', 'CFUN=4'),
+        6 => _termRef('state/cfun/6.png', 'modem.cfun.6', 'CFUN=6'),
         _ => const IcoRef('state/-1.png', 'cfun неизвестен'),
       };
 
   static IcoRef simst(int v) => switch (v) {
-        0 => const IcoRef('state/simst/0.png', 'simst=0 — SIM не готова'),
-        1 => const IcoRef('state/simst/1.png', 'simst=1 — SIM готова'),
-        4 => const IcoRef('state/simst/4.png', 'simst=4 — SIM занята'),
-        16 => const IcoRef('state/simst/16.png', 'simst=16 — нужен PIN'),
-        255 => const IcoRef('state/simst/255.png', 'simst=255 — нет SIM'),
+        0 => _termRef('state/simst/0.png', 'sim.state.0', 'SIMST=0'),
+        1 || 3 => _termRef('state/simst/1.png', 'sim.state.1', 'SIMST=$v'),
+        4 => _termRef('state/simst/4.png', 'sim.state.4', 'SIMST=4'),
+        16 => _termRef('state/simst/16.png', 'sim.pin_required', 'SIMST=16'),
+        255 => _termRef('state/simst/255.png', 'sim.state.255', 'SIMST=255'),
         _ => const IcoRef('state/-1.png', 'simst неизвестен'),
       };
 
   static IcoRef srvst(int v) => switch (v) {
-        0 => const IcoRef('state/srvst/0.png', 'srvst=0 — нет сети'),
-        1 => const IcoRef('state/srvst/1.png', 'srvst=1 — в сети'),
-        2 => const IcoRef('state/srvst/2.png', 'srvst=2 — поиск сети'),
+        0 => _termRef('state/srvst/0.png', 'network.state.0', 'SRVST=0'),
+        1 => _termRef('state/srvst/1.png', 'network.state.1', 'SRVST=1'),
+        2 => _termRef('state/srvst/2.png', 'network.state.2', 'SRVST=2'),
+        112 => _termRef('state/srvst/112.png', 'network.state.no_valid_sim',
+            'SRVST=1 + invalid SIM'),
         _ => const IcoRef('state/-1.png', 'srvst неизвестен'),
       };
 
   static IcoRef captcha(String c) {
     const m = {
-      'capok': 'капча пройдена',
-      'capnew': 'новая капча',
-      'capfail': 'капча не пройдена'
+      'capok': 'captcha.ok',
+      'capnew': 'captcha.new',
+      'capfail': 'captcha.fail',
+      'ipalevo': 'captcha.pal',
     };
-    return IcoRef('qos/$c.png', '$c — ${m[c] ?? c}');
+    final id = m[c];
+    return id == null
+        ? IcoRef('qos/$c.png', '$c — неизвестное значение')
+        : _termRef('qos/$c.png', id, c);
   }
 
-  static IcoRef rssi(int level) => IcoRef('rssi/rssi-$level.png', 'уровень сигнала $level/4');
+  static IcoRef rssi(int level) =>
+      IcoRef('rssi/rssi-$level.png', 'уровень сигнала $level/4');
 
   static IcoRef dongle(String model) => IcoRef(
       switch (model) {

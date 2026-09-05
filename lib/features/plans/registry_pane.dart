@@ -22,7 +22,9 @@ class PlanRegistryPane extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-            color: T.surface, borderRadius: BorderRadius.circular(T.radiusCard), boxShadow: T.shadow),
+            color: T.surface,
+            borderRadius: BorderRadius.circular(T.radiusCard),
+            boxShadow: T.shadow),
         child: Row(children: [
           const FugueIcon('application-task.png', semanticLabel: 'Планы'),
           const SizedBox(width: 8),
@@ -33,7 +35,9 @@ class PlanRegistryPane extends StatelessWidget {
                 value: controller.selectedId,
                 items: [
                   for (final plan in controller.records)
-                    DropdownMenuItem(value: plan.id, child: Text(plan.id, overflow: TextOverflow.ellipsis)),
+                    DropdownMenuItem(
+                        value: plan.id,
+                        child: Text(plan.id, overflow: TextOverflow.ellipsis)),
                 ],
                 onChanged: (id) {
                   if (id != null) requestPlanSelection(context, controller, id);
@@ -43,9 +47,12 @@ class PlanRegistryPane extends StatelessWidget {
           ),
           IconButton(
             tooltip: 'Добавить план',
-            constraints: const BoxConstraints.tightFor(width: T.narrowHit, height: T.narrowHit),
-            onPressed: () => showCreatePlanDialog(context, controller, commandSets),
-            icon: const FugueIcon('application--plus.png', semanticLabel: 'Добавить план'),
+            constraints: const BoxConstraints.tightFor(
+                width: T.narrowHit, height: T.narrowHit),
+            onPressed: () =>
+                showCreatePlanDialog(context, controller, commandSets),
+            icon: const FugueIcon('application--plus.png',
+                semanticLabel: 'Добавить план'),
           ),
         ]),
       );
@@ -54,7 +61,9 @@ class PlanRegistryPane extends StatelessWidget {
     return Container(
       width: 320,
       decoration: BoxDecoration(
-          color: T.surface, borderRadius: BorderRadius.circular(T.radiusCard), boxShadow: T.shadow),
+          color: T.surface,
+          borderRadius: BorderRadius.circular(T.radiusCard),
+          boxShadow: T.shadow),
       clipBehavior: Clip.antiAlias,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Padding(
@@ -63,15 +72,20 @@ class PlanRegistryPane extends StatelessWidget {
             const Expanded(child: Text('Планы', style: T.panelTitle)),
             IconButton(
               tooltip: 'Добавить план',
-              constraints: const BoxConstraints.tightFor(width: T.denseHit, height: T.denseHit),
-              onPressed: () => showCreatePlanDialog(context, controller, commandSets),
-              icon: const FugueIcon('application--plus.png', semanticLabel: 'Добавить план'),
+              constraints: const BoxConstraints.tightFor(
+                  width: T.denseHit, height: T.denseHit),
+              onPressed: () =>
+                  showCreatePlanDialog(context, controller, commandSets),
+              icon: const FugueIcon('application--plus.png',
+                  semanticLabel: 'Добавить план'),
             ),
             PopupMenuButton<String>(
               tooltip: 'Другие действия',
-              icon: const FugueIcon('ui-menu.png', semanticLabel: 'Другие действия'),
+              icon: const FugueIcon('ui-menu.png',
+                  semanticLabel: 'Другие действия'),
               itemBuilder: (_) => const [
-                PopupMenuItem(value: 'reset', child: Text('Сбросить демо-данные')),
+                PopupMenuItem(
+                    value: 'reset', child: Text('Сбросить демо-данные')),
               ],
               onSelected: (value) {
                 if (value == 'reset') controller.resetDemo();
@@ -90,7 +104,8 @@ class PlanRegistryPane extends StatelessWidget {
               prefixIconConstraints: const BoxConstraints.tightFor(width: 34),
               prefixIcon: const Center(child: FugueIcon('magnifier.png')),
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(T.radiusCtl), borderSide: const BorderSide(color: T.border)),
+                  borderRadius: BorderRadius.circular(T.radiusCtl),
+                  borderSide: const BorderSide(color: T.border)),
             ),
           ),
         ),
@@ -101,11 +116,13 @@ class PlanRegistryPane extends StatelessWidget {
             initialValue: controller.commandSetFilter,
             decoration: InputDecoration(
               isDense: true,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(T.radiusCtl)),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(T.radiusCtl)),
             ),
             items: [
               const DropdownMenuItem(value: null, child: Text('Все наборы')),
-              for (final set in commandSets) DropdownMenuItem(value: set.id, child: Text(set.name)),
+              for (final set in commandSets)
+                DropdownMenuItem(value: set.id, child: Text(set.name)),
             ],
             onChanged: controller.setCommandSetFilter,
           ),
@@ -114,37 +131,59 @@ class PlanRegistryPane extends StatelessWidget {
         Expanded(
           child: controller.visiblePlans.isEmpty
               ? const Center(
-                  child: Padding(padding: EdgeInsets.all(20), child: Text('Планы не найдены', style: T.caption)))
+                  child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Text('Планы не найдены', style: T.caption)))
               : ListView.builder(
                   itemCount: controller.visiblePlans.length,
                   itemBuilder: (context, index) {
                     final plan = controller.visiblePlans[index];
                     final selected = plan.id == controller.selectedId;
                     return Material(
-                      color: selected ? T.rowSel : (index.isOdd ? T.rowOdd : T.rowEven),
+                      color: selected
+                          ? T.rowSel
+                          : (index.isOdd ? T.rowOdd : T.rowEven),
                       child: InkWell(
-                        onTap: () => requestPlanSelection(context, controller, plan.id),
+                        onTap: () =>
+                            requestPlanSelection(context, controller, plan.id),
                         child: Container(
                           constraints: const BoxConstraints(minHeight: 52),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: T.rowSep))),
-                          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Icon(selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                                size: 16, color: selected ? T.brandDeep : T.hairline),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text(plan.id,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: T.body.copyWith(
-                                        fontWeight: selected ? FontWeight.w600 : FontWeight.w400)),
-                                const SizedBox(height: 2),
-                                Text('${plan.commandSetId} · ${controller.usageCount(plan.id)} симок',
-                                    maxLines: 1, overflow: TextOverflow.ellipsis, style: T.cellSub),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          decoration: const BoxDecoration(
+                              border:
+                                  Border(bottom: BorderSide(color: T.rowSep))),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                    selected
+                                        ? Icons.radio_button_checked
+                                        : Icons.radio_button_unchecked,
+                                    size: 16,
+                                    color: selected ? T.brandDeep : T.hairline),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(plan.id,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: T.body.copyWith(
+                                                fontWeight: selected
+                                                    ? FontWeight.w600
+                                                    : FontWeight.w400)),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                            '${plan.commandSetId} · ${controller.usageCount(plan.id)} симок',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: T.cellSub),
+                                      ]),
+                                ),
                               ]),
-                            ),
-                          ]),
                         ),
                       ),
                     );

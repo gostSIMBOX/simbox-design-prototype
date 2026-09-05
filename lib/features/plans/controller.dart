@@ -40,7 +40,8 @@ class PlanController extends ChangeNotifier {
   List<Plan> get records => repository.records;
 
   Plan? get selected =>
-      draft?.working ?? (selectedId == null ? null : repository.byId(selectedId!));
+      draft?.working ??
+      (selectedId == null ? null : repository.byId(selectedId!));
 
   bool get isDirty => draft?.isDirty ?? false;
 
@@ -49,7 +50,8 @@ class PlanController extends ChangeNotifier {
     final filterId = commandSetFilter;
     return records.where((p) {
       final setOk = filterId == null || p.commandSetId == filterId;
-      final queryOk = q.isEmpty || [p.id, p.commandSetId].join(' ').toLowerCase().contains(q);
+      final queryOk = q.isEmpty ||
+          [p.id, p.commandSetId].join(' ').toLowerCase().contains(q);
       return setOk && queryOk;
     }).toList();
   }
@@ -111,7 +113,11 @@ class PlanController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateIdentity({String? commandSetId, int? priority, String? proTag, bool clearProTag = false}) {
+  void updateIdentity(
+      {String? commandSetId,
+      int? priority,
+      String? proTag,
+      bool clearProTag = false}) {
     final current = selected;
     if (current == null) return;
     _update(current.copyWith(
@@ -192,14 +198,16 @@ class PlanController extends ChangeNotifier {
 
   /// [slot] must be 1-4 (the editable directions); 0 and 5 are compatibility-only
   /// and silently ignored, matching Specifications' edge-case table.
-  void updateDirectionSlot(int slot, {int? alg, bool? nodiff, int? limitSoft, int? limitHard}) {
+  void updateDirectionSlot(int slot,
+      {int? alg, bool? nodiff, int? limitSoft, int? limitHard}) {
     if (slot < 1 || slot > 4) return;
     final current = selected;
     if (current == null) return;
     final index = current.directions.indexWhere((d) => d.slot == slot);
     if (index < 0) return;
     final slots = List<DirectionSlot>.of(current.directions);
-    slots[index] = slots[index].copyWith(alg: alg, nodiff: nodiff, limitSoft: limitSoft, limitHard: limitHard);
+    slots[index] = slots[index].copyWith(
+        alg: alg, nodiff: nodiff, limitSoft: limitSoft, limitHard: limitHard);
     _update(current.copyWith(directions: slots));
   }
 

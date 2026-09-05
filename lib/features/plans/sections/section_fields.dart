@@ -18,7 +18,8 @@ class PolicySection extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(T.radiusCtl), border: Border.all(color: T.hairline)),
+            borderRadius: BorderRadius.circular(T.radiusCtl),
+            border: Border.all(color: T.hairline)),
         clipBehavior: Clip.antiAlias,
         child: ExpansionTile(
           title: Text(title, style: T.panelTitle),
@@ -38,13 +39,18 @@ class IntField extends StatefulWidget {
   final String label;
   final int value;
   final ValueChanged<int> onChanged;
-  const IntField({super.key, required this.label, required this.value, required this.onChanged});
+  const IntField(
+      {super.key,
+      required this.label,
+      required this.value,
+      required this.onChanged});
   @override
   State<IntField> createState() => _IntFieldState();
 }
 
 class _IntFieldState extends State<IntField> {
-  late final TextEditingController _controller = TextEditingController(text: '${widget.value}');
+  late final TextEditingController _controller =
+      TextEditingController(text: '${widget.value}');
   late final FocusNode _focusNode = FocusNode()..addListener(_onFocusChange);
 
   void _onFocusChange() {
@@ -74,7 +80,8 @@ class _IntFieldState extends State<IntField> {
           decoration: InputDecoration(
             labelText: widget.label,
             isDense: true,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(T.radiusCtl)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(T.radiusCtl)),
           ),
           onSubmitted: (_) => _commit(),
         ),
@@ -87,14 +94,18 @@ class NullableHourField extends StatefulWidget {
   final String label;
   final int? value;
   final void Function(int? value) onChanged;
-  const NullableHourField({super.key, required this.label, required this.value, required this.onChanged});
+  const NullableHourField(
+      {super.key,
+      required this.label,
+      required this.value,
+      required this.onChanged});
   @override
   State<NullableHourField> createState() => _NullableHourFieldState();
 }
 
 class _NullableHourFieldState extends State<NullableHourField> {
-  late final TextEditingController _controller =
-      TextEditingController(text: widget.value == null ? '' : '${widget.value}');
+  late final TextEditingController _controller = TextEditingController(
+      text: widget.value == null ? '' : '${widget.value}');
   late final FocusNode _focusNode = FocusNode()..addListener(_onFocusChange);
 
   void _onFocusChange() {
@@ -130,7 +141,8 @@ class _NullableHourFieldState extends State<NullableHourField> {
             labelText: widget.label,
             hintText: 'выключено',
             isDense: true,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(T.radiusCtl)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(T.radiusCtl)),
           ),
           onSubmitted: (_) => _commit(),
         ),
@@ -141,7 +153,11 @@ class BoolField extends StatelessWidget {
   final String label;
   final bool value;
   final ValueChanged<bool> onChanged;
-  const BoolField({super.key, required this.label, required this.value, required this.onChanged});
+  const BoolField(
+      {super.key,
+      required this.label,
+      required this.value,
+      required this.onChanged});
 
   @override
   Widget build(BuildContext context) => InkWell(

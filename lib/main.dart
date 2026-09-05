@@ -19,6 +19,7 @@ import 'pages/billing_page.dart';
 import 'pages/upgrade_page.dart';
 import 'pages/debug_page.dart';
 import 'pages/icons_page.dart';
+import 'pages/glossary_page.dart';
 
 void main() => runApp(const SimBoxApp());
 
@@ -116,7 +117,9 @@ class _AdminShellState extends State<AdminShell> {
           Flexible(
               child: Text(t.text,
                   style: const TextStyle(
-                      fontFamily: 'SF Pro Text', fontSize: 13, color: Colors.white))),
+                      fontFamily: 'SF Pro Text',
+                      fontSize: 13,
+                      color: Colors.white))),
         ]),
       ));
   }
@@ -135,6 +138,7 @@ class _AdminShellState extends State<AdminShell> {
         AdmPage.upgrade => const UpgradePage(),
         AdmPage.debug => const DebugPage(),
         AdmPage.icons => const IconsPage(),
+        AdmPage.glossary => const GlossaryPage(),
       };
 
   @override

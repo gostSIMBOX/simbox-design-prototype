@@ -52,7 +52,8 @@ class InMemoryPlanRepository implements PlanRepository {
     final index = _records.indexWhere((item) => item.id == id);
     if (index < 0) throw PlanRepositoryException('План $id не найден.');
     if (record.id != id) {
-      throw const PlanRepositoryException('ID существующего плана нельзя изменить.');
+      throw const PlanRepositoryException(
+          'ID существующего плана нельзя изменить.');
     }
     final next = List<Plan>.of(_records);
     next[index] = record;
@@ -69,7 +70,8 @@ class InMemoryPlanRepository implements PlanRepository {
     }
     final usageCount = liveSimPlanIds().where((planId) => planId == id).length;
     if (usageCount > 0) {
-      throw PlanRepositoryException('План $id используется $usageCount симками.');
+      throw PlanRepositoryException(
+          'План $id используется $usageCount симками.');
     }
     _records = _records.where((item) => item.id != id).toList();
   }

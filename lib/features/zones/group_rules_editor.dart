@@ -43,7 +43,8 @@ class GroupRulesEditor extends StatelessWidget {
               borderRadius: BorderRadius.circular(T.radiusCtl),
             ),
             child: const Center(
-                child: Text('Правил пока нет. Нажмите «Добавить правило».', style: T.caption)),
+                child: Text('Правил пока нет. Нажмите «Добавить правило».',
+                    style: T.caption)),
           )
         else
           for (var i = 0; i < rules.length; i++)
@@ -130,55 +131,70 @@ class _RuleRowState extends State<_RuleRow> {
         borderRadius: BorderRadius.circular(T.radiusCtl),
       ),
       child: Row(children: [
-        _labeled('L', DropdownButton<int>(
-          value: widget.rule.limitSlot,
-          isDense: true,
-          underline: const SizedBox.shrink(),
-          items: [for (var i = 0; i < 10; i++) DropdownMenuItem(value: i, child: Text('$i'))],
-          onChanged: (v) {
-            if (v != null) widget.onLimitSlot(v);
-          },
-        )),
+        _labeled(
+            'L',
+            DropdownButton<int>(
+              value: widget.rule.limitSlot,
+              isDense: true,
+              underline: const SizedBox.shrink(),
+              items: [
+                for (var i = 0; i < 10; i++)
+                  DropdownMenuItem(value: i, child: Text('$i'))
+              ],
+              onChanged: (v) {
+                if (v != null) widget.onLimitSlot(v);
+              },
+            )),
         const SizedBox(width: 10),
-        _labeled('алг', DropdownButton<String>(
-          value: widget.rule.alg,
-          isDense: true,
-          underline: const SizedBox.shrink(),
-          items: [
-            for (final a in GroupRulesEditor.algs) DropdownMenuItem(value: a, child: Text(a)),
-          ],
-          onChanged: (v) {
-            if (v != null) widget.onAlg(v);
-          },
-        )),
+        _labeled(
+            'алг',
+            DropdownButton<String>(
+              value: widget.rule.alg,
+              isDense: true,
+              underline: const SizedBox.shrink(),
+              items: [
+                for (final a in GroupRulesEditor.algs)
+                  DropdownMenuItem(value: a, child: Text(a)),
+              ],
+              onChanged: (v) {
+                if (v != null) widget.onAlg(v);
+              },
+            )),
         const SizedBox(width: 10),
-        _labeled('тип', DropdownButton<String>(
-          value: widget.rule.type,
-          isDense: true,
-          underline: const SizedBox.shrink(),
-          items: [
-            for (final t in GroupRulesEditor.types) DropdownMenuItem(value: t, child: Text(t)),
-          ],
-          onChanged: (v) {
-            if (v != null) widget.onType(v);
-          },
-        )),
+        _labeled(
+            'тип',
+            DropdownButton<String>(
+              value: widget.rule.type,
+              isDense: true,
+              underline: const SizedBox.shrink(),
+              items: [
+                for (final t in GroupRulesEditor.types)
+                  DropdownMenuItem(value: t, child: Text(t)),
+              ],
+              onChanged: (v) {
+                if (v != null) widget.onType(v);
+              },
+            )),
         const SizedBox(width: 10),
-        _labeled('группа', SizedBox(
-          width: 70,
-          child: TextField(
-            controller: _group,
-            style: T.mono,
-            decoration: const InputDecoration(isDense: true, border: OutlineInputBorder()),
-            onChanged: (v) {
-              _syncedGroup = v;
-              widget.onGroup(v);
-            },
-          ),
-        )),
+        _labeled(
+            'группа',
+            SizedBox(
+              width: 70,
+              child: TextField(
+                controller: _group,
+                style: T.mono,
+                decoration: const InputDecoration(
+                    isDense: true, border: OutlineInputBorder()),
+                onChanged: (v) {
+                  _syncedGroup = v;
+                  widget.onGroup(v);
+                },
+              ),
+            )),
         const Spacer(),
         _iconButton(Icons.arrow_upward, widget.canMoveUp, widget.onMoveUp),
-        _iconButton(Icons.arrow_downward, widget.canMoveDown, widget.onMoveDown),
+        _iconButton(
+            Icons.arrow_downward, widget.canMoveDown, widget.onMoveDown),
         _iconButton(Icons.delete_outline, true, widget.onDelete),
       ]),
     );
@@ -193,7 +209,8 @@ class _RuleRowState extends State<_RuleRow> {
         ],
       );
 
-  Widget _iconButton(IconData icon, bool enabled, VoidCallback onTap) => SizedBox(
+  Widget _iconButton(IconData icon, bool enabled, VoidCallback onTap) =>
+      SizedBox(
         width: 30,
         height: 30,
         child: Material(
@@ -201,7 +218,8 @@ class _RuleRowState extends State<_RuleRow> {
           child: InkWell(
             onTap: enabled ? onTap : null,
             borderRadius: BorderRadius.circular(6),
-            child: Icon(icon, size: 16, color: enabled ? T.fgMuted : T.disabled),
+            child:
+                Icon(icon, size: 16, color: enabled ? T.fgMuted : T.disabled),
           ),
         ),
       );

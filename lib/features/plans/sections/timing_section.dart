@@ -32,39 +32,43 @@ class TimingSection extends StatelessWidget {
         key: ValueKey('timeWake-${plan.id}-${plan.timeWake}'),
         label: 'time_wake',
         value: plan.timeWake,
-        onChanged: (v) => controller.updateTiming(timeWake: v, clearTimeWake: v == null),
+        onChanged: (v) =>
+            controller.updateTiming(timeWake: v, clearTimeWake: v == null),
       ),
       NullableHourField(
         key: ValueKey('timeSleep-${plan.id}-${plan.timeSleep}'),
         label: 'time_sleep',
         value: plan.timeSleep,
-        onChanged: (v) => controller.updateTiming(timeSleep: v, clearTimeSleep: v == null),
+        onChanged: (v) =>
+            controller.updateTiming(timeSleep: v, clearTimeSleep: v == null),
       ),
       NullableHourField(
         key: ValueKey('timeWorkWake-${plan.id}-${plan.timeWorkWake}'),
         label: 'time_work_wake',
         value: plan.timeWorkWake,
-        onChanged: (v) => controller.updateTiming(timeWorkWake: v, clearTimeWorkWake: v == null),
+        onChanged: (v) => controller.updateTiming(
+            timeWorkWake: v, clearTimeWorkWake: v == null),
       ),
       NullableHourField(
         key: ValueKey('timeWorkSleep-${plan.id}-${plan.timeWorkSleep}'),
         label: 'time_work_sleep',
         value: plan.timeWorkSleep,
-        onChanged: (v) => controller.updateTiming(timeWorkSleep: v, clearTimeWorkSleep: v == null),
+        onChanged: (v) => controller.updateTiming(
+            timeWorkSleep: v, clearTimeWorkSleep: v == null),
       ),
       NullableHourField(
         key: ValueKey('timeHolidayWake-${plan.id}-${plan.timeHolidayWake}'),
         label: 'time_holiday_wake',
         value: plan.timeHolidayWake,
-        onChanged: (v) =>
-            controller.updateTiming(timeHolidayWake: v, clearTimeHolidayWake: v == null),
+        onChanged: (v) => controller.updateTiming(
+            timeHolidayWake: v, clearTimeHolidayWake: v == null),
       ),
       NullableHourField(
         key: ValueKey('timeHolidaySleep-${plan.id}-${plan.timeHolidaySleep}'),
         label: 'time_holiday_sleep',
         value: plan.timeHolidaySleep,
-        onChanged: (v) =>
-            controller.updateTiming(timeHolidaySleep: v, clearTimeHolidaySleep: v == null),
+        onChanged: (v) => controller.updateTiming(
+            timeHolidaySleep: v, clearTimeHolidaySleep: v == null),
       ),
     ]);
   }

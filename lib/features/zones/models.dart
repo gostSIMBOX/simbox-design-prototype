@@ -24,7 +24,9 @@ class GroupRule {
     required this.group,
   });
 
-  GroupRule copyWith({int? limitSlot, String? alg, String? type, String? group}) => GroupRule(
+  GroupRule copyWith(
+          {int? limitSlot, String? alg, String? type, String? group}) =>
+      GroupRule(
         limitSlot: limitSlot ?? this.limitSlot,
         alg: alg ?? this.alg,
         type: type ?? this.type,
@@ -56,8 +58,10 @@ class Zone {
   final String? region;
   final String icon;
   final List<String> defCodes;
-  final String? billingCode; // 2-letter code, e.g. 'NS' — shared by every rule below
-  final List<GroupRule> groupRules; // ordered — fallback priority, first tried first
+  final String?
+      billingCode; // 2-letter code, e.g. 'NS' — shared by every rule below
+  final List<GroupRule>
+      groupRules; // ordered — fallback priority, first tried first
 
   const Zone({
     required this.id,
@@ -99,6 +103,6 @@ class Zone {
       _listEquals(groupRules, other.groupRules);
 
   @override
-  int get hashCode => Object.hash(
-      id, name, region, icon, billingCode, Object.hashAll(defCodes), Object.hashAll(groupRules));
+  int get hashCode => Object.hash(id, name, region, icon, billingCode,
+      Object.hashAll(defCodes), Object.hashAll(groupRules));
 }

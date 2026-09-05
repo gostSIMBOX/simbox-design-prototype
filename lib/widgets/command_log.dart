@@ -14,7 +14,10 @@ class CommandLog extends StatelessWidget {
       decoration: const BoxDecoration(
         color: T.surface,
         border: Border(top: BorderSide(color: T.headSep)),
-        boxShadow: [BoxShadow(color: Color(0x2E9CB2C2), blurRadius: 32, offset: Offset(0, -1))],
+        boxShadow: [
+          BoxShadow(
+              color: Color(0x2E9CB2C2), blurRadius: 32, offset: Offset(0, -1))
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -27,7 +30,8 @@ class CommandLog extends StatelessWidget {
               const SizedBox(width: 12),
               const Text('Вывод команд', style: T.panelTitle),
               const SizedBox(width: 10),
-              Text(s.logs.isEmpty ? '' : '${s.logs.length} записей', style: T.caption),
+              Text(s.logs.isEmpty ? '' : '${s.logs.length} записей',
+                  style: T.caption),
               const Spacer(),
               _small('Очистить', s.clearLog),
               const SizedBox(width: 8),
@@ -53,29 +57,37 @@ class CommandLog extends StatelessWidget {
                         final e = s.logs[i];
                         return Container(
                           padding: const EdgeInsets.symmetric(vertical: 8),
-                          decoration:
-                              const BoxDecoration(border: Border(bottom: BorderSide(color: T.hairline))),
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: T.hairline))),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(crossAxisAlignment: CrossAxisAlignment.baseline,
+                              Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
                                   textBaseline: TextBaseline.alphabetic,
                                   children: [
                                     SizedBox(
                                         width: 62,
-                                        child: Text(e.time, style: T.cellTertiary)),
+                                        child: Text(e.time,
+                                            style: T.cellTertiary)),
                                     Expanded(
                                         child: Text(e.cmd,
-                                            style: T.mono.copyWith(color: T.ink))),
+                                            style:
+                                                T.mono.copyWith(color: T.ink))),
                                   ]),
                               for (final l in e.lines)
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 62, top: 2),
-                                  child: Text(l, style: T.mono.copyWith(color: T.fgMuted)),
+                                  padding:
+                                      const EdgeInsets.only(left: 62, top: 2),
+                                  child: Text(l,
+                                      style: T.mono.copyWith(color: T.fgMuted)),
                                 ),
                               if (e.warn.isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 62, top: 4),
+                                  padding:
+                                      const EdgeInsets.only(left: 62, top: 4),
                                   child: Text(e.warn,
                                       style: const TextStyle(
                                           fontFamily: 'SF Pro Text',
@@ -106,7 +118,8 @@ class CommandLog extends StatelessWidget {
               border: Border.all(color: T.border),
             ),
             child: Text(label,
-                style: const TextStyle(fontFamily: 'SF Pro Text', fontSize: 11, color: T.fg1)),
+                style: const TextStyle(
+                    fontFamily: 'SF Pro Text', fontSize: 11, color: T.fg1)),
           ),
         ),
       );

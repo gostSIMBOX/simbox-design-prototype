@@ -52,12 +52,14 @@ class _DenseTableState<TRow> extends State<DenseTable<TRow>> {
 
   static const double _checkW = 34;
 
-  double get _totalWidth => _checkW + widget.cols.fold<double>(0, (a, c) => a + c.w);
+  double get _totalWidth =>
+      _checkW + widget.cols.fold<double>(0, (a, c) => a + c.w);
 
   @override
   Widget build(BuildContext context) {
     final rows = widget.rows;
-    final allSelected = rows.isNotEmpty && rows.every((r) => widget.isSelected(widget.idOf(r)));
+    final allSelected =
+        rows.isNotEmpty && rows.every((r) => widget.isSelected(widget.idOf(r)));
     return Container(
       decoration: BoxDecoration(
         color: T.surface,
@@ -139,14 +141,22 @@ class _DenseTableState<TRow> extends State<DenseTable<TRow>> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (c.icon != null) ...[AdmIcon(c.icon!), const SizedBox(height: 2)],
+                        if (c.icon != null) ...[
+                          AdmIcon(c.icon!),
+                          const SizedBox(height: 2)
+                        ],
                         Text(
-                          c.label + (sortKey == c.key ? (sortDir > 0 ? ' ↑' : ' ↓') : ''),
+                          c.label +
+                              (sortKey == c.key
+                                  ? (sortDir > 0 ? ' ↑' : ' ↓')
+                                  : ''),
                           style: T.head,
                           overflow: TextOverflow.ellipsis,
                         ),
                         if (c.sub.isNotEmpty)
-                          Text(c.sub, style: T.headSub, overflow: TextOverflow.ellipsis),
+                          Text(c.sub,
+                              style: T.headSub,
+                              overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),

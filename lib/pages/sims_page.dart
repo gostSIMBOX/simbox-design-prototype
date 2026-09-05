@@ -28,7 +28,16 @@ class _SimsPageState extends State<SimsPage> {
 
   @override
   void dispose() {
-    for (final c in [_search, _delay, _rnd, _ussd, _smsTo, _smsTxt, _call, _group]) {
+    for (final c in [
+      _search,
+      _delay,
+      _rnd,
+      _ussd,
+      _smsTo,
+      _smsTxt,
+      _call,
+      _group
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -59,7 +68,8 @@ class _SimsPageState extends State<SimsPage> {
             label: 'group',
             title: 'группа и расписание',
             build: (s) => Cell(
-                icons: Ico.group(s.group, st.pauseOf(s.id, s.pause)), sub: '${s.group}')),
+                icons: Ico.group(s.group, st.pauseOf(s.id, s.pause)),
+                sub: '${s.group}')),
         ColDef(
             key: 'cap',
             w: 30,
@@ -71,13 +81,15 @@ class _SimsPageState extends State<SimsPage> {
             w: 30,
             title: 'мульти-сим',
             icon: 'im/imb.png',
-            build: (s) => Cell(icons: [if (Ico.im(s.im) != null) Ico.im(s.im)!])),
+            build: (s) =>
+                Cell(icons: [if (Ico.im(s.im) != null) Ico.im(s.im)!])),
         ColDef(
             key: 'spec',
             w: 30,
             title: 'спец-режим',
             icon: 'spec/pre.png',
-            build: (s) => Cell(icons: [if (Ico.spec(s.spec) != null) Ico.spec(s.spec)!])),
+            build: (s) =>
+                Cell(icons: [if (Ico.spec(s.spec) != null) Ico.spec(s.spec)!])),
         ColDef(
             key: 'io',
             w: 54,
@@ -98,9 +110,14 @@ class _SimsPageState extends State<SimsPage> {
             w: 118,
             label: 'план',
             sub: 'набор / тариф',
-            build: (s) =>
-                Cell(text: s.plan, sub: s.nabor + (s.tarif.isEmpty ? '' : ' / ${s.tarif}'))),
-        ColDef(key: 'number', w: 96, label: 'number', build: (s) => Cell(mono: s.number)),
+            build: (s) => Cell(
+                text: s.plan,
+                sub: s.nabor + (s.tarif.isEmpty ? '' : ' / ${s.tarif}'))),
+        ColDef(
+            key: 'number',
+            w: 96,
+            label: 'number',
+            build: (s) => Cell(mono: s.number)),
         ColDef(
             key: 'oper',
             w: 92,
@@ -124,14 +141,22 @@ class _SimsPageState extends State<SimsPage> {
             w: 48,
             label: 'dongle',
             title: 'модель и передатчик',
-            build: (s) => Cell(icons: [Ico.dongle(s.model), Ico.cfun(st.cfunOf(s.id, s.cfun))])),
+            build: (s) => Cell(icons: [
+                  Ico.dongle(s.model),
+                  Ico.cfun(st.cfunOf(s.id, s.cfun))
+                ])),
         ColDef(
             key: 'simst',
             w: 44,
             label: 'st',
             title: 'simst / srvst',
-            build: (s) => Cell(icons: [Ico.simst(s.simst), Ico.srvst(s.srvst)])),
-        ColDef(key: 'dongle', w: 68, label: 'dev', build: (s) => Cell(mono: s.dongle)),
+            build: (s) =>
+                Cell(icons: [Ico.simst(s.simst), Ico.srvst(s.srvst)])),
+        ColDef(
+            key: 'dongle',
+            w: 68,
+            label: 'dev',
+            build: (s) => Cell(mono: s.dongle)),
         ColDef(
             key: 'tot',
             w: 92,
@@ -150,35 +175,51 @@ class _SimsPageState extends State<SimsPage> {
             label: 'm-o',
             sub: 'm-i',
             build: (s) => Cell(text: '${s.mo}', sub: '${s.mi}')),
-        ColDef(key: 'acdo', w: 46, label: 'ACD-o', build: (s) => Cell(text: s.acdo.toStringAsFixed(2))),
-        ColDef(key: 'acdi', w: 46, label: 'ACD-i', build: (s) => Cell(text: s.acdi.toStringAsFixed(2))),
+        ColDef(
+            key: 'acdo',
+            w: 46,
+            label: 'ACD-o',
+            build: (s) => Cell(text: s.acdo.toStringAsFixed(2))),
+        ColDef(
+            key: 'acdi',
+            w: 46,
+            label: 'ACD-i',
+            build: (s) => Cell(text: s.acdi.toStringAsFixed(2))),
         ColDef(
             key: 'acdl',
             w: 52,
             label: 'ACDL',
             build: (s) => s.acdlBad
-                ? Cell(icons: const [IcoRef('low_acdl.png', 'низкий ACDL')], warn: '${s.acdl}')
+                ? Cell(
+                    icons: const [IcoRef('low_acdl.png', 'низкий ACDL')],
+                    warn: '${s.acdl}')
                 : Cell(text: '${s.acdl}')),
         ColDef(
             key: 'datt',
             w: 48,
             label: 'DATT',
             build: (s) => s.dattBad
-                ? Cell(icons: const [IcoRef('high_datt.png', 'высокий DATT')], warn: '${s.datt}')
+                ? Cell(
+                    icons: const [IcoRef('high_datt.png', 'высокий DATT')],
+                    warn: '${s.datt}')
                 : Cell(text: '${s.datt}')),
         ColDef(
             key: 'iatt',
             w: 44,
             label: 'IATT',
             build: (s) => Cell(
-                icons: s.iatt > 3 ? const [IcoRef('need_in.png', 'нужен входящий')] : const [],
+                icons: s.iatt > 3
+                    ? const [IcoRef('need_in.png', 'нужен входящий')]
+                    : const [],
                 text: '${s.iatt}')),
         ColDef(
             key: 'satt',
             w: 40,
             label: 'SATT',
-            build: (s) =>
-                Cell(icons: s.satt > 0 ? const [IcoRef('satt.png', 'нужен SMS')] : const [])),
+            build: (s) => Cell(
+                icons: s.satt > 0
+                    ? const [IcoRef('satt.png', 'нужен SMS')]
+                    : const [])),
         ColDef(
             key: 'may',
             w: 72,
@@ -186,10 +227,26 @@ class _SimsPageState extends State<SimsPage> {
             sub: 'MON',
             icon: 'may.png',
             build: (s) => Cell(text: 'MAY ${s.may}', sub: 'MON ${s.mon}')),
-        ColDef(key: 'asrl', w: 46, label: 'ASRL', build: (s) => Cell(text: s.asrl.toStringAsFixed(2))),
-        ColDef(key: 'pdd0', w: 46, label: 'PDDL0', build: (s) => Cell(text: '${s.pdd0}')),
-        ColDef(key: 'pdd1', w: 46, label: 'PDDL1', build: (s) => Cell(text: '${s.pdd1}')),
-        ColDef(key: 'pri', w: 34, label: 'pri', build: (s) => Cell(text: '${s.pri}')),
+        ColDef(
+            key: 'asrl',
+            w: 46,
+            label: 'ASRL',
+            build: (s) => Cell(text: s.asrl.toStringAsFixed(2))),
+        ColDef(
+            key: 'pdd0',
+            w: 46,
+            label: 'PDDL0',
+            build: (s) => Cell(text: '${s.pdd0}')),
+        ColDef(
+            key: 'pdd1',
+            w: 46,
+            label: 'PDDL1',
+            build: (s) => Cell(text: '${s.pdd1}')),
+        ColDef(
+            key: 'pri',
+            w: 34,
+            label: 'pri',
+            build: (s) => Cell(text: '${s.pri}')),
         ColDef(
             key: 'lim0',
             w: 80,
@@ -207,7 +264,11 @@ class _SimsPageState extends State<SimsPage> {
             w: 128,
             label: 'IMEI',
             build: (s) => s.imeiWarn ? Cell(warn: s.imei) : Cell(mono: s.imei)),
-        ColDef(key: 'imsi', w: 132, label: 'IMSI', build: (s) => Cell(mono: s.imsi)),
+        ColDef(
+            key: 'imsi',
+            w: 132,
+            label: 'IMSI',
+            build: (s) => Cell(mono: s.imsi)),
         ColDef(
             key: 'log',
             w: 78,
@@ -218,8 +279,11 @@ class _SimsPageState extends State<SimsPage> {
             w: 96,
             label: 'засунут',
             sub: '1й / посл. / автоблок',
-            build: (s) =>
-                Cell(note: s.dates[0], text: s.dates[1], sub: s.dates[2], sub2: s.dates[3])),
+            build: (s) => Cell(
+                note: s.dates[0],
+                text: s.dates[1],
+                sub: s.dates[2],
+                sub2: s.dates[3])),
       ];
 
   List<ColDef<Sim>> _visibleCols(AppState st, List<ColDef<Sim>> all) {
@@ -227,7 +291,10 @@ class _SimsPageState extends State<SimsPage> {
     final order = st.columnOrderFor(AdmPage.sim, defaults);
     final hidden = st.hiddenColumnsFor(AdmPage.sim);
     final byKey = {for (final c in all) c.key: c};
-    return [for (final k in order) if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!];
+    return [
+      for (final k in order)
+        if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!
+    ];
   }
 
   List<ActionGroup> _groups(AppState st) => [
@@ -239,10 +306,13 @@ class _SimsPageState extends State<SimsPage> {
             SubAction(
                 key: 'on',
                 label: 'ВКЛ',
-                builder: (_) => AdmButton('ВКЛ', icon: 'p-on.png', primary: true, onPressed: () {
+                builder: (_) => AdmButton('ВКЛ',
+                        icon: 'p-on.png', primary: true, onPressed: () {
                       st.setPower(1);
                       st.runOnSelection(
-                          (r) => LogEntry('', '/usr/simbox/actions/connect.sh ${r.dongle} on',
+                          (r) => LogEntry(
+                              '',
+                              '/usr/simbox/actions/connect.sh ${r.dongle} on',
                               const ['AT+CFUN=1', 'OK']),
                           toastText: 'Передатчик включён',
                           icon: 'p-on.png');
@@ -250,10 +320,13 @@ class _SimsPageState extends State<SimsPage> {
             SubAction(
                 key: 'off',
                 label: 'ВЫКЛ',
-                builder: (_) => AdmButton('ВЫКЛ', icon: 'p-off.png', onPressed: () {
+                builder: (_) =>
+                    AdmButton('ВЫКЛ', icon: 'p-off.png', onPressed: () {
                       st.setPower(5);
                       st.runOnSelection(
-                          (r) => LogEntry('', '/usr/simbox/actions/connect.sh ${r.dongle} off',
+                          (r) => LogEntry(
+                              '',
+                              '/usr/simbox/actions/connect.sh ${r.dongle} off',
                               const ['AT+CFUN=5', 'OK']),
                           toastText: 'Передатчик выключен',
                           icon: 'p-off.png');
@@ -261,10 +334,13 @@ class _SimsPageState extends State<SimsPage> {
             SubAction(
                 key: 'pause',
                 label: 'Пауза',
-                builder: (_) => AdmButton('Пауза', icon: 'pause2.png', onPressed: () {
+                builder: (_) =>
+                    AdmButton('Пауза', icon: 'pause2.png', onPressed: () {
                       st.setPause(1);
                       st.runOnSelection(
-                          (r) => LogEntry('', 'echo 1 > /var/simbox/sim/settings/${r.imsi}.pause',
+                          (r) => LogEntry(
+                              '',
+                              'echo 1 > /var/simbox/sim/settings/${r.imsi}.pause',
                               const ['pause=1']),
                           toastText: 'Поставлено на паузу',
                           icon: 'pause2.png');
@@ -272,17 +348,23 @@ class _SimsPageState extends State<SimsPage> {
             SubAction(
                 key: 'work',
                 label: 'В работу',
-                builder: (_) => AdmButton('В работу', icon: 'play.png', onPressed: () {
+                builder: (_) =>
+                    AdmButton('В работу', icon: 'play.png', onPressed: () {
                       st.setPause(0);
                       st.runOnSelection(
-                          (r) => LogEntry('', '/usr/simbox/actions/activate_work.sh ${r.dongle}',
+                          (r) => LogEntry(
+                              '',
+                              '/usr/simbox/actions/activate_work.sh ${r.dongle}',
                               const ['group -> 101', 'OK']),
                           toastText: 'Отправлено в работу',
                           icon: 'play.png');
                     })),
           ],
           sharedSettings: (_) => Row(mainAxisSize: MainAxisSize.min, children: [
-            AdmCheck(value: st.queueMode, onChanged: st.setQueueMode, label: 'в очередь'),
+            AdmCheck(
+                value: st.queueMode,
+                onChanged: st.setQueueMode,
+                label: 'в очередь'),
             const SizedBox(width: 12),
             Text('Задержка', style: T.caption),
             const SizedBox(width: 6),
@@ -309,7 +391,8 @@ class _SimsPageState extends State<SimsPage> {
                 AdmButton('Отправить', primary: true, onPressed: () {
                   final v = _ussd.text.isEmpty ? '*100#' : _ussd.text;
                   st.runOnSelection(
-                      (r) => LogEntry('', "asterisk -rx 'dongle ussd ${r.dongle} $v'", [
+                      (r) => LogEntry(
+                              '', "asterisk -rx 'dongle ussd ${r.dongle} $v'", [
                             '+CUSD: 0,"Баланс: ${r.bal.toStringAsFixed(2)} р.",15',
                             'OK'
                           ]),
@@ -330,7 +413,9 @@ class _SimsPageState extends State<SimsPage> {
                   final to = _smsTo.text.isEmpty ? '9219981122' : _smsTo.text;
                   final tx = _smsTxt.text.isEmpty ? 'test' : _smsTxt.text;
                   st.runOnSelection(
-                      (r) => LogEntry('', "asterisk -rx 'dongle sms ${r.dongle} $to $tx'",
+                      (r) => LogEntry(
+                          '',
+                          "asterisk -rx 'dongle sms ${r.dongle} $to $tx'",
                           const ['+CMGS: 42', 'OK']),
                       toastText: 'SMS отправлена',
                       icon: 'sms_out.png');
@@ -385,7 +470,9 @@ class _SimsPageState extends State<SimsPage> {
                       tooltip: '/usr/simbox/actions/${a.cmd}',
                       onPressed: () => st.runOnSelection(
                           (r) => LogEntry(
-                              '', '/usr/simbox/actions/${a.cmd} ${r.dongle} ${r.imsi}', a.output),
+                              '',
+                              '/usr/simbox/actions/${a.cmd} ${r.dongle} ${r.imsi}',
+                              a.output),
                           toastText: '${a.label}: отправлено')),
               ]),
             ),
@@ -407,7 +494,9 @@ class _SimsPageState extends State<SimsPage> {
                 AdmButton('Set group', primary: true, onPressed: () {
                   final g = _group.text.isEmpty ? '101' : _group.text;
                   st.runOnSelection(
-                      (r) => LogEntry('', 'echo $g > /var/simbox/sim/settings/${r.imsi}.group',
+                      (r) => LogEntry(
+                          '',
+                          'echo $g > /var/simbox/sim/settings/${r.imsi}.group',
                           ['group -> $g']),
                       toastText: 'Группа $g');
                 }),
@@ -429,7 +518,8 @@ class _SimsPageState extends State<SimsPage> {
                     style: T.body,
                     decoration: InputDecoration(
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 9),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(T.radiusCtl),
                         borderSide: const BorderSide(color: T.border),
@@ -450,14 +540,16 @@ class _SimsPageState extends State<SimsPage> {
                 AdmButton('без копирования',
                     onPressed: () => st.runOnSelection(
                         (r) => LogEntry(
-                            '', '/usr/simbox/actions/set_plan_set.sh ${r.imsi} $_plan',
+                            '',
+                            '/usr/simbox/actions/set_plan_set.sh ${r.imsi} $_plan',
                             ['plan -> $_plan']),
                         toastText: 'План установлен')),
                 const SizedBox(width: 8),
                 AdmButton('с копированием',
                     onPressed: () => st.runOnSelection(
                         (r) => LogEntry(
-                            '', '/usr/simbox/actions/set_plan_copy.sh ${r.imsi} $_plan',
+                            '',
+                            '/usr/simbox/actions/set_plan_copy.sh ${r.imsi} $_plan',
                             ['plan -> $_plan', 'параметры скопированы']),
                         toastText: 'План + параметры')),
               ]),
@@ -467,7 +559,9 @@ class _SimsPageState extends State<SimsPage> {
               label: 'Восстановить параметры плана',
               builder: (_) => AdmButton('Восстановить параметры плана',
                   onPressed: () => st.runOnSelection(
-                      (r) => LogEntry('', '/usr/simbox/actions/set_plan.sh ${r.imsi}',
+                      (r) => LogEntry(
+                          '',
+                          '/usr/simbox/actions/set_plan.sh ${r.imsi}',
                           const ['параметры плана восстановлены']),
                       toastText: 'Параметры восстановлены')),
             ),
@@ -477,7 +571,9 @@ class _SimsPageState extends State<SimsPage> {
               builder: (_) => AdmButton('Снять флажки автоблокировки',
                   icon: 'high_datt.png',
                   onPressed: () => st.runOnSelection(
-                      (r) => LogEntry('', '/usr/simbox/actions/set_autoblock_null.sh ${r.imsi}',
+                      (r) => LogEntry(
+                          '',
+                          '/usr/simbox/actions/set_autoblock_null.sh ${r.imsi}',
                           const ['DATT=0', 'ACDL flag cleared']),
                       toastText: 'Флажки сняты',
                       icon: 'high_datt.png')),
@@ -494,14 +590,20 @@ class _SimsPageState extends State<SimsPage> {
               label: 'Экспорт',
               builder: (_) => Wrap(spacing: 8, runSpacing: 8, children: [
                 AdmButton('Export dongles',
-                    onPressed: () => st.push('/usr/simbox/www/simbox/export.php?what=dongles',
+                    onPressed: () => st.push(
+                        '/usr/simbox/www/simbox/export.php?what=dongles',
                         [for (final s in sims) '${s.dongle};${s.imsi}'])),
                 AdmButton('Export numbers',
-                    onPressed: () => st.push('/usr/simbox/www/simbox/numbers.php',
+                    onPressed: () => st.push(
+                        '/usr/simbox/www/simbox/numbers.php',
                         [for (final s in sims) s.number])),
                 AdmButton('Export masspayment',
-                    onPressed: () => st.push('/usr/simbox/www/simbox/export.php?what=masspayment',
-                        const ['9219981122;10;3;WMR;1', '9037761234;2;10;WMR;2'],
+                    onPressed: () => st.push(
+                        '/usr/simbox/www/simbox/export.php?what=masspayment',
+                        const [
+                          '9219981122;10;3;WMR;1',
+                          '9037761234;2;10;WMR;2'
+                        ],
                         'НЕ ОПРЕДЕЛЕН;0;0;WMR;3')),
               ]),
             ),
@@ -526,7 +628,9 @@ class _SimsPageState extends State<SimsPage> {
           search: _search,
           onSearch: st.setQuery,
           page: AdmPage.sim,
-          allColumns: [for (final c in allCols) (key: c.key, label: columnDisplayLabel(c))],
+          allColumns: [
+            for (final c in allCols) (key: c.key, label: columnDisplayLabel(c))
+          ],
         ),
         const SizedBox(height: 12),
         Expanded(
@@ -550,7 +654,8 @@ class _SimsPageState extends State<SimsPage> {
 /// Fallback chain for a column's display name in the columns editor:
 /// `label` (grid header text) is often empty for icon-only columns, so fall
 /// back to the tooltip `title`, then the raw `key`.
-String columnDisplayLabel(ColDef c) => c.label.isNotEmpty ? c.label : (c.title ?? c.key);
+String columnDisplayLabel(ColDef c) =>
+    c.label.isNotEmpty ? c.label : (c.title ?? c.key);
 
 /// Title + row count + selection chip. Sits above [TableToolbar].
 class TableHeading extends StatelessWidget {
@@ -572,7 +677,8 @@ class TableHeading extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(color: T.rowSel, borderRadius: BorderRadius.circular(20)),
+            decoration: BoxDecoration(
+                color: T.rowSel, borderRadius: BorderRadius.circular(20)),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Text('Выбрано: ${st.selected.length}',
                   style: const TextStyle(
@@ -636,9 +742,12 @@ class TableToolbar extends StatelessWidget {
                 isDense: true,
                 filled: true,
                 fillColor: T.surface,
-                prefixIcon: const Icon(Icons.search, size: 16, color: T.fgMuted),
-                prefixIconConstraints: const BoxConstraints(minWidth: 34, minHeight: 34),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                prefixIcon:
+                    const Icon(Icons.search, size: 16, color: T.fgMuted),
+                prefixIconConstraints:
+                    const BoxConstraints(minWidth: 34, minHeight: 34),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(T.radiusCtl),
                   borderSide: const BorderSide(color: T.border),
@@ -652,7 +761,9 @@ class TableToolbar extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           RailIconButton(
-              icon: Icons.view_column_outlined, tooltip: 'Столбцы', onTap: st.toggleColumns),
+              icon: Icons.view_column_outlined,
+              tooltip: 'Столбцы',
+              onTap: st.toggleColumns),
           const SizedBox(width: 8),
           AdmButton('Обновить',
               primary: true,

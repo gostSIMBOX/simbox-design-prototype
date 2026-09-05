@@ -9,7 +9,8 @@ import 'action_group_bar.dart';
 class ColumnsEditor extends StatelessWidget {
   final AdmPage page;
   final List<({String key, String label})> allColumns;
-  const ColumnsEditor({super.key, required this.page, required this.allColumns});
+  const ColumnsEditor(
+      {super.key, required this.page, required this.allColumns});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,10 @@ class ColumnsEditor extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          RailIconButton(icon: Icons.arrow_back, tooltip: 'Отмена', onTap: st.toggleColumns),
+          RailIconButton(
+              icon: Icons.arrow_back,
+              tooltip: 'Отмена',
+              onTap: st.toggleColumns),
           const SizedBox(width: 8),
           RailIconButton(
             icon: Icons.refresh,
@@ -83,11 +87,15 @@ class _ColumnChip extends StatelessWidget {
         SizedBox(
           width: 18,
           height: 18,
-          child: Checkbox(value: checked, onChanged: (_) => onToggle(), activeColor: T.brandDeep),
+          child: Checkbox(
+              value: checked,
+              onChanged: (_) => onToggle(),
+              activeColor: T.brandDeep),
         ),
         const SizedBox(width: 4),
         Text(label,
-            style: const TextStyle(fontFamily: 'SF Pro Text', fontSize: 11, color: T.fg1),
+            style: const TextStyle(
+                fontFamily: 'SF Pro Text', fontSize: 11, color: T.fg1),
             overflow: TextOverflow.ellipsis),
         _moveButton(Icons.chevron_left, canMoveLeft, onMoveLeft),
         _moveButton(Icons.chevron_right, canMoveRight, onMoveRight),

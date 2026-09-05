@@ -124,7 +124,18 @@ class Dongle {
   final int rssi;
   final String dbm;
   final int snr;
-  final String oper, operSub, cell, lac, iccid, serial, imei, fw, mdl, audio, data, dev;
+  final String oper,
+      operSub,
+      cell,
+      lac,
+      iccid,
+      serial,
+      imei,
+      fw,
+      mdl,
+      audio,
+      data,
+      dev;
 
   const Dongle({
     required this.id,
@@ -168,7 +179,8 @@ class Dongle {
         _ => null,
       };
 
-  String get haystack => '$name $model $state $oper $imei $iccid $serial $dev'.toLowerCase();
+  String get haystack =>
+      '$name $model $state $oper $imei $iccid $serial $dev'.toLowerCase();
 }
 
 class UmDevice {
@@ -188,7 +200,10 @@ class HubNode {
   final List<IcoRef> icons;
   final String device, port;
   const HubNode(
-      {required this.id, required this.icons, required this.device, required this.port});
+      {required this.id,
+      required this.icons,
+      required this.device,
+      required this.port});
 }
 
 /// A physical SIM-card-reader device (`readers.php`), distinct from `HubNode`'s USB-hub
@@ -196,7 +211,17 @@ class HubNode {
 /// is currently seated in the reader.
 class Reader {
   final int id;
-  final String model, device, lock, state, stateFault, spn, iccid, pin, imsi, ki, dataport;
+  final String model,
+      device,
+      lock,
+      state,
+      stateFault,
+      spn,
+      iccid,
+      pin,
+      imsi,
+      ki,
+      dataport;
   final int progressDone, progressTotal;
 
   const Reader({
@@ -217,10 +242,12 @@ class Reader {
   });
 
   bool get hasCard => iccid.isNotEmpty;
-  String get progressDisplay => progressDone > 0 ? '$progressDone/$progressTotal' : '';
+  String get progressDisplay =>
+      progressDone > 0 ? '$progressDone/$progressTotal' : '';
 
   /// Search haystack for the toolbar's filter box (mirrors Dongle.haystack/Sim.haystack).
-  String get haystack => '$device $state $spn $iccid $imsi $dataport'.toLowerCase();
+  String get haystack =>
+      '$device $state $spn $iccid $imsi $dataport'.toLowerCase();
 
   Object? field(String k) => switch (k) {
         'model' => model,

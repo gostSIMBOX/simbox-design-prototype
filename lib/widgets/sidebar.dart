@@ -18,6 +18,7 @@ const _tabs = <(AdmPage, String, String)>[
   (AdmPage.upgrade, 'Обновление', 'fugue:terminal.png'),
   (AdmPage.debug, 'Debug', 'logussd.png'),
   (AdmPage.icons, 'Иконки', 'qos/ivip.png'),
+  (AdmPage.glossary, 'Глоссарий', 'fugue:book-open-list.png'),
 ];
 
 const _widthFull = 208.0;

@@ -34,7 +34,8 @@ class ZoneController extends ChangeNotifier {
   List<Zone> get records => repository.records;
 
   Zone? get selected =>
-      draft?.working ?? (selectedId == null ? null : repository.byId(selectedId!));
+      draft?.working ??
+      (selectedId == null ? null : repository.byId(selectedId!));
 
   bool get isDirty => draft?.isDirty ?? false;
 
@@ -42,7 +43,8 @@ class ZoneController extends ChangeNotifier {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) return records;
     return records
-        .where((z) => [z.id, z.name, z.region ?? ''].join(' ').toLowerCase().contains(q))
+        .where((z) =>
+            [z.id, z.name, z.region ?? ''].join(' ').toLowerCase().contains(q))
         .toList();
   }
 
@@ -119,11 +121,12 @@ class ZoneController extends ChangeNotifier {
     _selectImmediately(id);
   }
 
-  void renameZone(String id, String name, String? region, [String? billingCode]) {
+  void renameZone(String id, String name, String? region,
+      [String? billingCode]) {
     final current = repository.byId(id);
     if (current == null) return;
-    repository.replace(
-        id, current.copyWith(name: name, region: region, billingCode: billingCode));
+    repository.replace(id,
+        current.copyWith(name: name, region: region, billingCode: billingCode));
     notifyListeners();
   }
 
@@ -138,13 +141,15 @@ class ZoneController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateGroupRule(int index, {int? limitSlot, String? alg, String? type, String? group}) {
+  void updateGroupRule(int index,
+      {int? limitSlot, String? alg, String? type, String? group}) {
     final current = selected;
     if (current == null) return;
     draft ??= ZoneDraft(current);
     final rules = List<GroupRule>.of(draft!.working.groupRules);
     if (index < 0 || index >= rules.length) return;
-    rules[index] = rules[index].copyWith(limitSlot: limitSlot, alg: alg, type: type, group: group);
+    rules[index] = rules[index]
+        .copyWith(limitSlot: limitSlot, alg: alg, type: type, group: group);
     draft!.working = draft!.working.copyWith(groupRules: rules);
     notifyListeners();
   }
@@ -155,7 +160,8 @@ class ZoneController extends ChangeNotifier {
     draft ??= ZoneDraft(current);
     final rules = List<GroupRule>.of(draft!.working.groupRules);
     final n = index + direction;
-    if (index < 0 || index >= rules.length || n < 0 || n >= rules.length) return;
+    if (index < 0 || index >= rules.length || n < 0 || n >= rules.length)
+      return;
     final r = rules.removeAt(index);
     rules.insert(n, r);
     draft!.working = draft!.working.copyWith(groupRules: rules);

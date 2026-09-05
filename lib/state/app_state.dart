@@ -25,7 +25,8 @@ enum AdmPage {
   bablo,
   upgrade,
   debug,
-  icons
+  icons,
+  glossary
 }
 
 class Toast {
@@ -76,7 +77,8 @@ class AppState extends ChangeNotifier {
     zones.addListener(_forwardZones);
     zones.load();
     plans = PlanController(
-      InMemoryPlanRepository(planSeed, liveSimPlanIds: () => sims.map((s) => s.plan).toList()),
+      InMemoryPlanRepository(planSeed,
+          liveSimPlanIds: () => sims.map((s) => s.plan).toList()),
       usageCount: (id) => sims.where((s) => s.plan == id).length,
     );
     plans.addListener(_forwardPlans);

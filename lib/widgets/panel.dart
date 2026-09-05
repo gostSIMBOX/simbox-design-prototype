@@ -41,7 +41,9 @@ class Panel extends StatelessWidget {
             ),
             child: Row(children: [
               if (icon != null) ...[AdmIcon(icon!), const SizedBox(width: 8)],
-              Flexible(child: Text(title, style: T.panelTitle, overflow: TextOverflow.ellipsis)),
+              Flexible(
+                  child: Text(title,
+                      style: T.panelTitle, overflow: TextOverflow.ellipsis)),
               if (actions.isNotEmpty) ...[const Spacer(), ...actions],
             ]),
           ),
@@ -98,7 +100,8 @@ class AdmButton extends StatelessWidget {
         gradient: primary ? T.brandGradient : null,
         color: primary ? null : T.surface,
         borderRadius: BorderRadius.circular(T.radiusCtl),
-        border: primary ? null : Border.all(color: danger ? T.danger : T.border),
+        border:
+            primary ? null : Border.all(color: danger ? T.danger : T.border),
       ),
       child: content,
     );
@@ -121,13 +124,17 @@ class AdmField extends StatelessWidget {
   final String? hint;
   final double? width;
   final bool mono;
-  const AdmField(this.controller, {super.key, this.hint, this.width, this.mono = false});
+  const AdmField(this.controller,
+      {super.key, this.hint, this.width, this.mono = false});
 
   @override
   Widget build(BuildContext context) {
     final f = TextField(
       controller: controller,
-      style: mono ? T.mono : const TextStyle(fontFamily: 'SF Pro Text', fontSize: 12, color: T.fg1),
+      style: mono
+          ? T.mono
+          : const TextStyle(
+              fontFamily: 'SF Pro Text', fontSize: 12, color: T.fg1),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: T.caption,
@@ -155,7 +162,11 @@ class AdmCheck extends StatelessWidget {
   final String label;
   final String? icon;
   const AdmCheck(
-      {super.key, required this.value, required this.onChanged, required this.label, this.icon});
+      {super.key,
+      required this.value,
+      required this.onChanged,
+      required this.label,
+      this.icon});
 
   @override
   Widget build(BuildContext context) {

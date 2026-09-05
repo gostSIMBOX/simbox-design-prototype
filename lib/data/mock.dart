@@ -514,42 +514,118 @@ const dongles = <Dongle>[
 ];
 
 const hubTree = <HubNode>[
-  HubNode(id: 81, icons: [IcoRef('usb/usb_pci.png', 'корневой хаб')], device: 'Bus 02.Port 1: Dev 1, Class=root_hub', port: '02'),
-  HubNode(id: 82, icons: [
-    IcoRef('tree/sub.png', 'ветка'),
-    IcoRef('usb/hub_16.png', 'хаб 16 портов'),
-    IcoRef('p-on.png', 'питание вкл')
-  ], device: 'Port 1: Dev 2, Class=hub', port: '02:2:1'),
-  HubNode(id: 83, icons: [
-    IcoRef('tree/down.png', 'вниз'),
-    IcoRef('tree/sub.png', 'ветка'),
-    IcoRef('usb/usb_port.png', 'порт'),
-    IcoRef('p-on.png', 'питание вкл')
-  ], device: 'Port 1: Dev 3, Class=vend.', port: '02:3:1'),
-  HubNode(id: 84, icons: [
-    IcoRef('tree/down.png', 'вниз'),
-    IcoRef('tree/sub_last.png', 'последняя ветка'),
-    IcoRef('usb/usb_port.png', 'порт'),
-    IcoRef('p-off.png', 'питание выкл')
-  ], device: 'Port 2: Dev 4, Class=vend.', port: '02:4:2'),
+  HubNode(
+      id: 81,
+      icons: [IcoRef('usb/usb_pci.png', 'корневой хаб')],
+      device: 'Bus 02.Port 1: Dev 1, Class=root_hub',
+      port: '02'),
+  HubNode(
+      id: 82,
+      icons: [
+        IcoRef('tree/sub.png', 'ветка'),
+        IcoRef('usb/hub_16.png', 'хаб 16 портов'),
+        IcoRef('p-on.png', 'питание вкл')
+      ],
+      device: 'Port 1: Dev 2, Class=hub',
+      port: '02:2:1'),
+  HubNode(
+      id: 83,
+      icons: [
+        IcoRef('tree/down.png', 'вниз'),
+        IcoRef('tree/sub.png', 'ветка'),
+        IcoRef('usb/usb_port.png', 'порт'),
+        IcoRef('p-on.png', 'питание вкл')
+      ],
+      device: 'Port 1: Dev 3, Class=vend.',
+      port: '02:3:1'),
+  HubNode(
+      id: 84,
+      icons: [
+        IcoRef('tree/down.png', 'вниз'),
+        IcoRef('tree/sub_last.png', 'последняя ветка'),
+        IcoRef('usb/usb_port.png', 'порт'),
+        IcoRef('p-off.png', 'питание выкл')
+      ],
+      device: 'Port 2: Dev 4, Class=vend.',
+      port: '02:4:2'),
 ];
 
 const readers = <Reader>[
-  Reader(id: 201, model: '1001', device: 'reader1', lock: '', state: 'Not connected',
-      spn: '', iccid: '', pin: '', imsi: '', ki: '', dataport: '/dev/ttyUSB0'),
-  Reader(id: 202, model: '1001', device: 'reader2', lock: 'locked', state: 'OK',
-      spn: 'Beeline', iccid: '8979025912345634471', pin: '1234', imsi: '250014912345671',
-      ki: 'A1B2C3D4E5F60718293A4B5C6D7E8F90', dataport: '/dev/ttyUSB1'),
-  Reader(id: 203, model: '1001', device: 'reader3', lock: '', state: 'Reading',
-      stateFault: '12', spn: 'MTS', iccid: '8977011912345631183', pin: '', imsi: '250991912345699',
-      ki: '00', progressDone: 812, progressTotal: 31044, dataport: '/dev/ttyUSB2'),
-  Reader(id: 204, model: '1001', device: 'reader4', lock: 'locked', state: 'OK',
-      spn: 'MegaFon', iccid: '8977029012345632290', pin: '0000', imsi: '250021912345678',
-      ki: 'F3C9A87654321000FEDCBA9876543210', dataport: '/dev/ttyUSB3'),
-  Reader(id: 205, model: '1001', device: 'reader5', lock: '', state: 'Error',
-      spn: '', iccid: '8979007112345630071', pin: '', imsi: '', ki: '00', dataport: '/dev/ttyUSB4'),
-  Reader(id: 206, model: '', device: 'reader6', lock: '', state: 'Not connected',
-      spn: '', iccid: '', pin: '', imsi: '', ki: '', dataport: '/dev/ttyUSB5'),
+  Reader(
+      id: 201,
+      model: '1001',
+      device: 'reader1',
+      lock: '',
+      state: 'Not connected',
+      spn: '',
+      iccid: '',
+      pin: '',
+      imsi: '',
+      ki: '',
+      dataport: '/dev/ttyUSB0'),
+  Reader(
+      id: 202,
+      model: '1001',
+      device: 'reader2',
+      lock: 'locked',
+      state: 'OK',
+      spn: 'Beeline',
+      iccid: '8979025912345634471',
+      pin: '1234',
+      imsi: '250014912345671',
+      ki: 'A1B2C3D4E5F60718293A4B5C6D7E8F90',
+      dataport: '/dev/ttyUSB1'),
+  Reader(
+      id: 203,
+      model: '1001',
+      device: 'reader3',
+      lock: '',
+      state: 'Reading',
+      stateFault: '12',
+      spn: 'MTS',
+      iccid: '8977011912345631183',
+      pin: '',
+      imsi: '250991912345699',
+      ki: '00',
+      progressDone: 812,
+      progressTotal: 31044,
+      dataport: '/dev/ttyUSB2'),
+  Reader(
+      id: 204,
+      model: '1001',
+      device: 'reader4',
+      lock: 'locked',
+      state: 'OK',
+      spn: 'MegaFon',
+      iccid: '8977029012345632290',
+      pin: '0000',
+      imsi: '250021912345678',
+      ki: 'F3C9A87654321000FEDCBA9876543210',
+      dataport: '/dev/ttyUSB3'),
+  Reader(
+      id: 205,
+      model: '1001',
+      device: 'reader5',
+      lock: '',
+      state: 'Error',
+      spn: '',
+      iccid: '8979007112345630071',
+      pin: '',
+      imsi: '',
+      ki: '00',
+      dataport: '/dev/ttyUSB4'),
+  Reader(
+      id: 206,
+      model: '',
+      device: 'reader6',
+      lock: '',
+      state: 'Not connected',
+      spn: '',
+      iccid: '',
+      pin: '',
+      imsi: '',
+      ki: '',
+      dataport: '/dev/ttyUSB5'),
 ];
 
 const billing = <BillRow>[
@@ -565,12 +641,16 @@ const smartActions = <ActionDef>[
       ['+CUSD: 0,"Баланс: 84.20 р.",15', 'OK']),
   ActionDef('Get number', 'get_number.sh', 'may.png',
       ['+CUSD: 0,"Ваш номер 9219981122",15', 'OK']),
-  ActionDef('Get minutes', 'get_minutes.sh', 'clock.png', ['+CUSD: 0,"Остаток: 320 мин",15', 'OK']),
-  ActionDef('Get tarif', 'get_tarif.sh', 'mon.png', ['+CUSD: 0,"Тариф МС",15', 'OK']),
-  ActionDef('Get options', 'get_options.sh', 'nospam.png', ['+CUSD: 0,"Опции: нет",15', 'OK']),
+  ActionDef('Get minutes', 'get_minutes.sh', 'clock.png',
+      ['+CUSD: 0,"Остаток: 320 мин",15', 'OK']),
+  ActionDef(
+      'Get tarif', 'get_tarif.sh', 'mon.png', ['+CUSD: 0,"Тариф МС",15', 'OK']),
+  ActionDef('Get options', 'get_options.sh', 'nospam.png',
+      ['+CUSD: 0,"Опции: нет",15', 'OK']),
   ActionDef('Get dover', 'get_dover.sh', 'free.png',
       ['+CUSD: 0,"Доверительный платёж недоступен",15']),
-  ActionDef('Activate work', 'activate_work.sh', 'play.png', ['group -> 101', 'OK']),
+  ActionDef(
+      'Activate work', 'activate_work.sh', 'play.png', ['group -> 101', 'OK']),
 ];
 
 const procActions = <ActionDef>[
@@ -578,31 +658,40 @@ const procActions = <ActionDef>[
       ['удалено 214 сообщений']),
   ActionDef('Перезапуск софта', '/usr/simbox/actions/reload.sh', 'conn.png',
       ['asterisk restarted', 'svistok restarted']),
-  ActionDef('Поискать модемы (modeswitch)', '/usr/sbin/usb_modeswitch -c /etc/usb_modeswitch.conf',
-      'dongle.png', ['found 8 devices']),
-  ActionDef('Поискать модемы (u2diag)', '/usr/simbox/bin/u2diag -d 0', 'pl2303.png', ['u2diag: ok']),
-  ActionDef('Рестартовать модемы', '/usr/simbox/actions/donglerestart.sh all', 'power.png',
-      ['restarting dongle0..dongle7']),
-  ActionDef('Рестартовать хабы', '/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 0', 'usb/hub_16.png',
+  ActionDef(
+      'Поискать модемы (modeswitch)',
+      '/usr/sbin/usb_modeswitch -c /etc/usb_modeswitch.conf',
+      'dongle.png',
+      ['found 8 devices']),
+  ActionDef('Поискать модемы (u2diag)', '/usr/simbox/bin/u2diag -d 0',
+      'pl2303.png', ['u2diag: ok']),
+  ActionDef('Рестартовать модемы', '/usr/simbox/actions/donglerestart.sh all',
+      'power.png', ['restarting dongle0..dongle7']),
+  ActionDef(
+      'Рестартовать хабы',
+      '/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 0',
+      'usb/hub_16.png',
       ['hub 02:3 power cycled']),
-  ActionDef('smsmag', '/usr/simbox/ai/sms/sendsms_spam_2.php', 'spec/mag.png', ['queued 12 sms']),
+  ActionDef('smsmag', '/usr/simbox/ai/sms/sendsms_spam_2.php', 'spec/mag.png',
+      ['queued 12 sms']),
 ];
 
 const dongleActions = <ActionDef>[
   ActionDef('сменить IMEI', '/usr/simbox/actions/changeimei.sh', 'rand.png',
       ['new imei: 35782000445599', 'OK']),
-  ActionDef('IMEI в чёрный список', '/usr/simbox/system/imei_black.php', 'spam.png',
-      ['imei blacklisted']),
-  ActionDef('В diagmode', '/usr/simbox/actions/diagmode.sh', 'diagmode/diagmode_start.png',
-      ['Внимание: вынуть SIM-карту']),
-  ActionDef('Перезапустить свисток', '/usr/simbox/actions/donglerestart.sh', 'power.png',
-      ['dongle restarted']),
+  ActionDef('IMEI в чёрный список', '/usr/simbox/system/imei_black.php',
+      'spam.png', ['imei blacklisted']),
+  ActionDef('В diagmode', '/usr/simbox/actions/diagmode.sh',
+      'diagmode/diagmode_start.png', ['Внимание: вынуть SIM-карту']),
+  ActionDef('Перезапустить свисток', '/usr/simbox/actions/donglerestart.sh',
+      'power.png', ['dongle restarted']),
 ];
 
 const upgradeActions = <ActionDef>[
   ActionDef('Обновить код', 'cd /usr/simbox && hg pull -u', 'conn.png',
       ['pulling from ssh://hg/simbox', '2 files updated']),
-  ActionDef('Перекомпилировать код', 'cd /usr/simbox/src && make -j4', 'free.png', ['make: ok']),
+  ActionDef('Перекомпилировать код', 'cd /usr/simbox/src && make -j4',
+      'free.png', ['make: ok']),
   ActionDef('Перезапуск софта', '/usr/simbox/actions/reload.sh', 'power.png',
       ['asterisk restarted']),
 ];

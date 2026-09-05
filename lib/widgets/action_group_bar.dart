@@ -13,7 +13,8 @@ class SubAction {
   final String key;
   final String label;
   final Widget Function(BuildContext) builder;
-  const SubAction({required this.key, required this.label, required this.builder});
+  const SubAction(
+      {required this.key, required this.label, required this.builder});
 }
 
 /// One collapsible action group shown as a pill in a [TableToolbar].
@@ -44,7 +45,11 @@ class ActionGroupPill extends StatelessWidget {
   final ActionGroup group;
   final bool open;
   final VoidCallback onTap;
-  const ActionGroupPill({super.key, required this.group, required this.open, required this.onTap});
+  const ActionGroupPill(
+      {super.key,
+      required this.group,
+      required this.open,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +64,8 @@ class ActionGroupPill extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(T.radiusCtl),
-            border: Border.all(color: open ? const Color(0x59005BEA) : T.border),
+            border:
+                Border.all(color: open ? const Color(0x59005BEA) : T.border),
           ),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             AdmIcon(group.icon),
@@ -73,7 +79,8 @@ class ActionGroupPill extends StatelessWidget {
                 )),
             const SizedBox(width: 6),
             Text(open ? '▲' : '▼',
-                style: TextStyle(fontSize: 9, color: open ? T.brandDeep : T.fg2)),
+                style:
+                    TextStyle(fontSize: 9, color: open ? T.brandDeep : T.fg2)),
           ]),
         ),
       ),
@@ -88,7 +95,10 @@ class ActionGroupIconPill extends StatelessWidget {
   final bool open;
   final VoidCallback onTap;
   const ActionGroupIconPill(
-      {super.key, required this.group, required this.open, required this.onTap});
+      {super.key,
+      required this.group,
+      required this.open,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +117,8 @@ class ActionGroupIconPill extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(T.radiusCtl),
-              border: Border.all(color: open ? const Color(0x59005BEA) : T.border),
+              border:
+                  Border.all(color: open ? const Color(0x59005BEA) : T.border),
             ),
             child: AdmIcon(group.icon),
           ),
@@ -122,7 +133,11 @@ class RailIconButton extends StatelessWidget {
   final IconData icon;
   final String tooltip;
   final VoidCallback onTap;
-  const RailIconButton({super.key, required this.icon, required this.tooltip, required this.onTap});
+  const RailIconButton(
+      {super.key,
+      required this.icon,
+      required this.tooltip,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +172,10 @@ class _SubActionDropdown extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final bool compact;
   const _SubActionDropdown(
-      {required this.subActions, required this.value, required this.onChanged, this.compact = false});
+      {required this.subActions,
+      required this.value,
+      required this.onChanged,
+      this.compact = false});
 
   @override
   Widget build(BuildContext context) {
@@ -173,12 +191,14 @@ class _SubActionDropdown extends StatelessWidget {
           value: value,
           isDense: true,
           icon: const Icon(Icons.expand_more, size: 16, color: T.fgMuted),
-          style: const TextStyle(fontFamily: 'SF Pro Text', fontSize: 12, color: T.fg1),
+          style: const TextStyle(
+              fontFamily: 'SF Pro Text', fontSize: 12, color: T.fg1),
           items: [
             for (final s in subActions)
               DropdownMenuItem(
                 value: s.key,
-                child: Text(compact ? '' : s.label, overflow: TextOverflow.ellipsis),
+                child: Text(compact ? '' : s.label,
+                    overflow: TextOverflow.ellipsis),
               ),
           ],
           selectedItemBuilder: compact
@@ -198,8 +218,11 @@ class _SubActionDropdown extends StatelessWidget {
 class _RailDivider extends StatelessWidget {
   const _RailDivider();
   @override
-  Widget build(BuildContext context) =>
-      Container(width: 1, height: 22, margin: const EdgeInsets.symmetric(horizontal: 12), color: T.hairline);
+  Widget build(BuildContext context) => Container(
+      width: 1,
+      height: 22,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      color: T.hairline);
 }
 
 /// Renders the toolbar's action-rail region: idle pills, or the currently
@@ -224,12 +247,14 @@ class ActionRail extends StatelessWidget {
               ? ActionGroupIconPill(
                   group: g,
                   open: false,
-                  onTap: () => st.toggleGroup(g.key, [for (final s in g.subActions) s.key]),
+                  onTap: () => st.toggleGroup(
+                      g.key, [for (final s in g.subActions) s.key]),
                 )
               : ActionGroupPill(
                   group: g,
                   open: false,
-                  onTap: () => st.toggleGroup(g.key, [for (final s in g.subActions) s.key]),
+                  onTap: () => st.toggleGroup(
+                      g.key, [for (final s in g.subActions) s.key]),
                 ),
           const SizedBox(width: 6),
         ],
@@ -247,15 +272,21 @@ class ActionRail extends StatelessWidget {
       } else if (group.subActions.length <= 1) {
         final sub = group.subActions.isNotEmpty ? group.subActions.first : null;
         final g = group;
-        content = Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          RailIconButton(icon: Icons.arrow_back, tooltip: 'Отмена', onTap: () => st.toggleGroup(g.key)),
-          const SizedBox(width: 10),
-          if (sub != null) sub.builder(context),
-          if (g.sharedSettings != null) ...[
-            const _RailDivider(),
-            g.sharedSettings!(context),
-          ],
-        ]);
+        content = Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              RailIconButton(
+                  icon: Icons.arrow_back,
+                  tooltip: 'Отмена',
+                  onTap: () => st.toggleGroup(g.key)),
+              const SizedBox(width: 10),
+              if (sub != null) sub.builder(context),
+              if (g.sharedSettings != null) ...[
+                const _RailDivider(),
+                g.sharedSettings!(context),
+              ],
+            ]);
       } else {
         final selectedKey = st.railSubAction ?? group.subActions.first.key;
         var selected = group.subActions.first;
@@ -266,28 +297,35 @@ class ActionRail extends StatelessWidget {
           }
         }
         final g = group;
-        content = Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          RailIconButton(icon: Icons.arrow_back, tooltip: 'Отмена', onTap: () => st.toggleGroup(g.key)),
-          const SizedBox(width: 10),
-          _SubActionDropdown(
-            subActions: g.subActions,
-            value: selected.key,
-            onChanged: st.selectSubAction,
-            compact: compact,
-          ),
-          const SizedBox(width: 10),
-          selected.builder(context),
-          if (g.sharedSettings != null) ...[
-            const _RailDivider(),
-            g.sharedSettings!(context),
-          ],
-        ]);
+        content = Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              RailIconButton(
+                  icon: Icons.arrow_back,
+                  tooltip: 'Отмена',
+                  onTap: () => st.toggleGroup(g.key)),
+              const SizedBox(width: 10),
+              _SubActionDropdown(
+                subActions: g.subActions,
+                value: selected.key,
+                onChanged: st.selectSubAction,
+                compact: compact,
+              ),
+              const SizedBox(width: 10),
+              selected.builder(context),
+              if (g.sharedSettings != null) ...[
+                const _RailDivider(),
+                g.sharedSettings!(context),
+              ],
+            ]);
       }
     }
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Align(alignment: Alignment.centerLeft, heightFactor: 1, child: content),
+      child: Align(
+          alignment: Alignment.centerLeft, heightFactor: 1, child: content),
     );
   }
 }

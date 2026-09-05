@@ -28,9 +28,21 @@ class _HubsPageState extends State<HubsPage> {
     final rows = hubTree;
 
     final cols = <ColDef<HubNode>>[
-      ColDef(key: 'tree', w: 84, title: 'дерево устройств', build: (h) => Cell(icons: h.icons)),
-      ColDef(key: 'device', w: 340, label: 'device', build: (h) => Cell(mono: h.device)),
-      ColDef(key: 'port', w: 120, label: 'bus:dev:port', build: (h) => Cell(mono: h.port)),
+      ColDef(
+          key: 'tree',
+          w: 84,
+          title: 'дерево устройств',
+          build: (h) => Cell(icons: h.icons)),
+      ColDef(
+          key: 'device',
+          w: 340,
+          label: 'device',
+          build: (h) => Cell(mono: h.device)),
+      ColDef(
+          key: 'port',
+          w: 120,
+          label: 'bus:dev:port',
+          build: (h) => Cell(mono: h.port)),
     ];
 
     final defaultIds = [for (final c in cols) c.key];
@@ -38,7 +50,8 @@ class _HubsPageState extends State<HubsPage> {
     final hidden = st.hiddenColumnsFor(AdmPage.hubs);
     final byKey = {for (final c in cols) c.key: c};
     final visibleCols = [
-      for (final k in order) if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!
+      for (final k in order)
+        if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!
     ];
 
     final groups = <ActionGroup>[
@@ -53,11 +66,13 @@ class _HubsPageState extends State<HubsPage> {
             builder: (_) => Wrap(spacing: 8, runSpacing: 8, children: [
               AdmButton('ВКЛ',
                   icon: 'p-on.png',
-                  onPressed: () => st.push('/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 1',
+                  onPressed: () => st.push(
+                      '/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 1',
                       const ['port powered on'])),
               AdmButton('ВЫКЛ',
                   icon: 'p-off.png',
-                  onPressed: () => st.push('/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 0',
+                  onPressed: () => st.push(
+                      '/usr/simbox/bin/hub-ctrl -b 02 -d 3 -P 1 -p 0',
                       const ['port powered off'])),
               AdmButton('РЕСТАРТ',
                   icon: 'power.png',
@@ -80,7 +95,9 @@ class _HubsPageState extends State<HubsPage> {
           search: _search,
           onSearch: st.setQuery,
           page: AdmPage.hubs,
-          allColumns: [for (final c in cols) (key: c.key, label: columnDisplayLabel(c))],
+          allColumns: [
+            for (final c in cols) (key: c.key, label: columnDisplayLabel(c))
+          ],
         ),
         const SizedBox(height: 12),
         Expanded(

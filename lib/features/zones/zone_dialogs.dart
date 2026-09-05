@@ -4,18 +4,21 @@ import '../../widgets/fugue_icon.dart';
 import 'controller.dart';
 import 'repository.dart';
 
-TextField _field(TextEditingController controller, String label, {bool required = false}) =>
+TextField _field(TextEditingController controller, String label,
+        {bool required = false}) =>
     TextField(
       controller: controller,
       style: T.body,
       decoration: InputDecoration(
         labelText: required ? '$label *' : label,
         isDense: true,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(T.radiusCtl)),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(T.radiusCtl)),
       ),
     );
 
-Future<void> showCreateZoneDialog(BuildContext context, ZoneController controller) async {
+Future<void> showCreateZoneDialog(
+    BuildContext context, ZoneController controller) async {
   final id = TextEditingController();
   final name = TextEditingController();
   final region = TextEditingController();
@@ -50,7 +53,8 @@ Future<void> showCreateZoneDialog(BuildContext context, ZoneController controlle
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(dialogContext), child: const Text('Отмена')),
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Отмена')),
           FilledButton(
             onPressed: () {
               final idValue = id.text.trim();
@@ -60,8 +64,8 @@ Future<void> showCreateZoneDialog(BuildContext context, ZoneController controlle
                 return;
               }
               try {
-                controller.createZone(
-                    idValue, nameValue, region.text.trim().isEmpty ? null : region.text.trim());
+                controller.createZone(idValue, nameValue,
+                    region.text.trim().isEmpty ? null : region.text.trim());
                 Navigator.pop(dialogContext);
               } on ZoneRepositoryException catch (e) {
                 setState(() => error = e.message);
@@ -78,7 +82,8 @@ Future<void> showCreateZoneDialog(BuildContext context, ZoneController controlle
   region.dispose();
 }
 
-Future<void> showEditZoneMetadataDialog(BuildContext context, ZoneController controller) async {
+Future<void> showEditZoneMetadataDialog(
+    BuildContext context, ZoneController controller) async {
   final zone = controller.selected;
   if (zone == null) return;
   final name = TextEditingController(text: zone.name);
@@ -103,14 +108,18 @@ Future<void> showEditZoneMetadataDialog(BuildContext context, ZoneController con
         ]),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Отмена')),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Отмена')),
         FilledButton(
           onPressed: () {
             controller.renameZone(
               zone.id,
               name.text.trim(),
               region.text.trim().isEmpty ? null : region.text.trim(),
-              billingCode.text.trim().isEmpty ? null : billingCode.text.trim().toUpperCase(),
+              billingCode.text.trim().isEmpty
+                  ? null
+                  : billingCode.text.trim().toUpperCase(),
             );
             Navigator.pop(context);
           },
@@ -124,7 +133,8 @@ Future<void> showEditZoneMetadataDialog(BuildContext context, ZoneController con
   billingCode.dispose();
 }
 
-Future<void> showDeleteZoneDialog(BuildContext context, ZoneController controller) async {
+Future<void> showDeleteZoneDialog(
+    BuildContext context, ZoneController controller) async {
   final zone = controller.selected;
   if (zone == null) return;
   final confirmed = await showDialog<bool>(
@@ -138,7 +148,9 @@ Future<void> showDeleteZoneDialog(BuildContext context, ZoneController controlle
       content: Text(
           '«${zone.name}» (${zone.id}) будет удалено вместе со всеми ${zone.defCodes.length} кодами.'),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Отмена')),
+        TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Отмена')),
         FilledButton(
           style: FilledButton.styleFrom(backgroundColor: T.danger),
           onPressed: () => Navigator.pop(context, true),

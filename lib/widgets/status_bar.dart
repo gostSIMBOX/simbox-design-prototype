@@ -21,7 +21,10 @@ class StatusBar extends StatelessWidget {
       decoration: const BoxDecoration(
         color: T.surface,
         border: Border(bottom: BorderSide(color: T.hairline)),
-        boxShadow: [BoxShadow(color: Color(0x249CB2C2), blurRadius: 32, offset: Offset(0, 1))],
+        boxShadow: [
+          BoxShadow(
+              color: Color(0x249CB2C2), blurRadius: 32, offset: Offset(0, 1))
+        ],
       ),
       child: Row(children: [
         const AdmIcon('power.png'),
@@ -35,7 +38,8 @@ class StatusBar extends StatelessWidget {
         const SizedBox(width: 14),
         Text('10.42.0.17', style: T.caption),
         const SizedBox(width: 14),
-        Text('SimBox 8f3c1a2+', style: T.caption.copyWith(fontStyle: FontStyle.italic)),
+        Text('SimBox 8f3c1a2+',
+            style: T.caption.copyWith(fontStyle: FontStyle.italic)),
         const Spacer(),
         Text(clock, style: T.caption),
         const SizedBox(width: 14),

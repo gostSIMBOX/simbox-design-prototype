@@ -15,7 +15,9 @@ class ExplanationBanner extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
         decoration: BoxDecoration(
-            color: T.surface, borderRadius: BorderRadius.circular(T.radiusCard), boxShadow: T.shadow),
+            color: T.surface,
+            borderRadius: BorderRadius.circular(T.radiusCard),
+            boxShadow: T.shadow),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             const FugueIcon('information.png'),
@@ -23,9 +25,11 @@ class ExplanationBanner extends StatelessWidget {
             const Expanded(child: Text('Пояснение', style: T.panelTitle)),
             IconButton(
               tooltip: 'Скрыть пояснение',
-              constraints: const BoxConstraints.tightFor(width: T.denseHit, height: T.denseHit),
+              constraints: const BoxConstraints.tightFor(
+                  width: T.denseHit, height: T.denseHit),
               onPressed: controller.toggleExplanation,
-              icon: const FugueIcon('cross.png', semanticLabel: 'Скрыть пояснение'),
+              icon: const FugueIcon('cross.png',
+                  semanticLabel: 'Скрыть пояснение'),
             ),
           ]),
           const SizedBox(height: 6),
@@ -58,8 +62,10 @@ class ExplanationReopenButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IconButton(
         tooltip: 'Показать пояснение',
-        constraints: const BoxConstraints.tightFor(width: T.denseHit, height: T.denseHit),
+        constraints: const BoxConstraints.tightFor(
+            width: T.denseHit, height: T.denseHit),
         onPressed: controller.toggleExplanation,
-        icon: const FugueIcon('information.png', semanticLabel: 'Показать пояснение'),
+        icon: const FugueIcon('information.png',
+            semanticLabel: 'Показать пояснение'),
       );
 }

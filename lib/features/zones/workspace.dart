@@ -21,7 +21,8 @@ class ZonesWorkspace extends StatelessWidget {
           child: Column(mainAxisSize: MainAxisSize.min, children: [
         const FugueIcon('exclamation.png'),
         const SizedBox(height: 8),
-        Text(controller.errorMessage ?? 'Не удалось загрузить направления.', style: T.body),
+        Text(controller.errorMessage ?? 'Не удалось загрузить направления.',
+            style: T.body),
         const SizedBox(height: 8),
         TextButton(onPressed: controller.load, child: const Text('Повторить')),
       ]));
@@ -56,25 +57,35 @@ class _DetailPane extends StatelessWidget {
     if (zone == null) {
       return Container(
         decoration: BoxDecoration(
-            color: T.surface, borderRadius: BorderRadius.circular(T.radiusCard), boxShadow: T.shadow),
-        child: const Center(child: Text('Выберите направление', style: T.caption)),
+            color: T.surface,
+            borderRadius: BorderRadius.circular(T.radiusCard),
+            boxShadow: T.shadow),
+        child:
+            const Center(child: Text('Выберите направление', style: T.caption)),
       );
     }
     return Container(
       decoration: BoxDecoration(
-          color: T.surface, borderRadius: BorderRadius.circular(T.radiusCard), boxShadow: T.shadow),
+          color: T.surface,
+          borderRadius: BorderRadius.circular(T.radiusCard),
+          boxShadow: T.shadow),
       clipBehavior: Clip.antiAlias,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         ZoneDetailHeader(controller: controller, narrow: narrow),
         Expanded(
           child: SingleChildScrollView(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              SizedBox(height: 280, child: ZoneCodeEditor(controller: controller)),
-              GroupRulesEditor(controller: controller),
-            ]),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                      height: 280,
+                      child: ZoneCodeEditor(controller: controller)),
+                  GroupRulesEditor(controller: controller),
+                ]),
           ),
         ),
-        if (controller.isDirty) _DraftBar(controller: controller, narrow: narrow),
+        if (controller.isDirty)
+          _DraftBar(controller: controller, narrow: narrow),
       ]),
     );
   }
@@ -87,12 +98,16 @@ class _DraftBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.symmetric(horizontal: narrow ? 12 : 16, vertical: 8),
-        decoration: const BoxDecoration(color: T.surface, border: Border(top: BorderSide(color: T.hairline))),
+        padding:
+            EdgeInsets.symmetric(horizontal: narrow ? 12 : 16, vertical: 8),
+        decoration: const BoxDecoration(
+            color: T.surface,
+            border: Border(top: BorderSide(color: T.hairline))),
         child: Row(children: [
           const FugueIcon('information.png'),
           const SizedBox(width: 8),
-          if (!narrow) const Text('Есть несохранённые изменения', style: T.caption),
+          if (!narrow)
+            const Text('Есть несохранённые изменения', style: T.caption),
           const Spacer(),
           TextButton.icon(
               onPressed: controller.cancelDraft,
@@ -121,8 +136,9 @@ class _GradientSaveButton extends StatelessWidget {
   const _GradientSaveButton({required this.onPressed});
   @override
   Widget build(BuildContext context) => DecoratedBox(
-        decoration:
-            BoxDecoration(gradient: T.brandGradient, borderRadius: BorderRadius.circular(T.radiusCtl)),
+        decoration: BoxDecoration(
+            gradient: T.brandGradient,
+            borderRadius: BorderRadius.circular(T.radiusCtl)),
         child: TextButton.icon(
           style: TextButton.styleFrom(
               foregroundColor: Colors.white,

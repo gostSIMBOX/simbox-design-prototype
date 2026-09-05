@@ -14,7 +14,8 @@ bool _listEquals<T>(List<T> a, List<T> b) {
 class DirectionSlot {
   final int slot; // 0-5
   final bool editable; // false for 0 and 5
-  final int alg; // legacy numeric algorithm code (values observed: 42,65,66,68,98) — a Plan-level policy code, unrelated to Zone's dialplan selector char
+  final int
+      alg; // legacy numeric algorithm code (values observed: 42,65,66,68,98) — a Plan-level policy code, unrelated to Zone's dialplan selector char
   final bool nodiff; // "различие не учитывается"
   final int limitSoft;
   final int limitHard;
@@ -28,7 +29,8 @@ class DirectionSlot {
     required this.limitHard,
   });
 
-  DirectionSlot copyWith({int? alg, bool? nodiff, int? limitSoft, int? limitHard}) =>
+  DirectionSlot copyWith(
+          {int? alg, bool? nodiff, int? limitSoft, int? limitHard}) =>
       DirectionSlot(
         slot: slot,
         editable: editable,
@@ -49,7 +51,8 @@ class DirectionSlot {
       limitHard == other.limitHard;
 
   @override
-  int get hashCode => Object.hash(slot, editable, alg, nodiff, limitSoft, limitHard);
+  int get hashCode =>
+      Object.hash(slot, editable, alg, nodiff, limitSoft, limitHard);
 }
 
 /// A billing/behavior plan ("план") — a named bundle of automation and
@@ -63,7 +66,8 @@ class Plan {
   final String id;
   final String commandSetId;
   final int priority;
-  final String? proTag; // routing tag compared by algorithms P/p/v, not a product tier
+  final String?
+      proTag; // routing tag compared by algorithms P/p/v, not a product tier
 
   // Capacity
   final int onlineMax;
@@ -83,7 +87,8 @@ class Plan {
   final int diffSlow;
   final int diffMin;
   final int diffMinOut;
-  final int? timeWake, timeSleep; // null = disabled (legacy -1) — the pair named in the banner
+  final int? timeWake,
+      timeSleep; // null = disabled (legacy -1) — the pair named in the banner
   final int? timeWorkWake, timeWorkSleep; // null = disabled (legacy -1)
   final int? timeHolidayWake, timeHolidaySleep; // null = disabled (legacy -1)
 
@@ -100,7 +105,12 @@ class Plan {
   // SMS and beacon generation
   final int mayLimit, monLimit, msmLimit;
   final int smsoutSoft, smsoutHard;
-  final int sattSoft, sattHard, sattSoftDay, sattHardDay, sattSoftTotal, sattHardTotal;
+  final int sattSoft,
+      sattHard,
+      sattSoftDay,
+      sattHardDay,
+      sattSoftTotal,
+      sattHardTotal;
   final int nospam; // legacy small integer code (1/2 observed), not boolean
 
   const Plan({
@@ -232,10 +242,16 @@ class Plan {
         diffMinOut: diffMinOut ?? this.diffMinOut,
         timeWake: clearTimeWake ? null : timeWake ?? this.timeWake,
         timeSleep: clearTimeSleep ? null : timeSleep ?? this.timeSleep,
-        timeWorkWake: clearTimeWorkWake ? null : timeWorkWake ?? this.timeWorkWake,
-        timeWorkSleep: clearTimeWorkSleep ? null : timeWorkSleep ?? this.timeWorkSleep,
-        timeHolidayWake: clearTimeHolidayWake ? null : timeHolidayWake ?? this.timeHolidayWake,
-        timeHolidaySleep: clearTimeHolidaySleep ? null : timeHolidaySleep ?? this.timeHolidaySleep,
+        timeWorkWake:
+            clearTimeWorkWake ? null : timeWorkWake ?? this.timeWorkWake,
+        timeWorkSleep:
+            clearTimeWorkSleep ? null : timeWorkSleep ?? this.timeWorkSleep,
+        timeHolidayWake: clearTimeHolidayWake
+            ? null
+            : timeHolidayWake ?? this.timeHolidayWake,
+        timeHolidaySleep: clearTimeHolidaySleep
+            ? null
+            : timeHolidaySleep ?? this.timeHolidaySleep,
         directions: directions ?? this.directions,
         iattMin: iattMin ?? this.iattMin,
         iattMax: iattMax ?? this.iattMax,
@@ -327,14 +343,18 @@ class Plan {
         Object.hashAllUnordered(qualityFlags),
         Object.hash(capOk, capNew, capFail, diffSlow, diffMin, diffMinOut),
         Object.hash(timeWake, timeSleep),
-        Object.hash(timeWorkWake, timeWorkSleep, timeHolidayWake, timeHolidaySleep),
+        Object.hash(
+            timeWorkWake, timeWorkSleep, timeHolidayWake, timeHolidaySleep),
         Object.hashAll(directions),
-        Object.hash(iattMin, iattMax, iattSoft, inAcdMin, inAcdMax, outAcdMin, outAcdMax),
+        Object.hash(iattMin, iattMax, iattSoft, inAcdMin, inAcdMax, outAcdMin,
+            outAcdMax),
         Object.hash(forwarding, outInAns, conn, rand, inWait, inSound),
         Object.hash(mayLimit, monLimit, msmLimit, smsoutSoft, smsoutHard),
-        Object.hash(sattSoft, sattHard, sattSoftDay, sattHardDay, sattSoftTotal, sattHardTotal),
+        Object.hash(sattSoft, sattHard, sattSoftDay, sattHardDay, sattSoftTotal,
+            sattHardTotal),
         nospam,
       );
 }
 
-bool _setEquals<T>(Set<T> a, Set<T> b) => a.length == b.length && a.containsAll(b);
+bool _setEquals<T>(Set<T> a, Set<T> b) =>
+    a.length == b.length && a.containsAll(b);

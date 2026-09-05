@@ -20,7 +20,8 @@ class InMemoryZoneRepository implements ZoneRepository {
   final List<Zone> _seed;
   late List<Zone> _records;
 
-  InMemoryZoneRepository(Iterable<Zone> seed) : _seed = List.unmodifiable(seed) {
+  InMemoryZoneRepository(Iterable<Zone> seed)
+      : _seed = List.unmodifiable(seed) {
     _records = List.of(_seed);
   }
 
@@ -48,7 +49,8 @@ class InMemoryZoneRepository implements ZoneRepository {
     final index = _records.indexWhere((item) => item.id == id);
     if (index < 0) throw ZoneRepositoryException('Направление $id не найдено.');
     if (record.id != id) {
-      throw const ZoneRepositoryException('ID существующего направления нельзя изменить.');
+      throw const ZoneRepositoryException(
+          'ID существующего направления нельзя изменить.');
     }
     final next = List<Zone>.of(_records);
     next[index] = record;

@@ -1,12 +1,105 @@
-/// The GostSimBox icon set, grouped by semantic axis.
-/// Each entry is `file|raw code|meaning`.
-class IconGroup {
-  final String title, path;
-  final List<String> items;
-  const IconGroup(this.title, this.path, this.items);
+class IconLegendItem {
+  final String file, code, termId, legacyLabel;
+
+  IconLegendItem._(this.file, this.code, this.termId, this.legacyLabel);
+
+  factory IconLegendItem.parse(String value) {
+    final parts = value.split('|');
+    final file = parts[0];
+    return IconLegendItem._(
+      file,
+      parts[1],
+      iconTermIds[file] ??
+          'legend.${file.replaceAll('.png', '').replaceAll(RegExp(r'[^A-Za-z0-9]+'), '.')}',
+      parts[2],
+    );
+  }
 }
 
-const iconCatalog = <IconGroup>[
+/// Stable semantic IDs for audited entries whose meaning is shared with tables
+/// and the Glossary. Unlisted decorative legacy assets retain a file-derived ID.
+const iconTermIds = <String, String>{
+  'state/state_sout.png': 'call.sou',
+  'state/state_sout_in.png': 'call.sou.in',
+  'state/state_sout_out.png': 'call.sou.out',
+  'state/end_party/1.png': 'call.end.us',
+  'state/end_party/2.png': 'call.end.remote',
+  'state/end_party/3.png': 'call.end.network',
+  'state/state_active.png': 'call.result.answer',
+  'state/state_dial.png': 'call.result.no_answer',
+  'state/state_ring.png': 'call.live.ring',
+  'state/state_wait.png': 'call.live.wait',
+  'p-on.png': 'modem.cfun.1',
+  'p-off.png': 'modem.cfun.5',
+  'state/cfun/4.png': 'modem.cfun.4',
+  'state/cfun/6.png': 'modem.cfun.6',
+  'state/simst/0.png': 'sim.state.0',
+  'state/simst/1.png': 'sim.state.1',
+  'state/simst/4.png': 'sim.state.4',
+  'state/simst/16.png': 'sim.pin_required',
+  'state/simst/255.png': 'sim.state.255',
+  'state/srvst/0.png': 'network.state.0',
+  'state/srvst/1.png': 'network.state.1',
+  'state/srvst/2.png': 'network.state.2',
+  'state/srvst/112.png': 'network.state.no_valid_sim',
+  'qos/ivip.png': 'qos.vip',
+  'qos/igoo.png': 'qos.goo',
+  'qos/inor.png': 'qos.nor',
+  'qos/ibad.png': 'qos.bad',
+  'qos/inew.png': 'qos.new',
+  'qos/inos.png': 'qos.nos',
+  'qos/irob.png': 'qos.rob',
+  'qos/iblo.png': 'qos.blo',
+  'qos/very.png': 'incoming.recency.very',
+  'qos/fast.png': 'incoming.recency.fast',
+  'qos/slow.png': 'incoming.recency.slow',
+  'qos/never.png': 'incoming.recency.never',
+  'qos/ine0.png': 'qos.ne0',
+  'qos/inec.png': 'qos.nec',
+  'qos/inem.png': 'qos.nem',
+  'qos/capok.png': 'captcha.ok',
+  'qos/capnew.png': 'captcha.new',
+  'qos/capfail.png': 'captcha.fail',
+  'qos/ipalevo.png': 'captcha.pal',
+  'spec/may.png': 'call.special.short_beacon',
+  'may.png': 'command.callback_request',
+  'mon.png': 'command.balance_topup_request',
+  'msm.png': 'command.callback_sms_fallback',
+  'im/ima.png': 'im.ima',
+  'im/imb.png': 'im.imb',
+  'im/imc.png': 'im.imc',
+  'im/imd.png': 'im.imd',
+  'im/ime.png': 'im.ime',
+  'im/imn.png': 'im.imn',
+  'recog_types/10.png': 'recognition.10',
+  'recog_types/20.png': 'recognition.20',
+  'recog_types/30.png': 'recognition.30',
+  'recog_types/50.png': 'recognition.50',
+  'recog_types/90.png': 'recognition.90',
+  'recog_types/91.png': 'recognition.91',
+  'recog_types/92.png': 'recognition.92',
+  'recog_types/100.png': 'recognition.100',
+  'recog_types/110.png': 'recognition.110',
+  'recog_types/120.png': 'recognition.120',
+  'spec/pre.png': 'special.pre',
+  'spec/pos.png': 'special.pos',
+  'spec/in_sound.png': 'special.spe',
+  'spec/mag.png': 'special.mag',
+  'spec/nav.png': 'special.nav',
+  'spec/mon.png': 'special.mon',
+};
+
+/// The GostSimBox icon set, grouped by semantic axis. The public catalog is
+/// typed; the compact seed notation below remains only to make this 164-item
+/// frozen legacy inventory auditable against its original source.
+class IconGroup {
+  final String title, path;
+  final List<IconLegendItem> items;
+  IconGroup(this.title, this.path, List<String> items)
+      : items = items.map(IconLegendItem.parse).toList(growable: false);
+}
+
+final iconCatalog = <IconGroup>[
   IconGroup('Группа и расписание', 'imgs/ · group + pause', [
     'play.png|100–299|в работе',
     'pause2.png|pause=1|пауза',
@@ -51,7 +144,7 @@ const iconCatalog = <IconGroup>[
     'state/srvst/2.png|srvst=2|поиск',
     'state/srvst/112.png|srvst=1,simst=0|сеть без SIM',
   ]),
-  IconGroup('Качество источника (qos)', 'imgs/qos/', [
+  IconGroup('Классификация и история (qos)', 'imgs/qos/', [
     'qos/ivip.png|VIP|достоверные источники',
     'qos/igoo.png|GOO|белый список',
     'qos/inor.png|NOR|нормальные',
@@ -87,7 +180,8 @@ const iconCatalog = <IconGroup>[
     'spec/mon.png|MON|MON',
     'spec/notvip.png|NOTVIP|не VIP',
   ]),
-  IconGroup('Мульти-сим и распознавание', 'imgs/im · imgs/recog_types', [
+  IconGroup(
+      'Связь SIM с номером и распознавание', 'imgs/im · imgs/recog_types', [
     'im/ima.png|A|мульти-сим A',
     'im/imb.png|B|мульти-сим B',
     'im/imc.png|C|мульти-сим C',
@@ -161,7 +255,7 @@ const iconCatalog = <IconGroup>[
     'imode.png|imode|режим',
     'in_no.png|in_no|нет входящих',
   ]),
-  IconGroup('Направления (napravleine)', 'imgs/napravleine/', [
+  IconGroup('Направления', 'imgs/napravleine/', [
     'napravleine/beeline_msk.png|BM|Билайн Мск',
     'napravleine/beeline_spb.png|BS|Билайн СПб',
     'napravleine/beeline_ru.png|BR|Билайн РФ',

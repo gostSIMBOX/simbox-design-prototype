@@ -29,6 +29,7 @@ const names = <String>[
   'exclamation.png',
   'tick.png',
   'information.png',
+  'book-open-list.png',
 ];
 
 int _pngDimension(File file, int offset) {

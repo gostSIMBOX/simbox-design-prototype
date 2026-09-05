@@ -28,24 +28,48 @@ class _DonglesPageState extends State<DonglesPage> {
   }
 
   List<ColDef<Dongle>> _cols(AppState st) => [
-        ColDef(key: 'model', w: 38, title: 'модель', build: (d) => Cell(icons: [Ico.dongle(d.model)])),
+        ColDef(
+            key: 'model',
+            w: 38,
+            title: 'модель',
+            build: (d) => Cell(icons: [Ico.dongle(d.model)])),
         ColDef(
             key: 'cfun',
             w: 34,
             title: 'передатчик',
             icon: 'p-on.png',
             build: (d) => Cell(icons: [Ico.cfun(st.cfunOf(d.id, d.cfun))])),
-        ColDef(key: 'name', w: 76, label: 'Свисток', build: (d) => Cell(mono: d.name)),
+        ColDef(
+            key: 'name',
+            w: 76,
+            label: 'Свисток',
+            build: (d) => Cell(mono: d.name)),
         ColDef(
             key: 'lock',
             w: 108,
             title: 'блокировка',
             icon: 'lock.png',
             build: (d) => Cell(sub: d.lock)),
-        ColDef(key: 'state', w: 68, label: 'state', build: (d) => Cell(text: d.state)),
-        ColDef(key: 'e0', w: 38, label: 'ERR0', build: (d) => Cell(text: '${d.e0}')),
-        ColDef(key: 'e1', w: 38, label: 'ERR1', build: (d) => Cell(text: '${d.e1}')),
-        ColDef(key: 'e2', w: 38, label: 'ERR2', build: (d) => Cell(text: '${d.e2}')),
+        ColDef(
+            key: 'state',
+            w: 68,
+            label: 'state',
+            build: (d) => Cell(text: d.state)),
+        ColDef(
+            key: 'e0',
+            w: 38,
+            label: 'ERR0',
+            build: (d) => Cell(text: '${d.e0}')),
+        ColDef(
+            key: 'e1',
+            w: 38,
+            label: 'ERR1',
+            build: (d) => Cell(text: '${d.e1}')),
+        ColDef(
+            key: 'e2',
+            w: 38,
+            label: 'ERR2',
+            build: (d) => Cell(text: '${d.e2}')),
         ColDef(key: 'm', w: 76, label: 'M', build: (d) => Cell(text: d.m)),
         ColDef(key: 'ch', w: 48, label: 'Ch', build: (d) => Cell(text: d.ch)),
         ColDef(
@@ -53,22 +77,56 @@ class _DonglesPageState extends State<DonglesPage> {
             w: 62,
             label: 'RSSI',
             build: (d) => Cell(icons: [Ico.rssi(d.rssi)], sub: d.dbm)),
-        ColDef(key: 'snr', w: 38, label: 'SNR', build: (d) => Cell(text: '${d.snr}')),
-        ColDef(key: 'oper', w: 96, label: 'Oper', build: (d) => Cell(text: d.oper, sub: d.operSub)),
+        ColDef(
+            key: 'snr',
+            w: 38,
+            label: 'SNR',
+            build: (d) => Cell(text: '${d.snr}')),
+        ColDef(
+            key: 'oper',
+            w: 96,
+            label: 'Oper',
+            build: (d) => Cell(text: d.oper, sub: d.operSub)),
         ColDef(
             key: 'cell',
             w: 62,
             label: 'CELL',
             sub: 'LAC',
             build: (d) => Cell(mono: d.cell, sub: d.lac)),
-        ColDef(key: 'iccid', w: 96, label: 'ICCID', build: (d) => Cell(mono: d.iccid)),
-        ColDef(key: 'serial', w: 84, label: 'Serial', build: (d) => Cell(mono: d.serial)),
-        ColDef(key: 'imei', w: 124, label: 'IMEI', build: (d) => Cell(mono: d.imei)),
-        ColDef(key: 'fw', w: 116, label: 'firmware', build: (d) => Cell(mono: d.fw)),
-        ColDef(key: 'mdl', w: 64, label: 'model', build: (d) => Cell(mono: d.mdl)),
-        ColDef(key: 'audio', w: 104, label: 'audio', build: (d) => Cell(mono: d.audio)),
-        ColDef(key: 'data', w: 104, label: 'data', build: (d) => Cell(mono: d.data)),
-        ColDef(key: 'dev', w: 54, label: 'dev', build: (d) => Cell(mono: d.dev)),
+        ColDef(
+            key: 'iccid',
+            w: 96,
+            label: 'ICCID',
+            build: (d) => Cell(mono: d.iccid)),
+        ColDef(
+            key: 'serial',
+            w: 84,
+            label: 'Serial',
+            build: (d) => Cell(mono: d.serial)),
+        ColDef(
+            key: 'imei',
+            w: 124,
+            label: 'IMEI',
+            build: (d) => Cell(mono: d.imei)),
+        ColDef(
+            key: 'fw',
+            w: 116,
+            label: 'firmware',
+            build: (d) => Cell(mono: d.fw)),
+        ColDef(
+            key: 'mdl', w: 64, label: 'model', build: (d) => Cell(mono: d.mdl)),
+        ColDef(
+            key: 'audio',
+            w: 104,
+            label: 'audio',
+            build: (d) => Cell(mono: d.audio)),
+        ColDef(
+            key: 'data',
+            w: 104,
+            label: 'data',
+            build: (d) => Cell(mono: d.data)),
+        ColDef(
+            key: 'dev', w: 54, label: 'dev', build: (d) => Cell(mono: d.dev)),
       ];
 
   List<ColDef<Dongle>> _visibleCols(AppState st, List<ColDef<Dongle>> all) {
@@ -76,7 +134,10 @@ class _DonglesPageState extends State<DonglesPage> {
     final order = st.columnOrderFor(AdmPage.dongle, defaults);
     final hidden = st.hiddenColumnsFor(AdmPage.dongle);
     final byKey = {for (final c in all) c.key: c};
-    return [for (final k in order) if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!];
+    return [
+      for (final k in order)
+        if (!hidden.contains(k) && byKey.containsKey(k)) byKey[k]!
+    ];
   }
 
   List<ActionGroup> _groups(AppState st) => [
@@ -114,14 +175,19 @@ class _DonglesPageState extends State<DonglesPage> {
                 AdmButton('Снять PIN', primary: true, onPressed: () {
                   final pin = _pin.text.isEmpty ? '0000' : _pin.text;
                   st.runOnDongles(
-                      (d) => LogEntry('', "asterisk -rx 'dongle cmd ${d.name} AT+CPIN=$pin'",
+                      (d) => LogEntry(
+                          '',
+                          "asterisk -rx 'dongle cmd ${d.name} AT+CPIN=$pin'",
                           const ['OK', 'свисток перезапускается']),
                       toastText: 'PIN снят',
                       icon: 'lock.png');
                 }),
                 const SizedBox(width: 10),
                 Text('свисток перезапускается — подождите около минуты',
-                    style: const TextStyle(fontFamily: 'SF Pro Text', fontSize: 11, color: Color(0xFF8A97A3))),
+                    style: const TextStyle(
+                        fontFamily: 'SF Pro Text',
+                        fontSize: 11,
+                        color: Color(0xFF8A97A3))),
               ]),
             ),
             SubAction(
@@ -129,7 +195,9 @@ class _DonglesPageState extends State<DonglesPage> {
               label: 'unlock CARDLOCK',
               builder: (_) => AdmButton('unlock CARDLOCK',
                   onPressed: () => st.runOnDongles(
-                      (d) => LogEntry('', '/usr/simbox/bin/unlock_cardlock ${d.name}',
+                      (d) => LogEntry(
+                          '',
+                          '/usr/simbox/bin/unlock_cardlock ${d.name}',
                           const ['CARDLOCK unlocked']),
                       toastText: 'CARDLOCK')),
             ),
@@ -138,7 +206,9 @@ class _DonglesPageState extends State<DonglesPage> {
               label: 'U2DIAG',
               builder: (_) => AdmButton('U2DIAG',
                   onPressed: () => st.runOnDongles(
-                      (d) => LogEntry('', '/usr/simbox/bin/u2diag -d 0 ${d.name}',
+                      (d) => LogEntry(
+                          '',
+                          '/usr/simbox/bin/u2diag -d 0 ${d.name}',
                           const ['u2diag: 0']),
                       toastText: 'U2DIAG')),
             ),
@@ -182,7 +252,9 @@ class _DonglesPageState extends State<DonglesPage> {
                 AdmButton('Выполнить', primary: true, onPressed: () {
                   final cmd = _at.text.isEmpty ? 'AT+CFUN?' : _at.text;
                   st.runOnDongles(
-                      (d) => LogEntry('', "asterisk -rx 'dongle cmd ${d.name} $cmd'",
+                      (d) => LogEntry(
+                          '',
+                          "asterisk -rx 'dongle cmd ${d.name} $cmd'",
                           ['+CFUN: ${st.cfunOf(d.id, d.cfun)}', 'OK']),
                       toastText: 'AT-команда');
                 }),
@@ -209,7 +281,9 @@ class _DonglesPageState extends State<DonglesPage> {
           search: _search,
           onSearch: st.setQuery,
           page: AdmPage.dongle,
-          allColumns: [for (final c in allCols) (key: c.key, label: columnDisplayLabel(c))],
+          allColumns: [
+            for (final c in allCols) (key: c.key, label: columnDisplayLabel(c))
+          ],
         ),
         const SizedBox(height: 12),
         Expanded(
