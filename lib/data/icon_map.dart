@@ -53,16 +53,34 @@ class Ico {
           IcoRef('day_work.png', 'рабочий день')
         ];
       }
+      if (pause == 2) {
+        return const [
+          IcoRef('pause2.png', 'пауза'),
+          IcoRef('day_holiday.png', 'выходной')
+        ];
+      }
       if (pause == 11) {
         return const [
           IcoRef('wake.png', 'просыпается'),
           IcoRef('day_work.png', 'рабочий день')
         ];
       }
+      if (pause == 12) {
+        return const [
+          IcoRef('wake.png', 'просыпается'),
+          IcoRef('day_holiday.png', 'выходной')
+        ];
+      }
       if (pause == 21) {
         return const [
           IcoRef('sleep.png', 'спит'),
           IcoRef('day_work.png', 'рабочий день')
+        ];
+      }
+      if (pause == 22) {
+        return const [
+          IcoRef('sleep.png', 'спит'),
+          IcoRef('day_holiday.png', 'выходной')
         ];
       }
       return const [IcoRef('play.png', 'в работе')];
@@ -105,6 +123,12 @@ class Ico {
     'VERY': ['qos/very.png', 'incoming.recency.very'],
     'SLOW': ['qos/slow.png', 'incoming.recency.slow'],
     'NEVER': ['qos/never.png', 'incoming.recency.never'],
+    'SPAM': ['spam.png', 'qos.spam'],
+    'IMO': ['imode.png', 'qos.imo'],
+    // Legacy has no distinct SYS icon — numeric 0 always renders inos.png
+    // regardless of NOS/SYS (modules/html.php:334); reusing that exact asset
+    // is the confirmed legacy behavior, not a placeholder.
+    'SYS': ['qos/inos.png', 'qos.sys'],
   };
 
   static IcoRef? qos(String q, String io) {
@@ -140,6 +164,31 @@ class Ico {
     final m = _specMap[s];
     return m == null ? null : IcoRef(m[0], '$s — ${m[1]}');
   }
+
+  static IcoRef? fas(bool v) => v ? const IcoRef('fas.png', 'fas') : null;
+
+  /// SIM-level VIP capability tier (`sim.php`'s `$vip`), distinct from the
+  /// call-level `qos.vip` classification — confirmed different assets
+  /// (`ivip.png` vs `qos/ivip.png`). Labeled by raw value only; the tier
+  /// distinction's business meaning is undocumented (see 02-visual.md Open Q2).
+  static IcoRef? vip(int v) => switch (v) {
+        11 => const IcoRef('ivip1.png', 'vip=11'),
+        12 => const IcoRef('ivip2.png', 'vip=12'),
+        > 0 => const IcoRef('ivip.png', 'vip>0'),
+        _ => null,
+      };
+
+  static IcoRef pre(bool v) => _termRef('spec/pre.png', 'special.pre', v ? 'PRE' : '');
+  static IcoRef pos(bool v) => _termRef('spec/pos.png', 'special.pos', v ? 'POS' : '');
+
+  static IcoRef liveCall(String state) => switch (state) {
+        'dialing' => _termRef('state/state_dial.png', 'call.live.dial', 'DIAL'),
+        'ring' => _termRef('state/state_ring.png', 'call.live.ring', 'RING'),
+        'active' =>
+          _termRef('state/state_active.png', 'call.live.active', 'ACTIVE'),
+        'cooldown' => _termRef('state_wait.png', 'call.live.wait', 'WAIT'),
+        _ => throw ArgumentError('unknown liveState: $state'),
+      };
 
   static IcoRef? im(String v) {
     const m = {

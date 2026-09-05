@@ -25,9 +25,43 @@ class Sim {
   final String may, mon;
   final double pdd0, pdd1;
   final int pri;
-  final String lim0, lim1, lac, cell, imei, imsi;
+  final String lac, cell, imei, imsi;
   final bool imeiWarn;
   final List<String> dates;
+
+  // --- pro (sim.php col 3): raw, bare-labeled — mismatch mechanism is
+  // confirmed by code, the value's own business meaning is not (see
+  // 02-visual.md Open Q1).
+  final String pro;
+  final bool proWarn;
+
+  // --- spec cluster (col 6): legacy stacks up to 5 icons in one cell —
+  // vip/pre/pos/fas alongside the existing `spec` code icon.
+  final int vip; // 0 (none) / 11 / 12 / >0 generic
+  final bool pre, pos, fas;
+
+  // --- state / live call (col 7): io/qos already exist above.
+  final String liveState; // '' | 'dialing' | 'ring' | 'active' | 'cooldown'
+  final int elapsedSec; // meaningful only when liveState is dialing/ring/active
+  final int cooldownMax; // diff_min ceiling, meaningful only when liveState=='cooldown'
+  final String emType; // raw, default '0' — shown as-is, never interpreted
+  final String numberb; // busy-state B number; may carry raw '#SOU<15-digit-imsi>' suffix
+  final String numbera; // busy-state A number; overridden when numberb carries the SOU suffix
+
+  // --- MAY/MON/MSM + SMS quota (col 25): may/mon already exist above.
+  final String msm;
+  final int smsSent, smsSoft, smsHard;
+
+  // --- PDDAS (col 27, mock value only — see 02-visual.md Open Q6)
+  final double pddas;
+
+  // --- LIMIT0..LIMIT5 (cols 31-36): six separate columns, replaces the
+  // earlier lim0/lim1 fields (mirrors the existing `dates` List precedent).
+  final List<String> limits; // length 6, each "value/max"
+  final List<bool> limitPalevo; // length 6, parallel index
+
+  // --- dongle hub-port sub-line (col 14, dongle0* rows only)
+  final String dongleA;
 
   const Sim({
     required this.id,
@@ -76,14 +110,32 @@ class Sim {
     required this.pdd0,
     required this.pdd1,
     required this.pri,
-    required this.lim0,
-    required this.lim1,
     required this.lac,
     required this.cell,
     required this.imei,
     this.imeiWarn = false,
     required this.imsi,
     required this.dates,
+    this.pro = '',
+    this.proWarn = false,
+    this.vip = 0,
+    this.pre = false,
+    this.pos = false,
+    this.fas = false,
+    this.liveState = '',
+    this.elapsedSec = 0,
+    this.cooldownMax = 0,
+    this.emType = '0',
+    this.numberb = '',
+    this.numbera = '',
+    this.msm = '0/0',
+    this.smsSent = 0,
+    this.smsSoft = 0,
+    this.smsHard = 0,
+    this.pddas = 0,
+    this.limits = const ['', '', '', '', '', ''],
+    this.limitPalevo = const [false, false, false, false, false, false],
+    this.dongleA = '',
   });
 
   Object? field(String k) => switch (k) {
@@ -284,6 +336,13 @@ class Cell {
   final String note, text, mono, warn, sub, sub2;
   final List<IcoRef> icons;
   final List<LogLink> links;
+
+  /// When true, `text` renders in the brand-accent color instead of the plain
+  /// cell color — this table's one "current value differs from a pending
+  /// setting" cue (currently only the `pro` column). Kept as a bool rather than
+  /// a `Color` field so this data-only file stays free of a Flutter import.
+  final bool pending;
+
   const Cell({
     this.note = '',
     this.text = '',
@@ -293,6 +352,7 @@ class Cell {
     this.sub2 = '',
     this.icons = const [],
     this.links = const [],
+    this.pending = false,
   });
 }
 

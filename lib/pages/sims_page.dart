@@ -61,6 +61,21 @@ class _SimsPageState extends State<SimsPage> {
               ],
       );
 
+  /// `sim.php:1543-1548`'s exact `substr(numberb,-19,4)=="#SOU"` check, ported
+  /// literally: a SOU internal SIM-to-SIM busy call encodes the other SIM's
+  /// 15-digit IMSI into `numberb` itself as a `<number>#SOU<imsi>` suffix.
+  static bool _isSouBusy(String numberb) =>
+      numberb.length >= 19 &&
+      numberb.substring(numberb.length - 19, numberb.length - 15) == '#SOU';
+
+  String _busyNumberB(Sim s) => _isSouBusy(s.numberb)
+      ? s.numberb.substring(0, s.numberb.length - 15)
+      : s.numberb;
+
+  String _busyNumberA(Sim s) => _isSouBusy(s.numberb)
+      ? s.numberb.substring(s.numberb.length - 15) // the OTHER managed SIM's IMSI
+      : s.numbera;
+
   List<ColDef<Sim>> _cols(AppState st) => [
         ColDef(
             key: 'group',
@@ -70,6 +85,12 @@ class _SimsPageState extends State<SimsPage> {
             build: (s) => Cell(
                 icons: Ico.group(s.group, st.pauseOf(s.id, s.pause)),
                 sub: '${s.group}')),
+        ColDef(
+            key: 'pro',
+            w: 40,
+            label: 'pro',
+            title: 'pro (set vs. current)',
+            build: (s) => Cell(text: s.pro, pending: s.proWarn)),
         ColDef(
             key: 'cap',
             w: 30,
@@ -85,20 +106,36 @@ class _SimsPageState extends State<SimsPage> {
                 Cell(icons: [if (Ico.im(s.im) != null) Ico.im(s.im)!])),
         ColDef(
             key: 'spec',
-            w: 30,
+            w: 44,
             title: 'спец-режим',
             icon: 'spec/pre.png',
-            build: (s) =>
-                Cell(icons: [if (Ico.spec(s.spec) != null) Ico.spec(s.spec)!])),
+            build: (s) => Cell(icons: [
+                  if (Ico.vip(s.vip) != null) Ico.vip(s.vip)!,
+                  if (s.pre) Ico.pre(true),
+                  if (s.pos) Ico.pos(true),
+                  if (Ico.fas(s.fas) != null) Ico.fas(s.fas)!,
+                  if (Ico.spec(s.spec) != null) Ico.spec(s.spec)!,
+                ])),
         ColDef(
             key: 'io',
-            w: 54,
+            w: 96,
             label: 'state',
-            title: 'направление и качество',
-            build: (s) => Cell(icons: [
-                  if (Ico.io(s.io) != null) Ico.io(s.io)!,
-                  if (Ico.qos(s.qos, s.io) != null) Ico.qos(s.qos, s.io)!,
-                ])),
+            title: 'направление, качество и live-состояние звонка',
+            build: (s) => Cell(
+                  icons: [
+                    if (s.liveState.isNotEmpty) Ico.liveCall(s.liveState),
+                    if (Ico.io(s.io) != null) Ico.io(s.io)!,
+                    if (Ico.qos(s.qos, s.io) != null) Ico.qos(s.qos, s.io)!,
+                  ],
+                  mono: s.io == 'O' && s.emType != '0' ? s.emType : '',
+                  text: switch (s.liveState) {
+                    'dialing' || 'ring' || 'active' => '(${s.elapsedSec} сек.)',
+                    'cooldown' => '(${s.elapsedSec}/${s.cooldownMax} сек.)',
+                    _ => '',
+                  },
+                  sub: _busyNumberB(s),
+                  sub2: _busyNumberA(s),
+                )),
         ColDef(
             key: 'napr',
             w: 38,
@@ -156,7 +193,7 @@ class _SimsPageState extends State<SimsPage> {
             key: 'dongle',
             w: 68,
             label: 'dev',
-            build: (s) => Cell(mono: s.dongle)),
+            build: (s) => Cell(mono: s.dongle, sub2: s.dongleA)),
         ColDef(
             key: 'tot',
             w: 92,
@@ -222,16 +259,24 @@ class _SimsPageState extends State<SimsPage> {
                     : const [])),
         ColDef(
             key: 'may',
-            w: 72,
+            w: 96,
             label: 'MAY',
-            sub: 'MON',
+            sub: 'MON/MSM/SMS',
             icon: 'may.png',
-            build: (s) => Cell(text: 'MAY ${s.may}', sub: 'MON ${s.mon}')),
+            build: (s) => Cell(text: 'MAY ${s.may}\n'
+                'MON ${s.mon}\n'
+                'MSM ${s.msm}\n'
+                'SMS ${s.smsSent}/[${s.smsSoft};${s.smsHard}]')),
         ColDef(
             key: 'asrl',
             w: 46,
             label: 'ASRL',
             build: (s) => Cell(text: s.asrl.toStringAsFixed(2))),
+        ColDef(
+            key: 'pddas',
+            w: 46,
+            label: 'PDDAS',
+            build: (s) => Cell(text: s.pddas.toStringAsFixed(2))),
         ColDef(
             key: 'pdd0',
             w: 46,
@@ -247,12 +292,17 @@ class _SimsPageState extends State<SimsPage> {
             w: 34,
             label: 'pri',
             build: (s) => Cell(text: '${s.pri}')),
-        ColDef(
-            key: 'lim0',
-            w: 80,
-            label: 'LIMIT0',
-            sub: 'LIMIT1',
-            build: (s) => Cell(text: s.lim0, sub: s.lim1)),
+        for (var i = 0; i < 6; i++)
+          ColDef(
+              key: 'lim$i',
+              w: 80,
+              label: 'LIMIT$i',
+              build: (s) => Cell(
+                    icons: s.limitPalevo[i]
+                        ? [Ico.captcha('ipalevo')]
+                        : const [],
+                    text: s.limits[i],
+                  )),
         ColDef(
             key: 'lac',
             w: 62,

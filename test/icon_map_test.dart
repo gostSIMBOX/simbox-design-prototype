@@ -32,4 +32,43 @@ void main() {
     expect(fast.title, contains('этого звонящего номера'));
     expect(fast.title, contains('этой принимающей SIM'));
   });
+
+  test('group() covers all six pause combinations, workday and holiday', () {
+    expect(Ico.group(150, 1)[1].path, 'day_work.png');
+    expect(Ico.group(150, 2)[1].path, 'day_holiday.png');
+    expect(Ico.group(150, 11)[1].path, 'day_work.png');
+    expect(Ico.group(150, 12)[1].path, 'day_holiday.png');
+    expect(Ico.group(150, 21)[1].path, 'day_work.png');
+    expect(Ico.group(150, 22)[1].path, 'day_holiday.png');
+  });
+
+  test('vip() returns the exact 3-way legacy branch, raw-value labeled only',
+      () {
+    expect(Ico.vip(11)!.path, 'ivip1.png');
+    expect(Ico.vip(12)!.path, 'ivip2.png');
+    expect(Ico.vip(1)!.path, 'ivip.png');
+    expect(Ico.vip(0), isNull);
+  });
+
+  test('qos() resolves the newly-added SPAM/IMO/SYS values', () {
+    expect(Ico.qos('SPAM', 'I')!.path, 'spam.png');
+    expect(Ico.qos('IMO', 'O')!.path, 'imode.png');
+    // SYS intentionally reuses the NOS asset — legacy has no distinct SYS
+    // icon (modules/html.php:334 always renders inos.png for numeric 0).
+    expect(Ico.qos('SYS', 'O')!.path, 'qos/inos.png');
+  });
+
+  test('fas()/pre()/pos() render only when the underlying flag is set', () {
+    expect(Ico.fas(true)!.path, 'fas.png');
+    expect(Ico.fas(false), isNull);
+    expect(Ico.pre(true).path, 'spec/pre.png');
+    expect(Ico.pos(true).path, 'spec/pos.png');
+  });
+
+  test('liveCall() resolves all four live-state icons', () {
+    expect(Ico.liveCall('dialing').path, 'state/state_dial.png');
+    expect(Ico.liveCall('ring').path, 'state/state_ring.png');
+    expect(Ico.liveCall('active').path, 'state/state_active.png');
+    expect(Ico.liveCall('cooldown').path, 'state_wait.png');
+  });
 }

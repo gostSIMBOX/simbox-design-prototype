@@ -324,6 +324,16 @@ final terminology = <String, TermDefinition>{
       tooltipRu:
           'Историческая spec-метка MON; не смешивать с командой send_mon «попросить пополнить счёт».',
       confidence: TermConfidence.unresolved),
+  'call.live.dial': _term('call.live.dial', 'Dialing', 'Набор номера'),
+  'call.live.active':
+      _term('call.live.active', 'Call active', 'Разговор активен'),
+  'qos.spam': _term('qos.spam', 'Suspicious', 'Подозрительно',
+      confidence: TermConfidence.derived),
+  'qos.imo': _term(
+      'qos.imo', 'IM-related request class', 'IM-связанный класс запроса',
+      confidence: TermConfidence.unresolved),
+  'qos.sys': _term(
+      'qos.sys', 'System class (not billed)', 'Системный класс (не биллится)'),
 };
 
 TermDefinition _unresolvedRecognition(String code) => _term(

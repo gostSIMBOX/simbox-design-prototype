@@ -206,7 +206,10 @@ class _DenseTableState<TRow> extends State<DenseTable<TRow>> {
     final children = <Widget>[];
     if (c.note.isNotEmpty) children.add(Text(c.note, style: T.cellTertiary));
     if (c.icons.isNotEmpty) children.add(IconStack(c.icons));
-    if (c.text.isNotEmpty) children.add(Text(c.text, style: T.cell));
+    if (c.text.isNotEmpty) {
+      children.add(Text(c.text,
+          style: c.pending ? T.cell.copyWith(color: T.brandDeep) : T.cell));
+    }
     if (c.mono.isNotEmpty) children.add(Text(c.mono, style: T.mono));
     if (c.warn.isNotEmpty) children.add(Text(c.warn, style: T.cellAlarm));
     if (c.sub.isNotEmpty) children.add(Text(c.sub, style: T.cellSub));
